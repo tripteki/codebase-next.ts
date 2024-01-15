@@ -1,6 +1,8 @@
-/** @type {import("next").NextConfig} */
+/** @type {import ("next").NextConfig} */
 
 "use strict";
+
+const { i18n, } = require ("./next-i18next.config");
 
 const nextConfig = {
 
@@ -18,7 +20,10 @@ const nextConfig = {
 
         appName: process.env.NEXT_PUBLIC_APP_NAME || "codebase",
         env: process.env.NEXT_PUBLIC_APP_ENV || "production",
+        language: process.env.NEXT_PUBLIC_APP_LANG || "en",
     },
+
+    i18n,
 };
 
 module.exports = nextConfig;

@@ -20,7 +20,13 @@
             }
         ],
         "paths": {
-            "@/*": ["./src/*"]
+            "@/src/*": ["./src/*"],
+            "@/app/*": ["./app/*"],
+            "@/lib/*": ["./lib/*"],
+            "@/components/*": ["./components/*"],
+            "@/hooks/*": ["./hooks/*"],
+            "@/store/*": ["./store/*"],
+            "@/assets/*": ["./assets/*"],
         }
     },
 
