@@ -1,37 +1,33 @@
 "use strict";
 
-import type { GetServerSideProps, InferGetServerSidePropsType, } from "next";
-import React, { ReactElement, } from "react";
-import RootLayout from "@/app/layout";
-import { serverSideTranslations, } from "next-i18next/serverSideTranslations";
+import DashboardLayout from "@/app/dashboard";
 import { useTranslation, } from "next-i18next";
+import { serverSideTranslations, } from "next-i18next/serverSideTranslations";
+import { NextSeo, } from "next-seo";
 
-type Props =
-{
-    //
-};
-
-export const getServerSideProps: GetServerSideProps<Props> = async ({ locale, }) => (
-{
-    props: {
-        
-        ... (await serverSideTranslations (locale, [
-            
-            "common",
-        ])),
-    },
-});
-
-const Index = (): ReactElement =>
+export default () =>
 {
     const { t, } = useTranslation ("common");
 
     return (
 
-        <RootLayout>
+        <DashboardLayout>
+            <NextSeo title="Index"></NextSeo>
             <div>{t ("welcome")}</div>
-        </RootLayout>
+        </DashboardLayout>
     )
 };
 
-export default Index;
+export const getServerSideProps = async ({ locale, }) =>
+{
+    return {
+
+        props: {
+
+            ... (await serverSideTranslations (locale, [
+
+                "common",
+            ])),
+        },
+    };
+};

@@ -1,20 +1,18 @@
 "use strict";
 
-import type { AppProps, } from "next/app";
-import React, { ReactElement, } from "react";
-import { appWithTranslation, } from "next-i18next";
+import type { AppProps } from "next/app";
 import { AppCacheProvider, } from "@mui/material-nextjs/v13-pagesRouter";
+import { appWithTranslation, } from "next-i18next";
+import { DefaultSeo, } from "next-seo";
+import site from "../next-seonext.config";
 
-const Application = ({ Component, pageProps, }: AppProps): ReactElement =>
+export default appWithTranslation (({ Component, pageProps, }: AppProps): JSX.Element =>
 {
-    const AnyComponent = Component as any;
-
     return (
 
         <AppCacheProvider {...pageProps}>
-            <AnyComponent {...pageProps} />
+            <DefaultSeo {...site} />
+            <Component {...pageProps} />
         </AppCacheProvider>
     )
-};
-
-export default appWithTranslation (Application);
+});

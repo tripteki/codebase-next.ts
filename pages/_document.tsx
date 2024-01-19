@@ -2,16 +2,15 @@
 
 // https://nextjs.org/docs/pages/api-reference/components //
 
-import type { DocumentHeadTagsProps } from "@mui/material-nextjs/v13-pagesRouter";
-import type { DocumentProps, DocumentContext, } from "next/document";
-import React, { ReactElement, } from "react";
+import type { DocumentContext, DocumentInitialProps, DocumentProps, } from "next/document";
+import type { DocumentHeadTagsProps, } from "@mui/material-nextjs/v13-pagesRouter";
 import { Html, Head, Main, NextScript, } from "next/document";
 import { DocumentHeadTags, documentGetInitialProps, } from "@mui/material-nextjs/v13-pagesRouter";
 import i18nextConfig from "../next-i18next.config";
 
-const Document = (props: DocumentProps & DocumentHeadTagsProps): ReactElement =>
+export default (props: DocumentProps & DocumentHeadTagsProps): JSX.Element =>
 {
-    const i18n = props.__NEXT_DATA__.locale ?? i18nextConfig.i18n.defaultLocale;
+    const i18n: string = i18nextConfig.i18n.defaultLocale;
 
     return (
 
@@ -33,11 +32,12 @@ const Document = (props: DocumentProps & DocumentHeadTagsProps): ReactElement =>
     );
 };
 
-Document.getInitialProps = async (ctx: DocumentContext) =>
+// https://nextjs.org/docs/pages/api-reference/functions //
+
+export const getInitialProps = async (context: DocumentContext): Promise<DocumentInitialProps> =>
 {
-    const finalProps = await documentGetInitialProps (ctx);
+    return {
 
-    return finalProps;
+        ... (await documentGetInitialProps (context)),
+    };
 };
-
-export default Document;

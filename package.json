@@ -2,34 +2,40 @@
     "name": "codebase",
     "private": true,
     "scripts": {
+
+        "lint": "next lint --fix && npx prettier --write .",
         "dev": "next dev",
         "build": "next build",
-        "start": "next start",
-        "lint": "next lint --fix && npx prettier --write ."
+        "start": "next start"
     },
+
     "dependencies": {
+
         "@emotion/cache": "^11.11.0",
         "@emotion/react": "^11.11.3",
         "@emotion/server": "^11.11.0",
         "@emotion/styled": "^11.11.0",
         "@fontsource/roboto": "^5.0.8",
-        "@mui/icons-material": "^5.15.4",
         "@mui/material-nextjs": "^5.15.3",
-        "i18next": "^23.7.16",
-        "next": "14.0.4",
-        "next-i18next": "^15.2.0",
+        "@mui/icons-material": "^5.15.4",
         "react": "^18",
         "react-dom": "^18",
-        "react-i18next": "^14.0.0"
+        "next": "14.0.4",
+        "i18next": "^23.7.16",
+        "react-i18next": "^14.0.0",
+        "next-i18next": "^15.2.0",
+        "next-seo": "^6.4.0"
     },
+
     "devDependencies": {
-        "@tripteki/prettier-config": "^1.0.0",
+
         "@types/node": "^20",
         "@types/react": "^18",
         "@types/react-dom": "^18",
+        "@tripteki/prettier-config": "^1.0.0",
+        "typescript": "^5",
         "eslint": "8.56.0",
         "eslint-config-next": "14.0.4",
-        "prettier": "^3.1.1",
-        "typescript": "^5"
+        "prettier": "^3.1.1"
     }
 }
