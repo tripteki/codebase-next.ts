@@ -15,7 +15,7 @@ export default () =>
             <NextSeo title="Index"></NextSeo>
             <div>{t ("welcome")}</div>
         </DashboardLayout>
-    )
+    );
 };
 
 export const getServerSideProps = async ({ locale, }) =>

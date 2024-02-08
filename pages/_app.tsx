@@ -14,5 +14,5 @@ export default appWithTranslation (({ Component, pageProps, }: AppProps): JSX.El
             <DefaultSeo {...site} />
             <Component {...pageProps} />
         </AppCacheProvider>
-    )
+    );
 });
