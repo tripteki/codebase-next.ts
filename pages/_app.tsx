@@ -1,18 +1,19 @@
 "use strict";
 
 import type { AppProps } from "next/app";
-import { AppCacheProvider, } from "@mui/material-nextjs/v13-pagesRouter";
 import { appWithTranslation, } from "next-i18next";
 import { DefaultSeo, } from "next-seo";
+import { ThemeProvider, } from "@material-tailwind/react";
 import site from "../next-seonext.config";
+import "../assets/css/globals.css";
 
 export default appWithTranslation (({ Component, pageProps, }: AppProps): JSX.Element =>
 {
     return (
 
-        <AppCacheProvider {...pageProps}>
+        <ThemeProvider>
             <DefaultSeo {...site} />
             <Component {...pageProps} />
-        </AppCacheProvider>
+        </ThemeProvider>
     );
 });

@@ -1,16 +1,15 @@
 "use strict";
 
-import { Fragment, } from "react";
-import { AppRouterCacheProvider, } from "@mui/material-nextjs/v13-appRouter";
+import { ThemeProvider, } from "@material-tailwind/react";
 
-export default ({ children, }) =>
+const Template = ({ children, }) =>
 {
     return (
 
-        <Fragment>
-            <AppRouterCacheProvider>
-                {children}
-            </AppRouterCacheProvider>
-        </Fragment>
+        <ThemeProvider>
+            {children}
+        </ThemeProvider>
     );
 };
+
+export default Template;

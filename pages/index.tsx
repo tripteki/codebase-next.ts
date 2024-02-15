@@ -5,7 +5,7 @@ import { useTranslation, } from "next-i18next";
 import { serverSideTranslations, } from "next-i18next/serverSideTranslations";
 import { NextSeo, } from "next-seo";
 
-export default () =>
+const Template = () =>
 {
     const { t, } = useTranslation ("common");
 
@@ -13,7 +13,7 @@ export default () =>
 
         <DashboardLayout>
             <NextSeo title="Index"></NextSeo>
-            <div>{t ("welcome")}</div>
+            <div className="underline">{t ("welcome")}</div>
         </DashboardLayout>
     );
 };
@@ -31,3 +31,5 @@ export const getServerSideProps = async ({ locale, }) =>
         },
     };
 };
+
+export default Template;
