@@ -2,9 +2,7 @@
 
 "use strict";
 
-const withMT = require ("@material-tailwind/react/utils/withMT");
-
-module.exports = withMT ({
+export default {
 
     content: [
 
@@ -21,4 +19,4 @@ module.exports = withMT ({
 
         extend: {},
     },
-});
+};

@@ -1,14 +1,14 @@
 "use strict";
 
-import { ThemeProvider, } from "@material-tailwind/react";
+import { Fragment, } from "react";
 
 const Template = ({ children, }) =>
 {
     return (
 
-        <ThemeProvider>
+        <Fragment>
             {children}
-        </ThemeProvider>
+        </Fragment>
     );
 };
 
