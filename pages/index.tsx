@@ -1,13 +1,21 @@
-"use strict";
-
-import DashboardLayout from "@/app/dashboard";
-import { useTranslation, } from "next-i18next";
-import { serverSideTranslations, } from "next-i18next/serverSideTranslations";
+import { GetServerSideProps, } from 'next';
 import { NextSeo, } from "next-seo";
+import { useRouter, } from 'next/router';
+import { useTranslation, } from "next-i18next";
+import { FC, useEffect, } from "react";
+import { serverSideTranslations, } from "next-i18next/serverSideTranslations";
+import DashboardLayout from "@/app/dashboard";
 
-const Template = () =>
+const IndexTemplate: FC = () =>
 {
+    const router = useRouter ();
     const { t, } = useTranslation ("common");
+
+    useEffect (() => {
+
+        router.push ('/auth/login');
+
+    }, [ router, ]);
 
     return (
 
@@ -18,18 +26,18 @@ const Template = () =>
     );
 };
 
-export const getServerSideProps = async ({ locale, }) =>
+export const getServerSideProps: GetServerSideProps = async ({ locale, }) =>
 {
     return {
 
         props: {
 
-            ... (await serverSideTranslations (locale, [
+            ... (await serverSideTranslations (locale ?? 'en', [
 
-                "common",
+                'common',
             ])),
         },
     };
 };
 
-export default Template;
+export default IndexTemplate;

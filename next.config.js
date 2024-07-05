@@ -21,6 +21,7 @@ const nextConfig = {
         appName: process.env.NEXT_PUBLIC_APP_NAME || "codebase",
         appUrl: process.env.NEXT_PUBLIC_APP_URL || "http://frontend.localhost",
         baseURL: process.env.NEXT_PUBLIC_BASE_URL || "http://api.backend.localhost",
+        authURL: process.env.NEXT_PUBLIC_AUTH_URL || "http://api.backend.localhost/auth",
         env: process.env.NEXT_PUBLIC_APP_ENV || "production",
         language: process.env.NEXT_PUBLIC_APP_LANG || "en",
     },

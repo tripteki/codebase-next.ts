@@ -1,17 +1,94 @@
-"use strict";
+import getConfig from 'next/config';
+import Head from 'next/head';
+import { GetServerSideProps, } from 'next';
+import { useRouter, } from 'next/router';
+import { serverSideTranslations, } from 'next-i18next/serverSideTranslations';
+import { useTranslation, } from 'next-i18next';
+import { signOut, getSession, } from 'next-auth/react';
+import { FC, MouseEvent, } from 'react';
+import { call, } from '@/lib/call';
 
-import { Fragment, } from "react";
+const { publicRuntimeConfig, } = getConfig ();
 
-const Template = () =>
+const AdminDashboardTemplate: FC = () =>
 {
+    const router = useRouter ();
+    const { t, } = useTranslation ('auth');
+
+    const logout = async (e: MouseEvent<HTMLButtonElement>) =>
+    {
+        e.preventDefault ();
+
+        try {
+
+            const {
+
+                isLoading: dataIsLoading,
+                isLoaded: dataIsLoaded,
+                isError: dataIsError,
+                isSuccess: dataIsSuccess,
+                data,
+                error,
+
+            } = await call (
+            {
+                baseUrl: publicRuntimeConfig.authURL,
+                url: "/logout",
+                method: "POST",
+            });
+
+            await signOut (
+            {
+                redirect: true,
+                callbackUrl: '/auth/login',
+            });
+
+        } catch (throwable) {
+
+            console.error (throwable);
+        }
+    };
+
     return (
 
-        <Fragment>
-            <div className="container m-2">
-                <button type="button" className="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-blue-100 text-blue-800 hover:bg-blue-200 disabled:opacity-50 disabled:pointer-events-none dark:hover:bg-blue-900 dark:text-blue-400">Sign out</button>
+        <>
+            <Head>
+                <title>Dashboard</title>
+            </Head>
+            <div className="container mx-auto mt-3 text-center">
+                <button onClick={logout} type="button" className="border">Sign out</button>
             </div>
-        </Fragment>
+        </>
     );
 };
 
-export default Template;
+export const getServerSideProps: GetServerSideProps = async (context) =>
+{
+    const locale = context.locale || 'en';
+    const session = await getSession (context);
+
+    if (! session) {
+
+        return {
+
+            redirect: {
+
+                permanent: false,
+                destination: '/auth/login',
+            },
+        };
+    }
+
+    return {
+
+        props: {
+
+            ... (await serverSideTranslations (locale ?? 'en', [
+
+                'auth',
+            ])),
+        },
+    };
+};
+
+export default AdminDashboardTemplate;
