@@ -33,7 +33,10 @@
         "@mui/material-nextjs": "^5.16.6",
         "@mui/x-charts": "^7.13.0",
         "ua-parser-js": "^1.0.38",
-        "react-toastify": "^10.0.5"
+        "react-toastify": "^10.0.5",
+        "@tiptap/starter-kit": "^2.6.5",
+        "@tiptap/pm": "^2.6.5",
+        "@tiptap/react": "^2.6.5"
     },
 
     "devDependencies": {

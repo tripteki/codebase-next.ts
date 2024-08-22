@@ -26,6 +26,15 @@ const nextConfig = {
         language: process.env.NEXT_PUBLIC_APP_LANG || "en",
     },
 
+    webpack: function (configuration, { isServer })
+    {
+        const { resolve, } = require ('path');
+
+        if (! isServer) configuration.resolve.alias['yjs'] = resolve (__dirname, 'node_modules/yjs');
+
+        return configuration;
+    },
+
     i18n,
 };
 
