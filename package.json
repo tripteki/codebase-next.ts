@@ -36,7 +36,8 @@
         "react-toastify": "^10.0.5",
         "@tiptap/starter-kit": "^2.6.5",
         "@tiptap/pm": "^2.6.5",
-        "@tiptap/react": "^2.6.5"
+        "@tiptap/react": "^2.6.5",
+        "atrament": "^4.4.1"
     },
 
     "devDependencies": {
