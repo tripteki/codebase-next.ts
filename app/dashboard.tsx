@@ -1,15 +1,14 @@
 "use strict";
 
-import { ReactNode, ReactElement, } from 'react';
-import { AppRouterCacheProvider, } from '@mui/material-nextjs/v13-appRouter';
+import { ReactNode, ReactElement, Fragment, } from 'react';
 
 const Template = ({ children, }: { children: ReactNode; }): ReactElement =>
 {
     return (
 
-        <AppRouterCacheProvider>
+        <Fragment>
             {children}
-        </AppRouterCacheProvider>
+        </Fragment>
     );
 };
 
