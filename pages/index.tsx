@@ -5,6 +5,12 @@ import { useTranslation, } from "next-i18next";
 import { FC, useEffect, } from "react";
 import { serverSideTranslations, } from "next-i18next/serverSideTranslations";
 import DashboardLayout from "@/app/dashboard";
+import dynamic from 'next/dynamic';
+
+const ApexChart = dynamic (() => import ('react-apexcharts'),
+{
+    ssr: false,
+});
 
 const IndexTemplate: FC = () =>
 {
@@ -22,6 +28,7 @@ const IndexTemplate: FC = () =>
         <DashboardLayout>
             <NextSeo title="Index"></NextSeo>
             <div className="underline">{t ("welcome")}</div>
+            <ApexChart />
         </DashboardLayout>
     );
 };
