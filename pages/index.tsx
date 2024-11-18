@@ -28,7 +28,7 @@ const IndexTemplate: FC = () =>
         <DashboardLayout>
             <NextSeo title="Index"></NextSeo>
             <div className="underline">{t ("welcome")}</div>
-            <ApexChart />
+            {/* <ApexChart /> */}
         </DashboardLayout>
     );
 };

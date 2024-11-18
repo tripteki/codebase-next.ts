@@ -14,8 +14,8 @@ export default appWithTranslation (({ Component, pageProps, }: AppProps): ReactE
     return (
 
         <SessionProvider session={pageProps.session}>
-            <DefaultSeo {...site} />
-            <Component {...pageProps} />
+            <DefaultSeo {... site} />
+            <Component {... pageProps} />
         </SessionProvider>
     );
 });

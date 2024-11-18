@@ -11,7 +11,8 @@ const i18nConfig = {
     i18n: {
 
         defaultLocale: process.env.NEXT_PUBLIC_APP_LANG || "en",
-        locales: [ "en", "id", ]
+        locales: [ "en", "id", ],
+        localeDetection: false,
     },
 };
 
