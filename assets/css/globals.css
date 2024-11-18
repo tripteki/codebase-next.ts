@@ -2,4 +2,4 @@
 @tailwind components;
 @tailwind utilities;
 
-@import '~react-toastify/dist/ReactToastify.css';
+@import "~react-toastify/dist/ReactToastify.css";

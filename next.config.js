@@ -2,6 +2,7 @@
 
 "use strict";
 
+const pwa = require ("@ducanh2912/next-pwa");
 const { i18n, } = require ("./next-i18next.config");
 
 const nextConfig = {
@@ -38,4 +39,9 @@ const nextConfig = {
     i18n,
 };
 
-module.exports = nextConfig;
+const withPWA = pwa.default ({
+
+    dest: "public",
+});
+
+module.exports = withPWA (nextConfig);
