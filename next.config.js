@@ -29,9 +29,9 @@ const nextConfig = {
 
     webpack: function (configuration, { isServer })
     {
-        const { resolve, } = require ('path');
+        const { resolve, } = require ("path");
 
-        if (! isServer) configuration.resolve.alias['yjs'] = resolve (__dirname, 'node_modules/yjs');
+        if (! isServer) configuration.resolve.alias["yjs"] = resolve (__dirname, "node_modules/yjs");
 
         return configuration;
     },

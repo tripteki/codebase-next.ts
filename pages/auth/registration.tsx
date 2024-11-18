@@ -1,13 +1,13 @@
-import getConfig from 'next/config';
-import Head from 'next/head';
-import { GetServerSideProps, } from 'next';
-import { useRouter, } from 'next/router';
-import { useTranslation, } from 'next-i18next';
-import { useSession, } from 'next-auth/react';
+import getConfig from "next/config";
+import Head from "next/head";
+import { GetServerSideProps, } from "next";
+import { useRouter, } from "next/router";
+import { useTranslation, } from "next-i18next";
+import { useSession, } from "next-auth/react";
 import { FC, FormEvent, ChangeEvent, useState, useEffect, } from "react";
-import { serverSideTranslations, } from 'next-i18next/serverSideTranslations';
-import { call, } from '@/lib/call';
-import InputComponent from '@/components/InputComponent';
+import { serverSideTranslations, } from "next-i18next/serverSideTranslations";
+import { call, } from "@/lib/call";
+import InputComponent from "@/components/InputComponent";
 
 type FormField =
 {
@@ -75,7 +75,7 @@ const AuthRegistrationTemplate: FC = () =>
     });
 
     const router = useRouter ();
-    const { t, } = useTranslation ('auth');
+    const { t, } = useTranslation ("auth");
     const { data: session, status: sessionStatus, } = useSession ();
 
     const load = () =>
@@ -92,7 +92,7 @@ const AuthRegistrationTemplate: FC = () =>
 
     const handleChange = (field: string) => (e) =>
     {
-        var newValue = field === 'agreement' ? newValue = e.target.checked : e;
+        var newValue = field === "agreement" ? newValue = e.target.checked : e;
 
         setForm (prevForm => (
         {
@@ -138,7 +138,7 @@ const AuthRegistrationTemplate: FC = () =>
 
             let dataSuccess = data;
 
-            router.push ('/auth/login');
+            router.push ("/auth/login");
 
         } else if (dataIsError) {
 
@@ -147,18 +147,18 @@ const AuthRegistrationTemplate: FC = () =>
             setForm (prevForm => (
             {
                 ... prevForm,
-                ['name']: {
-                    ... prevForm['name'],
+                ["name"]: {
+                    ... prevForm["name"],
                     isError: dataError?.name?.[0] ? true : false,
                     validationMessage: dataError?.name?.[0],
                 },
-                ['email']: {
-                    ... prevForm['email'],
+                ["email"]: {
+                    ... prevForm["email"],
                     isError: dataError?.email?.[0] ? true : false,
                     validationMessage: dataError?.email?.[0],
                 },
-                ['password']: {
-                    ... prevForm['password'],
+                ["password"]: {
+                    ... prevForm["password"],
                     isError: dataError?.password?.[0] ? true : false,
                     validationMessage: dataError?.password?.[0],
                 },
@@ -170,7 +170,7 @@ const AuthRegistrationTemplate: FC = () =>
 
     useEffect (() => {
 
-        if (sessionStatus === 'authenticated') router.push ('/admin/dashboard');
+        if (sessionStatus === "authenticated") router.push ("/admin/dashboard");
 
     }, [ router, sessionStatus, ]);
 
@@ -192,7 +192,7 @@ const AuthRegistrationTemplate: FC = () =>
                             isLoaded={true}
                             isError={form.name.isError}
                             validationMessage={form.name.validationMessage}
-                            onChange={handleChange ('name')}
+                            onChange={handleChange ("name")}
                         />
                     </div>
                     <div>
@@ -205,7 +205,7 @@ const AuthRegistrationTemplate: FC = () =>
                             isLoaded={true}
                             isError={form.email.isError}
                             validationMessage={form.email.validationMessage}
-                            onChange={handleChange ('email')}
+                            onChange={handleChange ("email")}
                         />
                     </div>
                     <div>
@@ -218,7 +218,7 @@ const AuthRegistrationTemplate: FC = () =>
                             isLoaded={true}
                             isError={form.password.isError}
                             validationMessage={form.password.validationMessage}
-                            onChange={handleChange ('password')}
+                            onChange={handleChange ("password")}
                         />
                     </div>
                     <div>
@@ -229,20 +229,20 @@ const AuthRegistrationTemplate: FC = () =>
                             label="Password Confirmation"
                             placeholder="********"
                             isLoaded={true}
-                            onChange={handleChange ('password_confirmation')}
+                            onChange={handleChange ("password_confirmation")}
                         />
                     </div>
                     <div>
-                        <label htmlFor="agreement">{t ('agreement')}</label>
+                        <label htmlFor="agreement">{t ("agreement")}</label>
                         <input
                             checked={form.agreement.value as boolean}
                             type="checkbox"
                             name="agreement"
                             id="agreement"
-                            onChange={handleChange ('agreement')}
+                            onChange={handleChange ("agreement")}
                         />
                     </div>
-                    <button type="submit" className="border">{t ('sign_up')}</button>
+                    <button type="submit" className="border">{t ("sign_up")}</button>
                 </form>
             </div>
         </>
@@ -255,9 +255,9 @@ export const getServerSideProps: GetServerSideProps = async ({ locale, }) =>
 
         props: {
 
-            ... (await serverSideTranslations (locale ?? 'en', [
+            ... (await serverSideTranslations (locale ?? "en", [
 
-                'auth',
+                "auth",
             ])),
         },
     };

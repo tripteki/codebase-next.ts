@@ -1,12 +1,12 @@
-import Head from 'next/head';
-import Link from 'next/link';
-import { GetServerSideProps, } from 'next';
-import { useRouter, } from 'next/router';
-import { useTranslation, } from 'next-i18next';
-import { SignInResponse, signIn, useSession, } from 'next-auth/react';
+import Head from "next/head";
+import Link from "next/link";
+import { GetServerSideProps, } from "next";
+import { useRouter, } from "next/router";
+import { useTranslation, } from "next-i18next";
+import { SignInResponse, signIn, useSession, } from "next-auth/react";
 import { FC, FormEvent, useState, useEffect, } from "react";
-import { serverSideTranslations, } from 'next-i18next/serverSideTranslations';
-import InputComponent from '@/components/InputComponent';
+import { serverSideTranslations, } from "next-i18next/serverSideTranslations";
+import InputComponent from "@/components/InputComponent";
 
 const AuthLoginTemplate: FC = () =>
 {
@@ -21,7 +21,7 @@ const AuthLoginTemplate: FC = () =>
     const [ formCheckboxRemember, setFormCheckboxRemember, ] = useState<boolean>(false);
 
     const router = useRouter ();
-    const { t, } = useTranslation ('auth');
+    const { t, } = useTranslation ("auth");
     const { data: session, status: sessionStatus, } = useSession ();
 
     const load = () =>
@@ -38,7 +38,7 @@ const AuthLoginTemplate: FC = () =>
 
     const handleExternalLinkClick = (url: string) =>
     {
-        window.open (url, '_blank');
+        window.open (url, "_blank");
     };
 
     const login = async (e: FormEvent<HTMLFormElement>) =>
@@ -49,7 +49,7 @@ const AuthLoginTemplate: FC = () =>
 
         try {
 
-            const data: SignInResponse | undefined = await signIn ('credentials',
+            const data: SignInResponse | undefined = await signIn ("credentials",
             {
                 email: formUserIdentity,
                 password: formUserPassword,
@@ -62,18 +62,18 @@ const AuthLoginTemplate: FC = () =>
 
             setIsSuccess (true);
 
-            router.push ('/admin/dashboard');
+            router.push ("/admin/dashboard");
 
         } catch (throwable: any) {
 
             if (throwable instanceof Error) {
 
-                throwable = JSON.parse (throwable.toString ().replace (/^Error: /, ''));
+                throwable = JSON.parse (throwable.toString ().replace (/^Error: /, ""));
 
                 if (Object.keys (throwable).length) {
 
                     setIsError (true);
-                    setValidationMessage (t ('failed'));
+                    setValidationMessage (t ("failed"));
 
                 } else {
 
@@ -90,7 +90,7 @@ const AuthLoginTemplate: FC = () =>
 
     useEffect (() => {
 
-        if (sessionStatus === 'authenticated') router.push ('/admin/dashboard');
+        if (sessionStatus === "authenticated") router.push ("/admin/dashboard");
 
     }, [ router, sessionStatus, ]);
 
@@ -103,14 +103,14 @@ const AuthLoginTemplate: FC = () =>
             <div className="container mx-auto text-center">
                 <div className="grid grid-cols-2">
                     <div className="p-3">
-                        <span>{t ('dont_have_an_account_yet')}</span>
+                        <span>{t ("dont_have_an_account_yet")}</span>
                         <span>
-                            <Link href="/auth/registration">&nbsp;{t ('sign_up_here')}</Link>
+                            <Link href="/auth/registration">&nbsp;{t ("sign_up_here")}</Link>
                         </span>
                     </div>
                     <div className="p-3">
-                        <button onClick={() => handleExternalLinkClick ('https://google.com')} type="button">
-                            {t ('sign_in_with_google')}
+                        <button onClick={() => handleExternalLinkClick ("https://google.com")} type="button">
+                            {t ("sign_in_with_google")}
                         </button>
                     </div>
                 </div>
@@ -138,11 +138,11 @@ const AuthLoginTemplate: FC = () =>
                         />
                     </div>
                     <div>
-                        <label htmlFor="remember">{t ('remember')}</label>
+                        <label htmlFor="remember">{t ("remember")}</label>
                         <input onChange={(e) => setFormCheckboxRemember (e.target.checked)} checked={formCheckboxRemember} type="checkbox" name="remember" id="remember" />
                     </div>
                     {isError && <p>{validationMessage}</p>}
-                    <button type="submit" className="border">{t ('sign_in')}</button>
+                    <button type="submit" className="border">{t ("sign_in")}</button>
                 </form>
             </div>
         </>
@@ -155,9 +155,9 @@ export const getServerSideProps: GetServerSideProps = async ({ locale, }) =>
 
         props: {
 
-            ... (await serverSideTranslations (locale ?? 'en', [
+            ... (await serverSideTranslations (locale ?? "en", [
 
-                'auth',
+                "auth",
             ])),
         },
     };

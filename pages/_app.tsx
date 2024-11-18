@@ -3,8 +3,8 @@
 import type { AppProps } from "next/app";
 import { appWithTranslation, } from "next-i18next";
 import { DefaultSeo, } from "next-seo";
-import { SessionProvider, } from 'next-auth/react';
-import { ReactElement, } from 'react';
+import { SessionProvider, } from "next-auth/react";
+import { ReactElement, } from "react";
 import manifest, { url, } from "../app/manifest";
 import Head from "next/head";
 import site from "../next-seonext.config";
@@ -12,7 +12,7 @@ import "../assets/css/globals.css";
 import "../assets/css/variables.scss";
 
 const { name, short_name, theme_color, background_color, icons, } = manifest ();
-const defaultIcon = icons && icons.length > 0 ? icons[0].src : '/favicon.png';
+const defaultIcon = icons && icons.length > 0 ? icons[0].src : "/favicon.png";
 
 export default appWithTranslation (({ Component, pageProps, }: AppProps): ReactElement =>
 {

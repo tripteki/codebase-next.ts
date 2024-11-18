@@ -1,13 +1,13 @@
-import axios, { AxiosRequestConfig, AxiosResponse, } from 'axios';
-import getConfig from 'next/config';
-import { getSession, } from 'next-auth/react';
+import axios, { AxiosRequestConfig, AxiosResponse, } from "axios";
+import getConfig from "next/config";
+import { getSession, } from "next-auth/react";
 
 type Detail =
 {
     baseUrl?: string;
     url: string;
     headers?: any;
-    method?: 'GET' | 'DELETE' | 'POST' | 'PUT' | 'PATCH';
+    method?: "GET" | "DELETE" | "POST" | "PUT" | "PATCH";
     data?: any;
     params?: any;
 };
@@ -37,7 +37,7 @@ export const call = async (detail: Detail): Promise<
     try {
 
         const session = await getSession ();
-        const token = session?.jwt || '';
+        const token = session?.jwt || "";
 
         const instance = axios.create (
         {

@@ -1,13 +1,13 @@
-import { GetServerSideProps, } from 'next';
+import { GetServerSideProps, } from "next";
 import { NextSeo, } from "next-seo";
-import { useRouter, } from 'next/router';
+import { useRouter, } from "next/router";
 import { useTranslation, } from "next-i18next";
 import { FC, useEffect, } from "react";
 import { serverSideTranslations, } from "next-i18next/serverSideTranslations";
 import DashboardLayout from "@/app/dashboard";
-import dynamic from 'next/dynamic';
+import dynamic from "next/dynamic";
 
-const ApexChart = dynamic (() => import ('react-apexcharts'),
+const ApexChart = dynamic (() => import ("react-apexcharts"),
 {
     ssr: false,
 });
@@ -19,7 +19,7 @@ const IndexTemplate: FC = () =>
 
     useEffect (() => {
 
-        router.push ('/auth/login');
+        router.push ("/auth/login");
 
     }, [ router, ]);
 
@@ -39,9 +39,9 @@ export const getServerSideProps: GetServerSideProps = async ({ locale, }) =>
 
         props: {
 
-            ... (await serverSideTranslations (locale ?? 'en', [
+            ... (await serverSideTranslations (locale ?? "en", [
 
-                'common',
+                "common",
             ])),
         },
     };

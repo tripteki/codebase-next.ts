@@ -1,6 +1,6 @@
 "use strict";
 
-import type { MetadataRoute, } from 'next';
+import type { MetadataRoute, } from "next";
 import getConfig from "next/config";
 
 const { publicRuntimeConfig, } = getConfig ();

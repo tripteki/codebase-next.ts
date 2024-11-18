@@ -1,19 +1,19 @@
-import getConfig from 'next/config';
-import Head from 'next/head';
-import { GetServerSideProps, } from 'next';
-import { useRouter, } from 'next/router';
-import { serverSideTranslations, } from 'next-i18next/serverSideTranslations';
-import { useTranslation, } from 'next-i18next';
-import { signOut, getSession, } from 'next-auth/react';
-import { FC, MouseEvent, } from 'react';
-import { call, } from '@/lib/call';
+import getConfig from "next/config";
+import Head from "next/head";
+import { GetServerSideProps, } from "next";
+import { useRouter, } from "next/router";
+import { serverSideTranslations, } from "next-i18next/serverSideTranslations";
+import { useTranslation, } from "next-i18next";
+import { signOut, getSession, } from "next-auth/react";
+import { FC, MouseEvent, } from "react";
+import { call, } from "@/lib/call";
 
 const { publicRuntimeConfig, } = getConfig ();
 
 const AdminDashboardTemplate: FC = () =>
 {
     const router = useRouter ();
-    const { t, } = useTranslation ('auth');
+    const { t, } = useTranslation ("auth");
 
     const logout = async (e: MouseEvent<HTMLButtonElement>) =>
     {
@@ -40,7 +40,7 @@ const AdminDashboardTemplate: FC = () =>
             await signOut (
             {
                 redirect: true,
-                callbackUrl: '/auth/login',
+                callbackUrl: "/auth/login",
             });
 
         } catch (throwable) {
@@ -64,7 +64,7 @@ const AdminDashboardTemplate: FC = () =>
 
 export const getServerSideProps: GetServerSideProps = async (context) =>
 {
-    const locale = context.locale || 'en';
+    const locale = context.locale || "en";
     const session = await getSession (context);
 
     if (! session) {
@@ -74,7 +74,7 @@ export const getServerSideProps: GetServerSideProps = async (context) =>
             redirect: {
 
                 permanent: false,
-                destination: '/auth/login',
+                destination: "/auth/login",
             },
         };
     }
@@ -83,9 +83,9 @@ export const getServerSideProps: GetServerSideProps = async (context) =>
 
         props: {
 
-            ... (await serverSideTranslations (locale ?? 'en', [
+            ... (await serverSideTranslations (locale ?? "en", [
 
-                'auth',
+                "auth",
             ])),
         },
     };

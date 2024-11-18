@@ -2,7 +2,7 @@
 
 const seoConfig = {
 
-    titleTemplate: 'React | %s',
+    titleTemplate: "React | %s",
     canonical: process.env.NEXT_PUBLIC_APP_URL || "http://frontend.localhost",
     openGraph: {
 

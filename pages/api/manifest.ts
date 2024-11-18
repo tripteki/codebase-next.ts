@@ -1,7 +1,7 @@
 "use strict";
 
-import type { NextApiRequest, NextApiResponse, } from 'next';
-import manifest from '../../app/manifest';
+import type { NextApiRequest, NextApiResponse, } from "next";
+import manifest from "../../app/manifest";
 
 const handler = (req: NextApiRequest, res: NextApiResponse): void =>
 {

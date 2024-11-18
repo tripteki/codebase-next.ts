@@ -1,14 +1,14 @@
 "use strict";
 
-import getConfig from 'next/config';
-import NextAuth from 'next-auth';
-import CredentialsProvider from 'next-auth/providers/credentials';
-import { call, } from '@/lib/call';
+import getConfig from "next/config";
+import NextAuth from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+import { call, } from "@/lib/call";
 
 const { serverRuntimeConfig, publicRuntimeConfig, } = getConfig ();
 
 /**
- * @type {import('next-auth').NextAuthOptions}
+ * @type {import("next-auth").NextAuthOptions}
  */
 export default NextAuth (
 {
@@ -67,7 +67,7 @@ export default NextAuth (
 
     /**
      * @type {Array}
-     * @property {import('next-auth').Provider} providers
+     * @property {import("next-auth").Provider} providers
      */
     providers:
     [
@@ -76,7 +76,7 @@ export default NextAuth (
             /**
              * @type {string}
              */
-            name: 'Credentials',
+            name: "Credentials",
 
             /**
              * @type {Object}

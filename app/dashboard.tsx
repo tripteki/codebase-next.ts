@@ -1,6 +1,6 @@
 "use strict";
 
-import { ReactNode, ReactElement, Fragment, } from 'react';
+import { ReactNode, ReactElement, Fragment, } from "react";
 
 const Template = ({ children, }: { children: ReactNode; }): ReactElement =>
 {

@@ -4,7 +4,7 @@
 
 import type { DocumentContext, DocumentInitialProps, DocumentProps, } from "next/document";
 import Document, { Html, Head, Main, NextScript, } from "next/document";
-import { ReactElement, } from 'react';
+import { ReactElement, } from "react";
 import i18nextConfig from "../next-i18next.config";
 
 const Template = (props: DocumentProps): ReactElement =>
