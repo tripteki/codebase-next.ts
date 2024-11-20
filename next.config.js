@@ -2,8 +2,9 @@
 
 "use strict";
 
-const pwa = require ("@ducanh2912/next-pwa");
+const { name, version, } = require ("./package.json");
 const { i18n, } = require ("./next-i18next.config");
+const pwa = require ("@ducanh2912/next-pwa");
 
 const nextConfig = {
 
@@ -19,7 +20,8 @@ const nextConfig = {
 
     publicRuntimeConfig: {
 
-        appName: process.env.NEXT_PUBLIC_APP_NAME || "codebase",
+        appName: process.env.NEXT_PUBLIC_APP_NAME || name || "codebase",
+        appVersion: process.env.NEXT_PUBLIC_APP_VERSION || version || "1.0.0",
         appUrl: process.env.NEXT_PUBLIC_APP_URL || "http://frontend.localhost",
         baseURL: process.env.NEXT_PUBLIC_BASE_URL || "http://api.backend.localhost",
         authURL: process.env.NEXT_PUBLIC_AUTH_URL || "http://api.backend.localhost/auth",
