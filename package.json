@@ -1,6 +1,11 @@
 {
     "name": "codebase",
+    "version": "1.0.1",
     "private": true,
+    "description": "Project",
+    "author": "Anonymous <anonymous@email.com>",
+    "license": "UNLICENSED",
+
     "scripts": {
 
         "lint": "next lint --fix && npx prettier --write .",
