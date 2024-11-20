@@ -9,7 +9,7 @@ import manifest, { url, } from "../app/manifest";
 import Head from "next/head";
 import site from "../next-seonext.config";
 import "../assets/css/globals.css";
-import "../assets/css/variables.scss";
+import "../assets/js/globals";
 
 const { name, short_name, theme_color, background_color, icons, } = manifest ();
 const defaultIcon = icons && icons.length > 0 ? icons[0].src : "/favicon.png";
