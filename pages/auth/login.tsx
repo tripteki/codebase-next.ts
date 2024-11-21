@@ -6,6 +6,8 @@ import { useTranslation, } from "next-i18next";
 import { SignInResponse, signIn, useSession, } from "next-auth/react";
 import { FC, FormEvent, useState, useEffect, } from "react";
 import { serverSideTranslations, } from "next-i18next/serverSideTranslations";
+import IconButton from "@mui/material/IconButton";
+import PersonIcon from "@mui/icons-material/Person";
 import InputComponent from "@/components/InputComponent";
 
 const AuthLoginTemplate: FC = () =>
@@ -143,6 +145,9 @@ const AuthLoginTemplate: FC = () =>
                     </div>
                     {isError && <p>{validationMessage}</p>}
                     <button type="submit" className="border">{t ("sign_in")}</button>
+                    <IconButton color="primary">
+                        <PersonIcon />
+                    </IconButton>
                 </form>
             </div>
         </>
