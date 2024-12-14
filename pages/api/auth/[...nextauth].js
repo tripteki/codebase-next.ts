@@ -100,7 +100,7 @@ export default NextAuth (
             {
                 const formData = {
 
-                    email: credentials.email,
+                    identifier: credentials.identifier,
                     password: credentials.password,
                     remember: credentials.remember,
                 };
@@ -115,12 +115,12 @@ export default NextAuth (
 
                 if (token.isError) {
 
-                    throw new Error (JSON.stringify (token.error?.response?.data?.data));
+                    throw new Error (JSON.stringify (token.error?.response?.data?.errors));
 
                     return null;
                 }
 
-                token = token.data?.data?.token;
+                token = token.data?.token;
 
                 let user = await call (
                 {

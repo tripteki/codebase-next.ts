@@ -53,7 +53,7 @@ const AuthLoginTemplate: FC = () =>
 
             const data: SignInResponse | undefined = await signIn ("credentials",
             {
-                email: formUserIdentity,
+                identifier: formUserIdentity,
                 password: formUserPassword,
                 remember: formCheckboxRemember,
 

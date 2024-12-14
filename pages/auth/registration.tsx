@@ -142,7 +142,7 @@ const AuthRegistrationTemplate: FC = () =>
 
         } else if (dataIsError) {
 
-            let dataError = error?.response?.data?.data;
+            let dataError = error?.response?.data?.errors;
 
             setForm (prevForm => (
             {
