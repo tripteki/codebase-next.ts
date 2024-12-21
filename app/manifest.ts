@@ -40,4 +40,6 @@ const manifest = (): MetadataRoute.Manifest => ({
 
 export const url: string = publicRuntimeConfig.appUrl;
 
+export const dynamic: string = "force-static";
+
 export default manifest;

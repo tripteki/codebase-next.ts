@@ -1,6 +1,7 @@
 # Next.js
-/.next/
-/out/
+/public/.next
+/.next
+/out
 /build
 
 *.tsbuildinfo

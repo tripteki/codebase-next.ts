@@ -8,6 +8,15 @@ const pwa = require ("@ducanh2912/next-pwa");
 
 const nextConfig = {
 
+    ... (process.env.BUILD_STATIC ? {
+
+        output: "export",
+
+    } : {
+
+        distDir: "public/.next",
+    }),
+
     reactStrictMode: true,
 
     // https://stackoverflow.com/questions/64261029/next-js-env-vs-serverruntimeconfig
@@ -38,7 +47,7 @@ const nextConfig = {
         return configuration;
     },
 
-    i18n,
+    ... (process.env.BUILD_STATIC ? {} : { i18n, }),
 };
 
 const withPWA = pwa.default ({

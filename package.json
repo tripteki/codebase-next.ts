@@ -11,6 +11,7 @@
         "lint": "next lint --fix && npx prettier --write .",
         "dev": "next dev --turbo",
         "build": "next build",
+        "generate": "BUILD_STATIC=true next build",
         "start": "next start"
     },
 
