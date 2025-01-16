@@ -3,6 +3,7 @@ import { NextSeo, } from "next-seo";
 import { useTranslation, } from "next-i18next";
 import { FC, } from "react";
 import { serverSideTranslations, } from "next-i18next/serverSideTranslations";
+import { Avatar, AvatarFallback, AvatarImage, } from "@/components/ui/avatar";
 import DefaultLayout from "@/app/index";
 
 const IndexTemplate: FC = () =>
@@ -14,6 +15,11 @@ const IndexTemplate: FC = () =>
         <DefaultLayout>
             <NextSeo title="Index"></NextSeo>
             <div className="underline">{t ("welcome")}</div>
+
+            <Avatar>
+                <AvatarImage src="https://github.com/shadcn.png" />
+                <AvatarFallback></AvatarFallback>
+            </Avatar>
         </DefaultLayout>
     );
 };

@@ -12,7 +12,8 @@
         "dev": "next dev --turbo",
         "build": "next build",
         "generate": "BUILD_STATIC=true next build",
-        "start": "next start"
+        "start": "next start",
+        "component": "npx shadcn@latest add"
     },
 
     "dependencies": {
@@ -39,7 +40,13 @@
         "atrament": "^4.4.1",
         "flowbite": "^2.5.2",
         "apexcharts": "^4.0.0",
-        "react-apexcharts": "^1.5.0"
+        "react-apexcharts": "^1.5.0",
+        "clsx": "^2.1.1",
+        "class-variance-authority": "^0.7.1",
+        "lucide-react": "^0.471.1",
+        "tailwind-merge": "^2.6.0",
+        "tailwindcss-animate": "^1.0.7",
+        "@radix-ui/react-avatar": "^1.1.2"
     },
 
     "devDependencies": {
