@@ -1,16 +1,15 @@
-"use strict";
-
+export const dynamic = "force-static";
 import type { MetadataRoute, } from "next";
 import getConfig from "next/config";
 
 const { publicRuntimeConfig, } = getConfig ();
 
-const manifest = (): MetadataRoute.Manifest => ({
+const Metadata = (): MetadataRoute.Manifest => ({
 
-    name: publicRuntimeConfig.appName,
     short_name: publicRuntimeConfig.appName,
+    name: publicRuntimeConfig.appName.charAt (0).toUpperCase () + publicRuntimeConfig.appName.slice (1),
+    description: `The ${publicRuntimeConfig.appName} WebApp!`,
 
-    id: "/",
     start_url: "/",
     display: "standalone",
     orientation: "portrait",
@@ -20,13 +19,12 @@ const manifest = (): MetadataRoute.Manifest => ({
     icons: [
 
         {
-            src: "/manifest/android-chrome-192x192.png",
+            src: "/manifest/icon-192x192.png",
             sizes: "192x192",
             type: "image/png",
-            purpose: "any",
         },
         {
-            src: "/manifest/android-chrome-384x384.png",
+            src: "/manifest/icon-384x384.png",
             sizes: "384x384",
             type: "image/png",
         },
@@ -40,6 +38,4 @@ const manifest = (): MetadataRoute.Manifest => ({
 
 export const url: string = publicRuntimeConfig.appUrl;
 
-export const dynamic: string = "force-static";
-
-export default manifest;
+export default Metadata;

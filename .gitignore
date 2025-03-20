@@ -5,7 +5,6 @@
 /build
 
 *.tsbuildinfo
-sw*
 workbox*
 next-env.d.ts
 
