@@ -1,6 +1,8 @@
-"use strict";
+import { NextRequest, NextResponse, } from "next/server";
 
-export function middleware ()
+export const middleware = (request: NextRequest): NextResponse =>
 {
-    //
+    const response: NextResponse = NextResponse.next ();
+
+    return response;
 };

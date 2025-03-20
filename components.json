@@ -8,17 +8,17 @@
 
     "tailwind": {
 
+        "cssVariables": true,
+        "css": "@/styles/globals.css",
         "prefix": "",
         "baseColor": "zinc",
-        "cssVariables": true,
-        "css": "assets/css/globals.css",
-        "config": "tailwind.config.js"
+        "config": ""
     },
 
     "aliases": {
 
-        "lib": "@/lib",
-        "utils": "@/lib/utils",
+        "lib": "@/libs",
+        "utils": "@/libs/utils",
         "hooks": "@/hooks",
         "components": "@/components",
         "ui": "@/components/ui"
