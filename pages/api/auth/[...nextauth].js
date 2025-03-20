@@ -3,7 +3,7 @@
 import getConfig from "next/config";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { call, } from "@/lib/call";
+import { call, } from "@/libs/call";
 
 const { serverRuntimeConfig, publicRuntimeConfig, } = getConfig ();
 
@@ -66,7 +66,7 @@ export default NextAuth (
     },
 
     /**
-     * @type {Array}
+     * @type {CredentialsConfig}
      * @property {import("next-auth").Provider} providers
      */
     providers:

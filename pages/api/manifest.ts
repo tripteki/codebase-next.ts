@@ -1,13 +1,9 @@
-"use strict";
-
 import type { NextApiRequest, NextApiResponse, } from "next";
-import manifest from "../../app/manifest";
+import manifest from "@/app/manifest";
 
 const handler = (req: NextApiRequest, res: NextApiResponse): void =>
 {
-    const data = manifest ();
-
-    res.status (200).json (data);
+    res.status (200).json (manifest ());
 };
 
 export default handler;

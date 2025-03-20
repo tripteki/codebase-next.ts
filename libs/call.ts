@@ -1,15 +1,16 @@
-import axios, { AxiosRequestConfig, AxiosResponse, } from "axios";
+import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosRequestConfig, AxiosResponse, } from "axios";
 import getConfig from "next/config";
 import { getSession, } from "next-auth/react";
+import { Session, } from "next-auth";
 
 type Detail =
 {
     baseUrl?: string;
     url: string;
-    headers?: any;
+    headers?: Record<string, unknown>;
     method?: "GET" | "DELETE" | "POST" | "PUT" | "PATCH";
-    data?: any;
-    params?: any;
+    data?: Record<string, unknown>;
+    params?: Record<string, unknown>;
 };
 
 export const call = async (detail: Detail): Promise<
@@ -25,21 +26,21 @@ export const call = async (detail: Detail): Promise<
 
     const { publicRuntimeConfig, } = getConfig ();
 
-    const baseURL = detail?.baseUrl || publicRuntimeConfig.baseURL;
+    const baseURL: string = detail?.baseUrl || publicRuntimeConfig.baseURL;
 
-    let isLoading = true;
-    let isLoaded = false;
-    let isError = false;
-    let isSuccess = false;
+    let isLoading: boolean = true;
+    let isLoaded: boolean = false;
+    let isError: boolean = false;
+    let isSuccess: boolean = false;
     let data: any = null;
     let error: any = null;
 
     try {
 
-        const session = await getSession ();
-        const token = session?.jwt || "";
+        const session: Session | null = await getSession ();
+        const token: string = session?.jwt || "";
 
-        const instance = axios.create (
+        const instance: AxiosInstance = axios.create (
         {
             baseURL,
             headers:
@@ -50,14 +51,14 @@ export const call = async (detail: Detail): Promise<
 
         instance.interceptors.request.use (
 
-            async (request) => request,
-            async (throwable) => Promise.reject (throwable)
+            async (request: InternalAxiosRequestConfig) => request,
+            async (throwable: unknown) => Promise.reject (throwable)
         );
 
         instance.interceptors.response.use (
 
-            async (response) => response,
-            async (throwable) => Promise.reject (throwable)
+            async (response: AxiosResponse) => response,
+            async (throwable: unknown) => Promise.reject (throwable)
         );
 
         const response: AxiosResponse = await instance (detail as AxiosRequestConfig);
@@ -65,7 +66,7 @@ export const call = async (detail: Detail): Promise<
         data = response.data;
         isSuccess = true;
 
-    } catch (throwable) {
+    } catch (throwable: unknown) {
 
         error = throwable;
         isError = true;

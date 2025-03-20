@@ -1,6 +1,4 @@
-"use strict";
-
-export function middleware ()
+export const middleware = (): void =>
 {
     //
 };

@@ -2,7 +2,10 @@ import { NextRouter, useRouter, } from "next/router";
 import { useTranslation, } from "next-i18next";
 import { i18n, } from "../next-i18next.config";
 
-export const useLocale = (): { currentLocale: () => string; availableLocales: () => string[]; } =>
+export const useLocale = (): {
+    currentLocale: () => string;
+    availableLocales: () => string[];
+} =>
 {
     return {
 
@@ -11,7 +14,9 @@ export const useLocale = (): { currentLocale: () => string; availableLocales: ()
     };
 };
 
-export const useChangeLocale = (): ((event: React.ChangeEvent<HTMLSelectElement>) => void) =>
+export const useChangeLocale = (): (
+    (event: React.ChangeEvent<HTMLSelectElement>) => void
+) =>
 {
     const
 
@@ -27,9 +32,15 @@ export const useChangeLocale = (): ((event: React.ChangeEvent<HTMLSelectElement>
     return changeI18N;
 };
 
-export const useTranslations = (namespaces: string[]): {[key: string]: ReturnType<typeof useTranslation>} =>
+export const useTranslations = (
+    namespaces: string[]
+): {
+    [key: string]: ReturnType<typeof useTranslation>;
+} =>
 {
-    const translations = namespaces.reduce<{[key: string]: ReturnType<typeof useTranslation>}> ((acc, namespace) => {
+    const
+
+    translations = namespaces.reduce<{[key: string]: ReturnType<typeof useTranslation>}> ((acc, namespace) => {
         acc[namespace] = useTranslation (namespace); return acc;
     }, {});
 

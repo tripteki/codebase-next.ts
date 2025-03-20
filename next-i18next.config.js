@@ -6,7 +6,7 @@
 
 const i18nConfig = {
 
-    localePath: typeof window === "undefined" ? require ("path").resolve ("./lang") : "./lang",
+    localePath: typeof window === "undefined" ? require ("path").resolve ("./langs") : "./langs",
 
     i18n: {
 

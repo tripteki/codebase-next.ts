@@ -1,19 +1,15 @@
-"use strict";
-
 // https://nextjs.org/docs/pages/api-reference/components //
 
 import type { DocumentContext, DocumentInitialProps, DocumentProps, } from "next/document";
 import Document, { Html, Head, Main, NextScript, } from "next/document";
 import { ReactElement, } from "react";
-import i18nextConfig from "../next-i18next.config";
+import { useLocale, } from "@/hooks/i18n";
 
-const Template = (props: DocumentProps): ReactElement =>
+const DocumentPage = (props: DocumentProps): ReactElement =>
 {
-    const i18n: string = i18nextConfig.i18n.defaultLocale;
-
     return (
 
-        <Html lang={i18n}>
+        <Html lang={useLocale ().currentLocale ()}>
             <Head>
                 <meta name="robots" content="noindex" />
             </Head>
@@ -35,4 +31,4 @@ export const getInitialProps = async (context: DocumentContext): Promise<Documen
     };
 };
 
-export default Template;
+export default DocumentPage;

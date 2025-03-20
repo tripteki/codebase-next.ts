@@ -17,6 +17,7 @@ const nextConfig = {
         distDir: "public/.next",
     }),
 
+    devIndicators: false,
     reactStrictMode: true,
 
     // https://stackoverflow.com/questions/64261029/next-js-env-vs-serverruntimeconfig
@@ -36,6 +37,13 @@ const nextConfig = {
         authURL: process.env.NEXT_PUBLIC_AUTH_URL || "http://api.backend.localhost/auth",
         env: process.env.NEXT_PUBLIC_APP_ENV || "production",
         language: process.env.NEXT_PUBLIC_APP_LANG || "en",
+    },
+
+
+
+    experimental: {
+
+        turbo: {},
     },
 
     webpack: function (configuration, { isServer })

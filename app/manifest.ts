@@ -1,12 +1,10 @@
-"use strict";
-
 import type { MetadataRoute, } from "next";
 import getConfig from "next/config";
 
 const { publicRuntimeConfig, } = getConfig ();
 
-const manifest = (): MetadataRoute.Manifest => ({
-
+const manifest = (): MetadataRoute.Manifest => (
+{
     name: publicRuntimeConfig.appName,
     short_name: publicRuntimeConfig.appName,
 
@@ -39,7 +37,6 @@ const manifest = (): MetadataRoute.Manifest => ({
 });
 
 export const url: string = publicRuntimeConfig.appUrl;
-
 export const dynamic: string = "force-static";
 
 export default manifest;
