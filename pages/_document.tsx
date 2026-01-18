@@ -11,7 +11,6 @@ const Page = (
 ): ReactElement =>
 {
     return (
-
         <Html lang={props.__NEXT_DATA__.locale != "default" ? props.__NEXT_DATA__.locale : process.env.NEXT_PUBLIC_APP_LANG}>
             <Head>
                 <meta name="robots" content="index, follow" />

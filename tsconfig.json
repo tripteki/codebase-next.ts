@@ -30,7 +30,6 @@
 
         "typeRoots": [
 
-            "./src/types",
             "./node_modules/@types"
         ],
 
@@ -41,6 +40,8 @@
             "@/langs/*": ["./src/langs/*"],
             "@/libs/*": ["./src/libs/*"],
             "@/components/*": ["./src/components/*"],
+            "@/layouts/*": ["./src/layouts/*"],
+            "@/types/*": ["./src/types/*"],
             "@/styles/*": ["./src/styles/*"],
             "@/hooks/*": ["./src/hooks/*"],
             "@/stores/*": ["./src/stores/*"],

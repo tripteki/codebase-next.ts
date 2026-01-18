@@ -1,24 +1,60 @@
-import { GetServerSideProps, GetServerSidePropsContext, GetServerSidePropsResult, GetStaticProps, GetStaticPropsContext, } from "next";
-import { ReactElement, ChangeEvent, } from "react";
+import { GetServerSideProps, GetServerSidePropsContext, GetServerSidePropsResult, } from "next";
+import { ReactElement, } from "react";
+import Head from "next/head";
+import Link from "next/link";
 import { serverSideTranslations, } from "next-i18next/serverSideTranslations";
-import { type LocaleType, type TranslationType, useLocale, useTranslations, } from "@/hooks/i18n";
+import { useTranslation, } from "next-i18next";
+
+import HeaderLayout from "@/layouts/header.layout";
+import FooterLayout from "@/layouts/footer.layout";
+import { Button, } from "@/components/ui/button";
 
 const Page = (): ReactElement =>
 {
-    const { availableLocales, currentLocale, setCurrentLocale, }: LocaleType = useLocale ();
-    const trans: TranslationType = useTranslations ([ "common", ]);
+    const { t, } = useTranslation ("common");
 
-    return (<>
+    return (
+        <>
+            <Head>
+                <title>{t ("welcome")}</title>
+            </Head>
 
-        <div className="mx-2">
-            <div>{trans.common.t ("welcome")}</div>
-            <select onChange={(e: ChangeEvent<HTMLSelectElement>) => { setCurrentLocale (e.target.value) }} value={currentLocale} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-25 p-2.5">
-                {availableLocales?.map ((locale: string) =>
-                    <option key={locale} value={locale}>{locale.toUpperCase ()}</option>
-                )}
-            </select>
-        </div>
-    </>);
+            <div className="min-h-screen flex flex-col bg-background">
+                <HeaderLayout />
+
+                <main className="flex-1 flex items-center justify-center px-4 py-16">
+                    <div className="text-center space-y-8 max-w-2xl">
+                        <div className="space-y-4">
+                            <h2 className="text-4xl font-bold tracking-tight sm:text-5xl">
+                                {t ("title")}
+                                <br />
+                                <span className="text-primary">{t ("subtitle")}</span>
+                            </h2>
+
+                            <p className="text-xl text-muted-foreground">
+                                {t ("description")}
+                            </p>
+                        </div>
+
+                        <div className="flex gap-4 justify-center">
+                            <Button size="lg" asChild>
+                                <Link href="/admin/dashboard">
+                                    {t ("get_started")}
+                                </Link>
+                            </Button>
+                            <Button variant="outline" size="lg" asChild>
+                                <Link href="/api/docs">
+                                    {t ("view_docs")}
+                                </Link>
+                            </Button>
+                        </div>
+                    </div>
+                </main>
+
+                <FooterLayout />
+            </div>
+        </>
+    );
 };
 
 export const getServerSideProps: GetServerSideProps = async (

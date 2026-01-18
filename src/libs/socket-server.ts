@@ -1,6 +1,4 @@
 import { Socket, io, } from "socket.io-client";
-import { getSession, } from "next-auth/react";
-import { Session, } from "next-auth";
 import getConfig from "next/config";
 
 type Detail =
@@ -9,8 +7,9 @@ type Detail =
     path?: string;
 };
 
-export const socket = async (
-    detail?: Detail
+export const socketServer = async (
+    detail?: Detail,
+    token?: string
 ): Promise<{
     isLoading: boolean;
     isLoaded: boolean;
@@ -32,9 +31,6 @@ export const socket = async (
 
     try
     {
-        const session: Session | null = await getSession ();
-        const token: string = (session as any)?.accessToken ?? (session as any)?.jwt ?? "";
-
         const instance: Socket = io (baseURL, {
             path: detail?.path ?? "/socket.io",
             transports: [ "websocket", "polling", ],

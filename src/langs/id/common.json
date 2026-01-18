@@ -1,3 +1,25 @@
 {
-    "welcome": "Selamat Datang..."
+    "welcome": "Selamat Datang",
+    "title": "Selamat Datang di",
+    "subtitle": "Aplikasi Anda",
+    "description": "Mulai dengan menjelajahi fitur dan dokumentasi kami.",
+    "get_started": "Mulai",
+    "view_docs": "Lihat Dokumentasi",
+    "dashboard": "Dashboard",
+    "dashboard_title": "Dashboard",
+    "dashboard_description": "Selamat datang di dashboard Anda. Di sini Anda dapat mengelola akun dan melihat aktivitas Anda.",
+    "overview": "Ringkasan",
+    "overview_description": "Dapatkan ringkasan cepat akun Anda",
+    "overview_content": "Ringkasan dan informasi akun Anda.",
+    "statistics": "Statistik",
+    "statistics_description": "Lihat statistik akun Anda",
+    "statistics_content": "Statistik detail tentang aktivitas akun Anda.",
+    "activity": "Aktivitas",
+    "activity_description": "Aktivitas terkini di akun Anda",
+    "activity_content": "Lihat aktivitas dan peristiwa akun terkini Anda.",
+    "all_rights_reserved": "Hak cipta dilindungi.",
+    "something_went_wrong": "Terjadi kesalahan.",
+    "loading": "Memuat",
+    "toggle_theme": "Ubah tema",
+    "method_not_allowed": "Metode tidak diizinkan"
 }

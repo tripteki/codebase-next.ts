@@ -16,17 +16,18 @@ export type TranslationType =
 
 export const useLocale = (): LocaleType =>
 {
-    const
+    const router: NextRouter = useRouter ();
+    const [ current, setCurrent, ]: [ string | undefined, Dispatch<SetStateAction<string | undefined>>, ] = useState<string | undefined> (router?.locale);
 
-    router: NextRouter = useRouter (),
-    [ current, setCurrent, ]: [ string | undefined, Dispatch<SetStateAction<string | undefined>>, ] = useState<string | undefined>(router?.locale);
-
-    useEffect ((): void => {
-        if (current !== router?.locale) window.location.href = `/${current}`;
+    useEffect ((): void =>
+    {
+        if (current !== router?.locale)
+        {
+            window.location.href = `/${current}`;
+        }
     }, [ current, router?.locale, ]);
 
     return {
-
         availableLocales: router?.locales?.filter ((locale: string): boolean => locale != "default"),
         currentLocale: current != "default" ? current : process.env.NEXT_PUBLIC_APP_LANG,
         setCurrentLocale: setCurrent,
@@ -35,12 +36,11 @@ export const useLocale = (): LocaleType =>
 
 export const useTranslations = (namespaces: string[]): TranslationType =>
 {
-    const
-
-    translations = namespaces.reduce<TranslationType> ((translation: TranslationType, namespace: string) => {
-
+    const translations = namespaces.reduce<TranslationType> ((translation: TranslationType, namespace: string) =>
+    {
         // eslint-disable-next-line react-hooks/rules-of-hooks
-        translation[namespace] = useTranslation (namespace); return translation;
+        translation[namespace] = useTranslation (namespace);
+        return translation;
     }, {});
 
     return translations;

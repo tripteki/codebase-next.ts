@@ -1,6 +1,4 @@
 import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosRequestConfig, AxiosResponse, } from "axios";
-import { getSession, } from "next-auth/react";
-import { Session, } from "next-auth";
 import getConfig from "next/config";
 
 type Detail =
@@ -13,8 +11,9 @@ type Detail =
     params?: Record<string, any>;
 };
 
-export const call = async (
-    detail: Detail
+export const callServer = async (
+    detail: Detail,
+    token?: string
 ): Promise<{
     isLoading: boolean;
     isLoaded: boolean;
@@ -36,13 +35,12 @@ export const call = async (
 
     try
     {
-        const session: Session | null = await getSession ();
-        const token: string = session?.jwt ?? "";
-
         const instance: AxiosInstance = axios.create ({
             baseURL,
             headers: {
+                "Content-Type": "application/json",
                 ... (token ? { Authorization: `Bearer ${token}`, } : {}),
+                ... (detail.headers || {}),
             },
         });
 

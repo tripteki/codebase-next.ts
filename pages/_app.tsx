@@ -13,18 +13,23 @@ const Page = appWithTranslation ((
     { Component, pageProps, }: AppProps
 ): ReactElement =>
 {
-    useEffect ((): void => {
-        if ("serviceWorker" in navigator) {
-            navigator.serviceWorker.register ("/sw.js").then ((registration: ServiceWorkerRegistration) => {
-                console.log (registration);
-            }).catch ((throwable: unknown) => {
-                console.error (throwable);
-            });
+    useEffect ((): void =>
+    {
+        if ("serviceWorker" in navigator)
+        {
+            navigator.serviceWorker.register ("/sw.js")
+                .then ((registration: ServiceWorkerRegistration) =>
+                {
+                    console.log (registration);
+                })
+                .catch ((throwable: unknown) =>
+                {
+                    console.error (throwable);
+                });
         }
     }, []);
 
     return (
-
         <SessionProvider session={pageProps.session}>
             <Head>
                 <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, user-scalable=no, viewport-fit=cover" />

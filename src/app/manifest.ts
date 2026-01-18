@@ -5,19 +5,15 @@ import getConfig from "next/config";
 const { publicRuntimeConfig, } = getConfig ();
 
 const Metadata = (): MetadataRoute.Manifest => ({
-
     short_name: publicRuntimeConfig.appName,
     name: publicRuntimeConfig.appName.charAt (0).toUpperCase () + publicRuntimeConfig.appName.slice (1),
     description: `The ${publicRuntimeConfig.appName} WebApp!`,
-
     start_url: "/",
     display: "standalone",
     orientation: "portrait",
     theme_color: "#FFFFFF",
     background_color: "#FFFFFF",
-
     icons: [
-
         {
             src: "/manifest/icon-192x192.png",
             sizes: "192x192",

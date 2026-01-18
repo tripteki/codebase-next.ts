@@ -1,3 +1,25 @@
 {
-    "welcome": "Welcome..."
+    "welcome": "Welcome",
+    "title": "Welcome to",
+    "subtitle": "Your Application",
+    "description": "Get started by exploring our features and documentation.",
+    "get_started": "Get Started",
+    "view_docs": "View Docs",
+    "dashboard": "Dashboard",
+    "dashboard_title": "Dashboard",
+    "dashboard_description": "Welcome to your dashboard. Here you can manage your account and view your activity.",
+    "overview": "Overview",
+    "overview_description": "Get a quick overview of your account",
+    "overview_content": "Your account overview and summary information.",
+    "statistics": "Statistics",
+    "statistics_description": "View your account statistics",
+    "statistics_content": "Detailed statistics about your account activity.",
+    "activity": "Activity",
+    "activity_description": "Recent activity on your account",
+    "activity_content": "View your recent account activity and events.",
+    "all_rights_reserved": "All rights reserved.",
+    "something_went_wrong": "Something went wrong.",
+    "loading": "Loading",
+    "toggle_theme": "Toggle theme",
+    "method_not_allowed": "Method not allowed"
 }
