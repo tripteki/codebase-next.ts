@@ -3,8 +3,6 @@ import { useTranslation, } from "next-i18next/pages";
 import { Dispatch, SetStateAction, useCallback, useEffect, useState, } from "react";
 
 import {
-    DEFAULT_LOCALE,
-    getClientLocale,
     resolveLocale,
     setLocaleCookie,
     SUPPORTED_LOCALES,
@@ -26,12 +24,15 @@ export type TranslationType =
 export const useLocale = (): LocaleType =>
 {
     const router = useRouter ();
-    const [ currentLocale, setCurrentLocaleState, ] = useState<AppLocale> (DEFAULT_LOCALE);
+    const { i18n, } = useTranslation ();
+    const [ currentLocale, setCurrentLocaleState, ] = useState<AppLocale> ((): AppLocale =>
+        resolveLocale (i18n.language)
+    );
 
     useEffect ((): void =>
     {
-        setCurrentLocaleState (getClientLocale ());
-    }, []);
+        setCurrentLocaleState (resolveLocale (i18n.language));
+    }, [ i18n.language, ]);
 
     const setCurrentLocale = useCallback ((nextLocale: SetStateAction<AppLocale>): void =>
     {
