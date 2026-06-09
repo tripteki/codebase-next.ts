@@ -1,9 +1,11 @@
-import { GetServerSideProps, GetServerSidePropsContext, GetServerSidePropsResult, } from "next";
+import { GetServerSideProps, } from "next";
 import { ReactElement, } from "react";
 import Head from "next/head";
 import Link from "next/link";
-import { serverSideTranslations, } from "next-i18next/serverSideTranslations";
 import { useTranslation, } from "next-i18next";
+
+import { type PagePropsOptions, } from "@/libs/page-props.shared";
+import { formatPageTitle, } from "@/libs/page-title";
 
 import HeaderLayout from "@/layouts/header.layout";
 import FooterLayout from "@/layouts/footer.layout";
@@ -16,7 +18,7 @@ const Page = (): ReactElement =>
     return (
         <>
             <Head>
-                <title>{t ("welcome")}</title>
+                <title>{formatPageTitle (t ("welcome"))}</title>
             </Head>
 
             <div className="min-h-screen flex flex-col bg-background">
@@ -57,16 +59,11 @@ const Page = (): ReactElement =>
     );
 };
 
-export const getServerSideProps: GetServerSideProps = async (
-    context: GetServerSidePropsContext
-): Promise<GetServerSidePropsResult<{ [key: string]: any; }>> =>
-({
-    props: {
-        title: "Index",
-        ... (await serverSideTranslations (context.locale as string, [
-            "common",
-        ])),
-    },
-});
+const pageOptions: PagePropsOptions = {
+    title: "Index",
+    namespaces: [ "common", ],
+};
+
+export const getServerSideProps: GetServerSideProps = require ("@/libs/page-props.server").buildGetServerSideProps (pageOptions);
 
 export default Page;

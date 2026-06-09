@@ -3,6 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import getConfig from "next/config";
 
 import { callServer, } from "@/libs/call-server";
+import { parseApiErrors, } from "@/libs/parse-api-errors";
 import { getServerTranslation, getLocaleFromRequest, } from "@/libs/i18n/server";
 
 const { serverRuntimeConfig, publicRuntimeConfig, } = getConfig ();
@@ -78,7 +79,10 @@ const createAuthOptions = (locale: string = "en"): NextAuthOptions =>
 
                     if (tokenResponse.isError)
                     {
-                        throw new Error (JSON.stringify (tokenResponse.error?.response?.data?.errors));
+                        throw new Error (JSON.stringify (parseApiErrors (
+                            tokenResponse.error?.response?.data,
+                            t ("authentication_failed")
+                        )));
                     }
 
                     const accessToken = tokenResponse.data?.accessToken;

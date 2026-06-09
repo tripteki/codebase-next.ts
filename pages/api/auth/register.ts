@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse, } from "next";
 
 import { getServerTranslation, getLocaleFromRequest, } from "@/libs/i18n/server";
 import { callServer, } from "@/libs/call-server";
+import { parseApiErrors, } from "@/libs/parse-api-errors";
 import getConfig from "next/config";
 
 const { publicRuntimeConfig, } = getConfig ();
@@ -42,24 +43,7 @@ const handler = async (
         if (axiosError?.response)
         {
             const status = axiosError.response.status || 500;
-            let errors: Record<string, string> = {};
-
-            if (axiosError.response.data?.errors)
-            {
-                errors = axiosError.response.data.errors;
-            }
-            else if (axiosError.response.data?.message)
-            {
-                errors.general = axiosError.response.data.message;
-            }
-            else if (typeof axiosError.response.data === "string")
-            {
-                errors.general = axiosError.response.data;
-            }
-            else
-            {
-                errors.general = t ("registration_failed");
-            }
+            const errors = parseApiErrors (axiosError.response.data, t ("registration_failed"));
 
             res.status (status).json ({
                 success: false,

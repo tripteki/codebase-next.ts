@@ -1,12 +1,21 @@
-import { NextRouter, useRouter, } from "next/router";
+import { useRouter, } from "next/router";
 import { useTranslation, } from "next-i18next";
-import { Dispatch, SetStateAction, useEffect, useState, } from "react";
+import { Dispatch, SetStateAction, useCallback, useEffect, useState, } from "react";
+
+import {
+    DEFAULT_LOCALE,
+    getClientLocale,
+    resolveLocale,
+    setLocaleCookie,
+    SUPPORTED_LOCALES,
+    type AppLocale,
+} from "@/libs/i18n/locale";
 
 export type LocaleType =
 {
-    availableLocales: readonly string[] | undefined;
-    currentLocale: string | undefined;
-    setCurrentLocale: Dispatch<SetStateAction<string | undefined>>;
+    availableLocales: readonly AppLocale[];
+    currentLocale: AppLocale;
+    setCurrentLocale: Dispatch<SetStateAction<AppLocale>>;
 };
 
 export type TranslationType =
@@ -16,21 +25,35 @@ export type TranslationType =
 
 export const useLocale = (): LocaleType =>
 {
-    const router: NextRouter = useRouter ();
-    const [ current, setCurrent, ]: [ string | undefined, Dispatch<SetStateAction<string | undefined>>, ] = useState<string | undefined> (router?.locale);
+    const router = useRouter ();
+    const [ currentLocale, setCurrentLocaleState, ] = useState<AppLocale> (DEFAULT_LOCALE);
 
     useEffect ((): void =>
     {
-        if (current !== router?.locale)
+        setCurrentLocaleState (getClientLocale ());
+    }, []);
+
+    const setCurrentLocale = useCallback ((nextLocale: SetStateAction<AppLocale>): void =>
+    {
+        setCurrentLocaleState ((previousLocale: AppLocale): AppLocale =>
         {
-            window.location.href = `/${current}`;
-        }
-    }, [ current, router?.locale, ]);
+            const resolvedLocale = resolveLocale (
+                typeof nextLocale === "function"
+                    ? nextLocale (previousLocale)
+                    : nextLocale
+            );
+
+            setLocaleCookie (resolvedLocale);
+            router.reload ();
+
+            return resolvedLocale;
+        });
+    }, [ router, ]);
 
     return {
-        availableLocales: router?.locales?.filter ((locale: string): boolean => locale != "default"),
-        currentLocale: current != "default" ? current : process.env.NEXT_PUBLIC_APP_LANG,
-        setCurrentLocale: setCurrent,
+        availableLocales: SUPPORTED_LOCALES,
+        currentLocale: currentLocale,
+        setCurrentLocale,
     };
 };
 

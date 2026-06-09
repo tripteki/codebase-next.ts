@@ -1,6 +1,19 @@
 import { readFileSync, } from "fs";
 import { resolve, } from "path";
 
+import { getLocaleFromRequest, } from "./locale";
+
+export {
+    DEFAULT_LOCALE,
+    getClientLocale,
+    getLocaleFromRequest,
+    LOCALE_COOKIE_KEY,
+    resolveLocale,
+    setLocaleCookie,
+    SUPPORTED_LOCALES,
+    type AppLocale,
+} from "./locale";
+
 type TranslationObject = Record<string, any>;
 
 const translationsCache: Record<string, TranslationObject> = {};
@@ -60,12 +73,4 @@ export const getServerTranslation = (
 
         return typeof value === "string" ? value : key;
     };
-};
-
-export const getLocaleFromRequest = (req: any): string =>
-{
-    const locale = req.headers?.["accept-language"]?.split (",")?.[0]?.split ("-")?.[0] || "en";
-    const supportedLocales = [ "en", "id", ];
-
-    return supportedLocales.includes (locale) ? locale : "en";
 };

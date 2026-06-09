@@ -1,12 +1,14 @@
-export const dynamic = "force-static";
 import type { MetadataRoute, } from "next";
 import getConfig from "next/config";
 
+import { getAppDisplayName, } from "@/libs/page-title";
+
 const { publicRuntimeConfig, } = getConfig ();
 
-const Metadata = (): MetadataRoute.Manifest => ({
+const manifest = (): MetadataRoute.Manifest => ({
+    id: "/",
     short_name: publicRuntimeConfig.appName,
-    name: publicRuntimeConfig.appName.charAt (0).toUpperCase () + publicRuntimeConfig.appName.slice (1),
+    name: getAppDisplayName (),
     description: `The ${publicRuntimeConfig.appName} WebApp!`,
     start_url: "/",
     display: "standalone",
@@ -34,4 +36,4 @@ const Metadata = (): MetadataRoute.Manifest => ({
 
 export const url: string = publicRuntimeConfig.appUrl;
 
-export default Metadata;
+export default manifest;

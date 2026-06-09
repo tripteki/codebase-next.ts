@@ -36,7 +36,6 @@
         "paths": {
 
             "@/src/*": ["./src/*"],
-            "@/app/*": ["./src/app/*"],
             "@/langs/*": ["./src/langs/*"],
             "@/libs/*": ["./src/libs/*"],
             "@/components/*": ["./src/components/*"],

@@ -1,8 +1,7 @@
-import { GetServerSideProps, GetServerSidePropsContext, GetServerSidePropsResult, } from "next";
-import { ReactElement, FormEvent, useState, ChangeEvent, } from "react";
+import { GetServerSideProps, } from "next";
+import { ReactElement, FormEvent, useState, ChangeEvent, useEffect, } from "react";
 import { useRouter, } from "next/router";
 import Head from "next/head";
-import { serverSideTranslations, } from "next-i18next/serverSideTranslations";
 import { useTranslation, } from "next-i18next";
 import getConfig from "next/config";
 
@@ -12,6 +11,8 @@ import { Button, } from "@/components/ui/button";
 import { Input, } from "@/components/ui/input";
 import { Label, } from "@/components/ui/label";
 import { Spinner, } from "@/components/ui/spinner";
+import { type PagePropsOptions, } from "@/libs/page-props.shared";
+import { formatPageTitle, } from "@/libs/page-title";
 import { call, } from "@/libs/call";
 
 const { publicRuntimeConfig, } = getConfig ();
@@ -23,18 +24,29 @@ interface ResetPasswordProps
 };
 
 const ResetPassword = ({
-    email,
-    signed,
+    email: emailProp,
+    signed: signedProp,
 }: ResetPasswordProps): ReactElement =>
 {
     const router = useRouter ();
     const { t, } = useTranslation ("auth");
+    const email = emailProp ?? (router.query.email as string) ?? "";
+    const signed = signedProp ?? (router.query.signed as string | undefined);
     const [ data, setData, ] = useState ({
         email,
         signed,
         password: "",
         password_confirmation: "",
     });
+
+    useEffect ((): void =>
+    {
+        setData ((prev) => ({
+            ... prev,
+            email,
+            signed,
+        }));
+    }, [ email, signed, ]);
     const [ errors, setErrors, ] = useState<Record<string, string>> ({});
     const [ processing, setProcessing, ] = useState (false);
 
@@ -129,7 +141,7 @@ const ResetPassword = ({
     return (
         <>
             <Head>
-                <title>{t ("reset_password")}</title>
+                <title>{formatPageTitle (t ("reset_password"))}</title>
             </Head>
 
             <AuthLayout
@@ -205,34 +217,14 @@ const ResetPassword = ({
     );
 };
 
-export const getServerSideProps: GetServerSideProps = async (
-    context: GetServerSidePropsContext
-): Promise<GetServerSidePropsResult<{ [key: string]: any; }>> =>
-{
-    const email = context.params?.email as string;
-    const signed = context.query.signed as string | undefined;
-
-    if (! email)
-    {
-        return {
-            redirect: {
-                destination: "/admin/auth/login",
-                permanent: false,
-            },
-        };
-    }
-
-    return {
-        props: {
-            title: "Reset Password",
-            email,
-            ... (signed ? { signed, } : {}),
-            ... (await serverSideTranslations (context.locale as string, [
-                "auth",
-                "common",
-            ])),
-        },
-    };
+const pageOptions: PagePropsOptions = {
+    title: "Reset Password",
+    namespaces: [ "auth", "common", ],
 };
+
+export const getServerSideProps: GetServerSideProps = require ("@/libs/page-props.server").buildGetServerSideProps ({
+    ... pageOptions,
+    requireParams: [ "email", ],
+});
 
 export default ResetPassword;

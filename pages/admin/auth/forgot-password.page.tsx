@@ -1,8 +1,7 @@
-import { GetServerSideProps, GetServerSidePropsContext, GetServerSidePropsResult, } from "next";
+import { GetServerSideProps, } from "next";
 import { ReactElement, FormEvent, useState, ChangeEvent, } from "react";
 import { useRouter, } from "next/router";
 import Head from "next/head";
-import { serverSideTranslations, } from "next-i18next/serverSideTranslations";
 import { useTranslation, } from "next-i18next";
 import { LoaderCircle, } from "lucide-react";
 import getConfig from "next/config";
@@ -13,7 +12,9 @@ import TextLink from "@/components/text-link";
 import { Button, } from "@/components/ui/button";
 import { Input, } from "@/components/ui/input";
 import { Label, } from "@/components/ui/label";
+import { type PagePropsOptions, } from "@/libs/page-props.shared";
 import { type ForgotPasswordProps, } from "@/types/admin/auth";
+import { formatPageTitle, } from "@/libs/page-title";
 import { call, } from "@/libs/call";
 
 const { publicRuntimeConfig, } = getConfig ();
@@ -24,6 +25,7 @@ const ForgotPassword = ({
 {
     const router = useRouter ();
     const { t, } = useTranslation ("auth");
+    const displayStatus = status ?? (router.query.status as string | undefined);
     const [ data, setData, ] = useState ({
         email: "",
     });
@@ -87,7 +89,7 @@ const ForgotPassword = ({
                 {
                     router.push ({
                         pathname: "/admin/auth/login",
-                        query: { status: t ("verification-sent"), },
+                        query: { status: t ("password_reset_link_sent"), },
                     });
                 }
                 else
@@ -109,16 +111,16 @@ const ForgotPassword = ({
     return (
         <>
             <Head>
-                <title>{t ("forgot_password")}</title>
+                <title>{formatPageTitle (t ("forgot_password"))}</title>
             </Head>
 
             <AuthLayout
                 title={t ("forgot_password_title")}
                 description={t ("forgot_password_description")}
             >
-                {status && (
+                {displayStatus && (
                     <div className="mb-4 text-center text-sm font-medium text-green-600">
-                        {status}
+                        {displayStatus}
                     </div>
                 )}
 
@@ -169,22 +171,11 @@ const ForgotPassword = ({
     );
 };
 
-export const getServerSideProps: GetServerSideProps = async (
-    context: GetServerSidePropsContext
-): Promise<GetServerSidePropsResult<{ [key: string]: any; }>> =>
-{
-    const status = context.query.status as string | undefined;
-
-    return {
-        props: {
-            title: "Forgot Password",
-            ... (status ? { status, } : {}),
-            ... (await serverSideTranslations (context.locale as string, [
-                "auth",
-                "common",
-            ])),
-        },
-    };
+const pageOptions: PagePropsOptions = {
+    title: "Forgot Password",
+    namespaces: [ "auth", "common", ],
 };
+
+export const getServerSideProps: GetServerSideProps = require ("@/libs/page-props.server").buildGetServerSideProps (pageOptions);
 
 export default ForgotPassword;

@@ -6,27 +6,45 @@ import { Alert, AlertDescription, AlertTitle, } from "@/components/ui/alert";
 
 interface AlertErrorProps
 {
-    errors: string[];
+    errors?: string[];
+    message?: string;
     title?: string;
 };
 
 const AlertError = ({
-    errors,
+    errors = [],
+    message,
     title,
-}: AlertErrorProps): ReactElement =>
+}: AlertErrorProps): ReactElement | null =>
 {
     const { t, } = useTranslation ("common");
+    const items = message
+        ? [ message, ]
+        : errors.filter ((error) => error !== "");
+
+    if (items.length === 0)
+    {
+        return null;
+    }
+
+    const resolvedTitle = title ?? (items.length > 1 ? t ("something_went_wrong") : undefined);
 
     return (
         <Alert variant="destructive">
             <AlertCircleIcon />
-            <AlertTitle>{title || t ("something_went_wrong")}</AlertTitle>
+            {resolvedTitle ? (
+                <AlertTitle>{resolvedTitle}</AlertTitle>
+            ) : null}
             <AlertDescription>
-                <ul className="list-inside list-disc text-sm">
-                    {Array.from (new Set (errors)).map ((error, index) => (
-                        <li key={index}>{error}</li>
-                    ))}
-                </ul>
+                {items.length === 1 ? (
+                    <p>{items[0]}</p>
+                ) : (
+                    <ul className="list-inside list-disc text-sm">
+                        {Array.from (new Set (items)).map ((error, index) => (
+                            <li key={index}>{error}</li>
+                        ))}
+                    </ul>
+                )}
             </AlertDescription>
         </Alert>
     );

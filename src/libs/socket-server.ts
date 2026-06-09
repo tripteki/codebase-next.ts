@@ -1,10 +1,13 @@
-import { Socket, io, } from "socket.io-client";
-import getConfig from "next/config";
+import Echo from "laravel-echo";
+import { createEcho, } from "@/libs/echo";
 
 type Detail =
 {
-    baseUrl?: string;
-    path?: string;
+    apiUrl?: string;
+    reverbAppKey?: string;
+    reverbHost?: string;
+    reverbPort?: number;
+    reverbScheme?: string;
 };
 
 export const socketServer = async (
@@ -15,33 +18,20 @@ export const socketServer = async (
     isLoaded: boolean;
     isError: boolean;
     isSuccess: boolean;
-    data: Socket | null;
+    data: Echo<any> | null;
     error: any;
 }> =>
 {
-    const { publicRuntimeConfig, } = getConfig ();
-    const baseURL: string = detail?.baseUrl ?? publicRuntimeConfig.baseURL;
-
     let isLoading: boolean = true;
     let isLoaded: boolean = false;
     let isError: boolean = false;
     let isSuccess: boolean = false;
-    let data: Socket | null = null;
+    let data: Echo<any> | null = null;
     let error: any = null;
 
     try
     {
-        const instance: Socket = io (baseURL, {
-            path: detail?.path ?? "/socket.io",
-            transports: [ "websocket", "polling", ],
-            extraHeaders: {
-                ... (token
-                    ? { Authorization: `Bearer ${token}`, }
-                    : {}),
-            },
-        });
-
-        data = instance;
+        data = createEcho (token ?? "", detail);
         isSuccess = true;
     }
     catch (thrower: any)

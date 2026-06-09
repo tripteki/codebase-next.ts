@@ -1,12 +1,12 @@
-import { GetServerSideProps, GetServerSidePropsContext, GetServerSidePropsResult, } from "next";
+import { GetServerSideProps, } from "next";
 import { ReactElement, FormEvent, useState, ChangeEvent, } from "react";
 import { useRouter, } from "next/router";
 import Head from "next/head";
 import { signIn, } from "next-auth/react";
-import { serverSideTranslations, } from "next-i18next/serverSideTranslations";
 import { useTranslation, } from "next-i18next";
 
 import AuthLayout from "@/layouts/auth/auth-layout";
+import AlertError from "@/components/alert-error";
 import InputError from "@/components/input-error";
 import TextLink from "@/components/text-link";
 import { Button, } from "@/components/ui/button";
@@ -14,6 +14,10 @@ import { Checkbox, } from "@/components/ui/checkbox";
 import { Input, } from "@/components/ui/input";
 import { Label, } from "@/components/ui/label";
 import { Spinner, } from "@/components/ui/spinner";
+import { useRequireGuest, } from "@/hooks/auth-guard";
+import { type PagePropsOptions, } from "@/libs/page-props.shared";
+import { formatPageTitle, } from "@/libs/page-title";
+import { cn, } from "@/libs/utils";
 import { type LoginProps, } from "@/types/admin/auth";
 
 const Login = ({
@@ -23,6 +27,7 @@ const Login = ({
 }: LoginProps): ReactElement =>
 {
     const router = useRouter ();
+    useRequireGuest ();
     const { t, } = useTranslation ("auth");
     const [ data, setData, ] = useState ({
         identifier: "",
@@ -31,6 +36,7 @@ const Login = ({
     });
     const [ errors, setErrors, ] = useState<Record<string, string>> ({});
     const [ processing, setProcessing, ] = useState (false);
+    const displayStatus = status ?? (router.query.status as string | undefined);
 
     const submit = async (e: FormEvent): Promise<void> =>
     {
@@ -58,12 +64,12 @@ const Login = ({
                     }
                     else
                     {
-                        setErrors ({ identifier: result.error, });
+                        setErrors ({ general: result.error, });
                     }
                 }
                 catch
                 {
-                    setErrors ({ identifier: result.error, });
+                    setErrors ({ general: result.error, });
                 }
             }
             else if (result?.ok)
@@ -73,7 +79,7 @@ const Login = ({
         }
         catch (error)
         {
-            setErrors ({ identifier: t ("authentication_failed"), });
+            setErrors ({ general: t ("authentication_failed"), });
         }
         finally
         {
@@ -81,10 +87,13 @@ const Login = ({
         }
     };
 
+    const identifierError = errors.email || errors.identifier;
+    const passwordError = errors.password;
+
     return (
         <>
             <Head>
-                <title>{t ("login")}</title>
+                <title>{formatPageTitle (t ("login"))}</title>
             </Head>
 
             <AuthLayout
@@ -95,6 +104,8 @@ const Login = ({
                     onSubmit={submit}
                     className="flex flex-col gap-6"
                 >
+                    <AlertError message={errors.general} />
+
                     <div className="grid gap-6">
                         <div className="grid gap-2">
                             <Label htmlFor="email">{t ("email_address")}</Label>
@@ -111,8 +122,12 @@ const Login = ({
                                 tabIndex={1}
                                 autoComplete="email"
                                 placeholder={t ("email_placeholder")}
+                                aria-invalid={!! identifierError}
+                                className={cn (
+                                    identifierError && "border-destructive focus-visible:ring-destructive/30"
+                                )}
                             />
-                            <InputError message={errors.email || errors.identifier} />
+                            <InputError message={identifierError} />
                         </div>
 
                         <div className="grid gap-2">
@@ -140,8 +155,12 @@ const Login = ({
                                 tabIndex={2}
                                 autoComplete="current-password"
                                 placeholder={t ("password_placeholder")}
+                                aria-invalid={!! passwordError}
+                                className={cn (
+                                    passwordError && "border-destructive focus-visible:ring-destructive/30"
+                                )}
                             />
-                            <InputError message={errors.password} />
+                            <InputError message={passwordError} />
                         </div>
 
                         <div className="flex items-center space-x-3">
@@ -182,9 +201,9 @@ const Login = ({
                     )}
                 </form>
 
-                {status && (
+                {displayStatus && (
                     <div className="mb-4 text-center text-sm font-medium text-green-600">
-                        {status}
+                        {displayStatus}
                     </div>
                 )}
             </AuthLayout>
@@ -192,37 +211,14 @@ const Login = ({
     );
 };
 
-export const getServerSideProps: GetServerSideProps = async (
-    context: GetServerSidePropsContext
-): Promise<GetServerSidePropsResult<{ [key: string]: any; }>> =>
-{
-    const { getServerSession, } = await import ("next-auth/next");
-    const { authOptions, } = await import ("../../api/auth/[...nextauth]");
-
-    const session = await getServerSession (context.req, context.res, authOptions);
-
-    if (session)
-    {
-        return {
-            redirect: {
-                destination: "/admin/dashboard",
-                permanent: false,
-            },
-        };
-    }
-
-    const status = context.query.status as string | undefined;
-
-    return {
-        props: {
-            title: "Login",
-            ... (status ? { status, } : {}),
-            ... (await serverSideTranslations (context.locale as string, [
-                "auth",
-                "common",
-            ])),
-        },
-    };
+const pageOptions: PagePropsOptions = {
+    title: "Login",
+    namespaces: [ "auth", "common", ],
 };
+
+export const getServerSideProps: GetServerSideProps = require ("@/libs/page-props.server").buildGetServerSideProps ({
+    ... pageOptions,
+    requireGuest: true,
+});
 
 export default Login;

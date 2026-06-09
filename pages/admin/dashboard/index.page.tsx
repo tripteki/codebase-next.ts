@@ -1,23 +1,24 @@
-import { GetServerSideProps, GetServerSidePropsContext, GetServerSidePropsResult, } from "next";
+import { GetServerSideProps, } from "next";
 import { ReactElement, } from "react";
 import Head from "next/head";
-import { serverSideTranslations, } from "next-i18next/serverSideTranslations";
 import { useTranslation, } from "next-i18next";
-import { getServerSession, } from "next-auth/next";
 
 import HeaderLayout from "@/layouts/header.layout";
 import FooterLayout from "@/layouts/footer.layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from "@/components/ui/card";
-import { authOptions, } from "../../api/auth/[...nextauth]";
+import { useRequireAuth, } from "@/hooks/auth-guard";
+import { type PagePropsOptions, } from "@/libs/page-props.shared";
+import { formatPageTitle, } from "@/libs/page-title";
 
 const Dashboard = (): ReactElement =>
 {
+    useRequireAuth ();
     const { t, } = useTranslation ("common");
 
     return (
         <>
             <Head>
-                <title>{t ("dashboard")}</title>
+                <title>{formatPageTitle (t ("dashboard"))}</title>
             </Head>
 
             <div className="min-h-screen flex flex-col bg-background">
@@ -86,31 +87,14 @@ const Dashboard = (): ReactElement =>
     );
 };
 
-export const getServerSideProps: GetServerSideProps = async (
-    context: GetServerSidePropsContext
-): Promise<GetServerSidePropsResult<{ [key: string]: any; }>> =>
-{
-    const session = await getServerSession (context.req, context.res, authOptions);
-
-    if (! session)
-    {
-        return {
-            redirect: {
-                destination: "/admin/auth/login",
-                permanent: false,
-            },
-        };
-    }
-
-    return {
-        props: {
-            title: "Dashboard",
-            ... (await serverSideTranslations (context.locale as string, [
-                "common",
-                "auth",
-            ])),
-        },
-    };
+const pageOptions: PagePropsOptions = {
+    title: "Dashboard",
+    namespaces: [ "common", "auth", ],
 };
+
+export const getServerSideProps: GetServerSideProps = require ("@/libs/page-props.server").buildGetServerSideProps ({
+    ... pageOptions,
+    requireAuth: true,
+});
 
 export default Dashboard;

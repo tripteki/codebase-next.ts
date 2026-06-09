@@ -1,8 +1,7 @@
-import { GetServerSideProps, GetServerSidePropsContext, GetServerSidePropsResult, } from "next";
+import { GetServerSideProps, } from "next";
 import { ReactElement, useEffect, useState, } from "react";
 import { useRouter, } from "next/router";
 import Head from "next/head";
-import { serverSideTranslations, } from "next-i18next/serverSideTranslations";
 import { useTranslation, } from "next-i18next";
 import getConfig from "next/config";
 
@@ -10,6 +9,9 @@ import AuthLayout from "@/layouts/auth/auth-layout";
 import { Button, } from "@/components/ui/button";
 import TextLink from "@/components/text-link";
 import { Spinner, } from "@/components/ui/spinner";
+import { type PagePropsOptions, } from "@/libs/page-props.shared";
+import { shouldRedirectVerifyEmailError, } from "@/libs/api-error-matchers";
+import { formatPageTitle, } from "@/libs/page-title";
 import { call, } from "@/libs/call";
 
 const { publicRuntimeConfig, } = getConfig ();
@@ -21,12 +23,14 @@ interface VerifyEmailProps
 };
 
 const VerifyEmail = ({
-    email,
-    signed,
+    email: emailProp,
+    signed: signedProp,
 }: VerifyEmailProps): ReactElement =>
 {
     const router = useRouter ();
     const { t, } = useTranslation ("auth");
+    const email = emailProp ?? (router.query.email as string) ?? "";
+    const signed = signedProp ?? (router.query.signed as string) ?? "";
     const [ status, setStatus, ] = useState<"verifying" | "success" | "error"> ("verifying");
     const [ message, setMessage, ] = useState<string> ("");
 
@@ -86,11 +90,7 @@ const VerifyEmail = ({
                 };
 
                 const errorMessage = getErrorMessage ();
-                const shouldRedirect = errorMessage && (
-                    errorMessage.includes ("The selected User does not exist") ||
-                    errorMessage.includes ("User does not exist") ||
-                    errorMessage.includes ("Email verification failed")
-                );
+                const shouldRedirect = errorMessage && shouldRedirectVerifyEmailError (errorMessage);
 
                 if (shouldRedirect)
                 {
@@ -127,7 +127,7 @@ const VerifyEmail = ({
     return (
         <>
             <Head>
-                <title>{t ("verify_email")}</title>
+                <title>{formatPageTitle (t ("verify_email"))}</title>
             </Head>
 
             <AuthLayout
@@ -208,34 +208,15 @@ const VerifyEmail = ({
     );
 };
 
-export const getServerSideProps: GetServerSideProps = async (
-    context: GetServerSidePropsContext
-): Promise<GetServerSidePropsResult<{ [key: string]: any; }>> =>
-{
-    const email = context.params?.email as string;
-    const signed = context.query.signed as string;
-
-    if (! email || ! signed)
-    {
-        return {
-            redirect: {
-                destination: "/admin/auth/login",
-                permanent: false,
-            },
-        };
-    }
-
-    return {
-        props: {
-            title: "Verify Email",
-            email,
-            signed,
-            ... (await serverSideTranslations (context.locale as string, [
-                "auth",
-                "common",
-            ])),
-        },
-    };
+const pageOptions: PagePropsOptions = {
+    title: "Verify Email",
+    namespaces: [ "auth", "common", ],
 };
+
+export const getServerSideProps: GetServerSideProps = require ("@/libs/page-props.server").buildGetServerSideProps ({
+    ... pageOptions,
+    requireParams: [ "email", ],
+    requireQuery: [ "signed", ],
+});
 
 export default VerifyEmail;
