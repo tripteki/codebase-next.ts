@@ -1,7 +1,7 @@
 import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosRequestConfig, AxiosResponse, } from "axios";
+import { publicRuntimeConfig, } from "@/libs/runtime-config";
 import { getSession, } from "next-auth/react";
 import { Session, } from "next-auth";
-import getConfig from "next/config";
 
 type Detail =
 {
@@ -24,7 +24,6 @@ export const call = async (
     error: any;
 }> =>
 {
-    const { publicRuntimeConfig, } = getConfig ();
     const baseURL: string = detail?.baseUrl ?? publicRuntimeConfig.baseURL;
 
     let isLoading: boolean = true;

@@ -1,4 +1,4 @@
-import { serverSideTranslations, } from "next-i18next/serverSideTranslations";
+import { serverSideTranslations, } from "next-i18next/pages/serverSideTranslations";
 
 import { staticLocale, type PagePropsOptions, } from "./page-props.shared";
 

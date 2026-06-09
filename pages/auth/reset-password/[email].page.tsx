@@ -1,9 +1,9 @@
 import { GetServerSideProps, } from "next";
+import { publicRuntimeConfig, } from "@/libs/runtime-config";
 import { ReactElement, FormEvent, useState, ChangeEvent, useEffect, } from "react";
 import { useRouter, } from "next/router";
 import Head from "next/head";
-import { useTranslation, } from "next-i18next";
-import getConfig from "next/config";
+import { useTranslation, } from "next-i18next/pages";
 
 import AuthLayout from "@/layouts/auth/auth-layout";
 import InputError from "@/components/input-error";
@@ -11,11 +11,11 @@ import { Button, } from "@/components/ui/button";
 import { Input, } from "@/components/ui/input";
 import { Label, } from "@/components/ui/label";
 import { Spinner, } from "@/components/ui/spinner";
+import { buildGetServerSideProps, } from "@/libs/page-props.server";
 import { type PagePropsOptions, } from "@/libs/page-props.shared";
 import { formatPageTitle, } from "@/libs/page-title";
 import { call, } from "@/libs/call";
 
-const { publicRuntimeConfig, } = getConfig ();
 
 interface ResetPasswordProps
 {
@@ -222,7 +222,7 @@ const pageOptions: PagePropsOptions = {
     namespaces: [ "auth", "common", ],
 };
 
-export const getServerSideProps: GetServerSideProps = require ("@/libs/page-props.server").buildGetServerSideProps ({
+export const getServerSideProps: GetServerSideProps = buildGetServerSideProps ({
     ... pageOptions,
     requireParams: [ "email", ],
 });

@@ -1,6 +1,6 @@
 import { ReactElement, } from "react";
 import { Loader2Icon, } from "lucide-react";
-import { useTranslation, } from "next-i18next";
+import { useTranslation, } from "next-i18next/pages";
 
 import { cn, } from "@/libs/utils";
 

@@ -1,7 +1,7 @@
 import type { AppProps, } from "next/app";
 import { ReactElement, useEffect, } from "react";
 import { SessionProvider, } from "next-auth/react";
-import { useTranslation, } from "next-i18next";
+import { useTranslation, } from "next-i18next/pages";
 import Head from "next/head";
 import { getClientLocale, } from "@/libs/i18n/locale";
 

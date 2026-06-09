@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosRequestConfig, AxiosResponse, } from "axios";
-import getConfig from "next/config";
+import { publicRuntimeConfig, } from "@/libs/runtime-config";
 
 type Detail =
 {
@@ -23,7 +23,6 @@ export const callServer = async (
     error: any;
 }> =>
 {
-    const { publicRuntimeConfig, } = getConfig ();
     const baseURL: string = detail?.baseUrl ?? publicRuntimeConfig.baseURL;
 
     let isLoading: boolean = true;

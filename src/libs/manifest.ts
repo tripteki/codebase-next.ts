@@ -1,9 +1,8 @@
 import type { MetadataRoute, } from "next";
-import getConfig from "next/config";
+import { publicRuntimeConfig, } from "@/libs/runtime-config";
 
 import { getAppDisplayName, } from "@/libs/page-title";
 
-const { publicRuntimeConfig, } = getConfig ();
 
 const manifest = (): MetadataRoute.Manifest => ({
     id: "/",

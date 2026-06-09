@@ -1,12 +1,11 @@
 import NextAuth, { NextAuthOptions, } from "next-auth";
+import { publicRuntimeConfig, serverRuntimeConfig, } from "@/libs/runtime-config";
 import CredentialsProvider from "next-auth/providers/credentials";
-import getConfig from "next/config";
 
 import { callServer, } from "@/libs/call-server";
 import { parseApiErrors, } from "@/libs/parse-api-errors";
 import { getServerTranslation, getLocaleFromRequest, } from "@/libs/i18n/server";
 
-const { serverRuntimeConfig, publicRuntimeConfig, } = getConfig ();
 
 const createAuthOptions = (locale: string = "en"): NextAuthOptions =>
 {

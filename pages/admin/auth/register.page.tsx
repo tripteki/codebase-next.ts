@@ -1,9 +1,9 @@
 import { GetServerSideProps, } from "next";
+import { publicRuntimeConfig, } from "@/libs/runtime-config";
 import { ReactElement, FormEvent, useState, ChangeEvent, } from "react";
 import { useRouter, } from "next/router";
 import Head from "next/head";
-import { useTranslation, } from "next-i18next";
-import getConfig from "next/config";
+import { useTranslation, } from "next-i18next/pages";
 
 import AuthLayout from "@/layouts/auth/auth-layout";
 import AlertError from "@/components/alert-error";
@@ -13,13 +13,13 @@ import { Button, } from "@/components/ui/button";
 import { Input, } from "@/components/ui/input";
 import { Label, } from "@/components/ui/label";
 import { Spinner, } from "@/components/ui/spinner";
+import { buildGetServerSideProps, } from "@/libs/page-props.server";
 import { type PagePropsOptions, } from "@/libs/page-props.shared";
 import { call, } from "@/libs/call";
 import { parseApiErrors, } from "@/libs/parse-api-errors";
 import { formatPageTitle, } from "@/libs/page-title";
 import { cn, } from "@/libs/utils";
 
-const { publicRuntimeConfig, } = getConfig ();
 
 const Register = (): ReactElement =>
 {
@@ -228,6 +228,6 @@ const pageOptions: PagePropsOptions = {
     namespaces: [ "auth", "common", ],
 };
 
-export const getServerSideProps: GetServerSideProps = require ("@/libs/page-props.server").buildGetServerSideProps (pageOptions);
+export const getServerSideProps: GetServerSideProps = buildGetServerSideProps (pageOptions);
 
 export default Register;

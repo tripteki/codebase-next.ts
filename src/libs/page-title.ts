@@ -1,8 +1,7 @@
-import getConfig from "next/config";
 
+import { publicRuntimeConfig, } from "@/libs/runtime-config";
 export const getAppDisplayName = (): string =>
 {
-    const { publicRuntimeConfig, } = getConfig ();
     const appName = publicRuntimeConfig?.appName || "codebase";
 
     return appName.charAt (0).toUpperCase () + appName.slice (1);

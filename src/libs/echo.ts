@@ -1,6 +1,6 @@
 import Echo from "laravel-echo";
+import { publicRuntimeConfig, } from "@/libs/runtime-config";
 import Pusher from "pusher-js";
-import getConfig from "next/config";
 
 type Detail =
 {
@@ -18,7 +18,6 @@ const resolveApiRootUrl = (baseURL: string): string =>
 
 export const createEcho = (accessToken: string, detail?: Detail): Echo<any> =>
 {
-    const { publicRuntimeConfig, } = getConfig ();
 
     if (typeof window !== "undefined")
     {

@@ -1,5 +1,5 @@
 import { ReactElement, } from "react";
-import { useTranslation, } from "next-i18next";
+import { useTranslation, } from "next-i18next/pages";
 import { AlertCircleIcon, } from "lucide-react";
 
 import { Alert, AlertDescription, AlertTitle, } from "@/components/ui/alert";

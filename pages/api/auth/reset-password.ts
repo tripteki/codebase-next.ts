@@ -1,10 +1,9 @@
 import { NextApiRequest, NextApiResponse, } from "next";
+import { publicRuntimeConfig, } from "@/libs/runtime-config";
 
 import { getServerTranslation, getLocaleFromRequest, } from "@/libs/i18n/server";
 import { callServer, } from "@/libs/call-server";
-import getConfig from "next/config";
 
-const { publicRuntimeConfig, } = getConfig ();
 
 const handler = async (
     req: NextApiRequest,

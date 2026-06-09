@@ -1,7 +1,7 @@
 import { ReactElement, } from "react";
 import { useRouter, } from "next/router";
 import { signOut, } from "next-auth/react";
-import { useTranslation, } from "next-i18next";
+import { useTranslation, } from "next-i18next/pages";
 
 import { Button, } from "@/components/ui/button";
 import ThemeToggle from "@/components/theme-toggle";

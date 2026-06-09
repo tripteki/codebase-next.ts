@@ -1,12 +1,13 @@
 import { GetServerSideProps, } from "next";
 import { ReactElement, } from "react";
 import Head from "next/head";
-import { useTranslation, } from "next-i18next";
+import { useTranslation, } from "next-i18next/pages";
 
 import HeaderLayout from "@/layouts/header.layout";
 import FooterLayout from "@/layouts/footer.layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from "@/components/ui/card";
 import { useRequireAuth, } from "@/hooks/auth-guard";
+import { buildGetServerSideProps, } from "@/libs/page-props.server";
 import { type PagePropsOptions, } from "@/libs/page-props.shared";
 import { formatPageTitle, } from "@/libs/page-title";
 
@@ -92,7 +93,7 @@ const pageOptions: PagePropsOptions = {
     namespaces: [ "common", "auth", ],
 };
 
-export const getServerSideProps: GetServerSideProps = require ("@/libs/page-props.server").buildGetServerSideProps ({
+export const getServerSideProps: GetServerSideProps = buildGetServerSideProps ({
     ... pageOptions,
     requireAuth: true,
 });

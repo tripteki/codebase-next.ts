@@ -3,7 +3,7 @@ import {
     GetServerSidePropsContext,
     GetServerSidePropsResult,
 } from "next";
-import { serverSideTranslations, } from "next-i18next/serverSideTranslations";
+import { serverSideTranslations, } from "next-i18next/pages/serverSideTranslations";
 
 import { getLocaleFromRequest, } from "./i18n/locale";
 import { type ServerSideOptions, } from "./page-props.shared";
