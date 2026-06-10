@@ -1,5 +1,4 @@
 import { GetServerSideProps, } from "next";
-import { publicRuntimeConfig, } from "@/libs/runtime-config";
 import { ReactElement, FormEvent, useState, ChangeEvent, useEffect, } from "react";
 import { useRouter, } from "next/router";
 import Head from "next/head";
@@ -15,7 +14,6 @@ import { buildGetServerSideProps, } from "@/libs/page-props.server";
 import { type PagePropsOptions, } from "@/libs/page-props.shared";
 import { type ResetPasswordProps, } from "@/types/admin/auth";
 import { formatPageTitle, } from "@/libs/page-title";
-import { call, } from "@/libs/call";
 
 
 const ResetPassword = ({
@@ -53,66 +51,52 @@ const ResetPassword = ({
 
         try
         {
-            const response = await call ({
-                baseUrl: publicRuntimeConfig.authURL,
-                url: `/reset-password/${data.email}`,
+            const response = await fetch ("/api/auth/reset-password", {
                 method: "POST",
-                data: {
+                headers: { "Content-Type": "application/json", },
+                body: JSON.stringify ({
+                    token: data.token || undefined,
+                    email: data.email,
                     password: data.password,
                     password_confirmation: data.password_confirmation,
-                },
+                }),
             });
+            const payload = await response.json ();
 
-            if (response.isError)
+            if (! response.ok)
             {
-                const axiosError = response.error as any;
-
-                if (axiosError?.response?.data)
+                if (payload?.errors)
                 {
-                    if (axiosError.response.data.errors)
-                    {
-                        setErrors (axiosError.response.data.errors);
-                    }
-                    else if (axiosError.response.data.message)
-                    {
-                        setErrors ({ password: axiosError.response.data.message, });
-                    }
-                    else if (typeof axiosError.response.data === "string")
-                    {
-                        setErrors ({ password: axiosError.response.data, });
-                    }
-                    else
-                    {
-                        setErrors ({ password: t ("something_went_wrong"), });
-                    }
+                    setErrors (payload.errors);
+                }
+                else if (payload?.message)
+                {
+                    setErrors ({ password: payload.message, });
                 }
                 else
                 {
                     setErrors ({ password: t ("something_went_wrong"), });
                 }
+
+                return;
             }
-            else if (response.isSuccess)
+
+            if (payload?.errors)
             {
-                if (typeof response.data === "string")
-                {
-                    setErrors ({ password: response.data, });
-                }
-                else if (response.data?.errors)
-                {
-                    setErrors (response.data.errors);
-                }
-                else if (response.data && typeof response.data === "object")
-                {
-                    router.push ({
-                        pathname: "/admin/auth/login",
-                        query: { status: t ("password_reset"), },
-                    });
-                }
-                else
-                {
-                    setErrors ({ password: t ("something_went_wrong"), });
-                }
+                setErrors (payload.errors);
+                return;
             }
+
+            if (payload?.success || payload?.message)
+            {
+                router.push ({
+                    pathname: "/admin/auth/login",
+                    query: { status: t ("password_reset"), },
+                });
+                return;
+            }
+
+            setErrors ({ password: t ("something_went_wrong"), });
         }
         catch (error)
         {

@@ -5,6 +5,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { callServer, } from "@/libs/call-server";
 import { parseApiErrors, } from "@/libs/parse-api-errors";
 import { getServerTranslation, getLocaleFromRequest, } from "@/libs/i18n/server";
+import { refreshAccessToken, } from "@/libs/refresh-access-token";
 
 
 const createAuthOptions = (locale: string = "en"): NextAuthOptions =>
@@ -22,15 +23,34 @@ const createAuthOptions = (locale: string = "en"): NextAuthOptions =>
             {
                 if (user)
                 {
-                    token.accessToken = (user as any)?.accessToken;
-                    token.refreshToken = (user as any)?.refreshToken;
-                    token.jwt = (user as any)?.accessToken;
-                    token.user = (user as any)?.user;
-                    token.id = user.id;
-                    token.name = user.name;
-                    token.email = user.email;
+                    const accessToken = (user as any)?.accessToken;
+                    const refreshToken = (user as any)?.refreshToken;
+                    const accessTokenTtl = (user as any)?.accessTokenTtl ?? 3600;
+
+                    return {
+                        ... token,
+                        accessToken,
+                        refreshToken,
+                        jwt: accessToken,
+                        user: (user as any)?.user,
+                        id: user.id,
+                        name: user.name,
+                        email: user.email,
+                        accessTokenExpires: Date.now () + accessTokenTtl * 1000,
+                    };
                 }
-                return token;
+
+                if ((token as any).error === "RefreshAccessTokenError")
+                {
+                    return token;
+                }
+
+                if (Date.now () < ((token.accessTokenExpires as number) || 0))
+                {
+                    return token;
+                }
+
+                return refreshAccessToken (token as any);
             },
 
             async session ({ session, token, })
@@ -86,6 +106,7 @@ const createAuthOptions = (locale: string = "en"): NextAuthOptions =>
 
                     const accessToken = tokenResponse.data?.accessToken;
                     const refreshToken = tokenResponse.data?.refreshToken;
+                    const accessTokenTtl = tokenResponse.data?.accessTokenTtl ?? 3600;
 
                     if (! accessToken)
                     {
@@ -111,6 +132,7 @@ const createAuthOptions = (locale: string = "en"): NextAuthOptions =>
                         name: user?.name || user?.username || "",
                         accessToken,
                         refreshToken,
+                        accessTokenTtl,
                         user,
                     };
                 },

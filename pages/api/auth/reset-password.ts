@@ -33,24 +33,43 @@ const handler = async (
         return;
     }
 
-    const url = `/reset-password/${email}`;
-    const params: Record<string, string> = {};
+    let response;
 
-    if (signed)
+    if (token)
     {
-        params.signed = signed;
+        response = await callServer ({
+            baseUrl: publicRuntimeConfig.authURL,
+            url: "/reset-password",
+            method: "POST",
+            data: {
+                token,
+                email,
+                password,
+                password_confirmation,
+            },
+        });
     }
+    else
+    {
+        const url = `/reset-password/${email}`;
+        const params: Record<string, string> = {};
 
-    const response = await callServer ({
-        baseUrl: publicRuntimeConfig.authURL,
-        url,
-        method: "POST",
-        data: {
-            password,
-            password_confirmation,
-        },
-        params,
-    });
+        if (signed)
+        {
+            params.signed = signed;
+        }
+
+        response = await callServer ({
+            baseUrl: publicRuntimeConfig.authURL,
+            url,
+            method: "POST",
+            data: {
+                password,
+                password_confirmation,
+            },
+            params,
+        });
+    }
 
     if (response.isError)
     {

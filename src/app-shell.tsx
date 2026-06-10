@@ -1,6 +1,6 @@
 import type { AppProps, } from "next/app";
 import { ReactElement, useEffect, } from "react";
-import { SessionProvider, } from "next-auth/react";
+import { getSession, SessionProvider, } from "next-auth/react";
 import { useTranslation, } from "next-i18next/pages";
 import Head from "next/head";
 import { getClientLocale, } from "@/libs/i18n/locale";
@@ -21,6 +21,24 @@ const AppShell = (
         }
     }, [ i18n, ]);
 
+    useEffect (() =>
+    {
+        const handlePageShow = (event: PageTransitionEvent): void =>
+        {
+            if (event.persisted)
+            {
+                void getSession ();
+            }
+        };
+
+        window.addEventListener ("pageshow", handlePageShow);
+
+        return () =>
+        {
+            window.removeEventListener ("pageshow", handlePageShow);
+        };
+    }, []);
+
     useEffect ((): void =>
     {
         if (process.env.NODE_ENV !== "production" || ! ("serviceWorker" in navigator))
@@ -40,7 +58,10 @@ const AppShell = (
     }, []);
 
     return (
-        <SessionProvider session={pageProps.session}>
+        <SessionProvider
+            refetchInterval={50 * 60}
+            session={pageProps.session}
+        >
             <Head>
                 <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, user-scalable=no, viewport-fit=cover" />
             </Head>

@@ -1,6 +1,6 @@
 import { ReactElement, } from "react";
 import { useRouter, } from "next/router";
-import { signOut, } from "next-auth/react";
+import { getSession, signOut, } from "next-auth/react";
 import { useTranslation, } from "next-i18next/pages";
 
 import { Button, } from "@/components/ui/button";
@@ -32,6 +32,8 @@ const HeaderLayout = ({
         catch (error)
         {
             console.error ("Logout error:", error);
+            await getSession ();
+            await router.replace ("/admin/auth/login");
         }
     };
 

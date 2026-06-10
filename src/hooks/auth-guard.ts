@@ -2,8 +2,6 @@ import { useRouter, } from "next/router";
 import { useSession, } from "next-auth/react";
 import { useEffect, } from "react";
 
-const isStaticBuild: boolean = process.env.NEXT_PUBLIC_BUILD_STATIC === "true";
-
 export const useRequireAuth = (
     redirectTo: string = "/admin/auth/login"
 ): void =>
@@ -13,7 +11,7 @@ export const useRequireAuth = (
 
     useEffect ((): void =>
     {
-        if (! isStaticBuild || status === "loading")
+        if (status === "loading")
         {
             return;
         }
@@ -34,7 +32,7 @@ export const useRequireGuest = (
 
     useEffect ((): void =>
     {
-        if (! isStaticBuild || status === "loading")
+        if (status === "loading")
         {
             return;
         }

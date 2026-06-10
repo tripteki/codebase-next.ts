@@ -3,6 +3,7 @@ import { ReactElement, } from "react";
 import Head from "next/head";
 import { useTranslation, } from "next-i18next/pages";
 
+import AuthVerifyEmailBanner from "@/components/auth-verify-email-banner";
 import HeaderLayout from "@/layouts/header.layout";
 import FooterLayout from "@/layouts/footer.layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from "@/components/ui/card";
@@ -27,6 +28,8 @@ const Dashboard = (): ReactElement =>
 
                 <main className="flex-1 container mx-auto px-4 py-8">
                     <div className="space-y-8">
+                        <AuthVerifyEmailBanner />
+
                         <div className="space-y-2">
                             <h1 className="text-3xl font-bold tracking-tight">
                                 {t ("dashboard_title")}

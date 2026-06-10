@@ -37,5 +37,7 @@ declare module "next-auth/jwt"
         refreshToken?: string;
         user?: any;
         id?: string;
+        accessTokenExpires?: number;
+        error?: string;
     };
 };
