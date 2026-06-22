@@ -3,10 +3,17 @@ import {
     GetServerSidePropsContext,
     GetServerSidePropsResult,
 } from "next";
-import { serverSideTranslations, } from "next-i18next/pages/serverSideTranslations";
-
 import { getLocaleFromRequest, } from "./i18n/locale";
+import { loadPageTranslations, } from "./i18n/load-translations.server";
+import { hasValidSession, } from "./auth-session";
+import { apiRequestHasSessionCookie, } from "./next-auth-cookies";
+import { AUTH_HOME_PATH, AUTH_LOGIN_PATH, } from "./page-auth";
 import { type ServerSideOptions, } from "./page-props.shared";
+
+const serializePropsValue = <T,>(value: T): T =>
+    JSON.parse (JSON.stringify (value, (_key, entry) =>
+        entry === undefined ? null : entry
+    )) as T;
 
 const loadSession = async (
     context: GetServerSidePropsContext
@@ -25,33 +32,46 @@ export const buildGetServerSideProps = (
         context: GetServerSidePropsContext
     ): Promise<GetServerSidePropsResult<Record<string, unknown>>> =>
     {
-        if (options.requireAuth)
-        {
-            const session = await loadSession (context);
+        let authenticatedSession: Awaited<ReturnType<typeof loadSession>> | null = null;
 
-            if (! session)
+        const authMode = options.pageAuth?.mode;
+
+        if (authMode === "auth")
+        {
+            authenticatedSession = await loadSession (context);
+
+            if (! hasValidSession (authenticatedSession))
             {
                 return {
                     redirect: {
-                        destination: options.redirectTo || "/admin/auth/login",
+                        destination: options.pageAuth?.redirectUnauthenticatedTo
+                            ?? options.redirectTo
+                            ?? AUTH_LOGIN_PATH,
                         permanent: false,
                     },
                 };
             }
         }
 
-        if (options.requireGuest)
+        if (authMode === "guest")
         {
-            const session = await loadSession (context);
+            const signedOut = context.query.signedOut === "1";
 
-            if (session)
+            if (! signedOut && apiRequestHasSessionCookie (context.req))
             {
-                return {
-                    redirect: {
-                        destination: options.redirectTo || "/admin/dashboard",
-                        permanent: false,
-                    },
-                };
+                const session = await loadSession (context);
+
+                if (hasValidSession (session))
+                {
+                    return {
+                        redirect: {
+                            destination: options.pageAuth?.redirectAuthenticatedTo
+                                ?? options.redirectTo
+                                ?? AUTH_HOME_PATH,
+                            permanent: false,
+                        },
+                    };
+                }
             }
         }
 
@@ -93,7 +113,7 @@ export const buildGetServerSideProps = (
 
         const props: Record<string, unknown> = {
             title: options.title,
-            ... (await serverSideTranslations (locale, options.namespaces)),
+            ... (await loadPageTranslations (locale, options.namespaces)),
         };
 
         if (context.params?.email)
@@ -127,6 +147,11 @@ export const buildGetServerSideProps = (
         if (status)
         {
             props.status = status;
+        }
+
+        if (authenticatedSession)
+        {
+            props.session = serializePropsValue (authenticatedSession);
         }
 
         return { props, };

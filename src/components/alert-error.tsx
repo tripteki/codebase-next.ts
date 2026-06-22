@@ -30,7 +30,7 @@ const AlertError = ({
     const resolvedTitle = title ?? (items.length > 1 ? t ("something_went_wrong") : undefined);
 
     return (
-        <Alert variant="destructive">
+        <Alert variant="destructive" className="mb-4">
             <AlertCircleIcon />
             {resolvedTitle ? (
                 <AlertTitle>{resolvedTitle}</AlertTitle>

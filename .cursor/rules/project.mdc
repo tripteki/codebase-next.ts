@@ -1,0 +1,123 @@
+---
+description: Core Next.js project conventions (Pages Router, auth, build, env, tests)
+alwaysApply: true
+---
+
+# Next.js — Project Conventions
+
+This is the **Next.js 16 Pages Router** frontend in the Tripteki parallel-codebase family. It pairs with NestJS, FastAPI, or Laravel backends via a shared REST contract.
+
+## Stack
+
+| Layer | Choice |
+|-------|--------|
+| Framework | Next.js 16 Pages Router + React 19 + TypeScript |
+| Dev server | `npm run dev` (Turbopack); clears `public/.next` before start |
+| Auth | NextAuth.js 4 — Credentials provider, JWT session strategy |
+| State | Redux Toolkit (`src/stores/`) |
+| UI | Tailwind CSS 4 + shadcn/ui (new-york) + Radix + Lucide |
+| i18n | next-i18next — locales `en`, `id`, `ms`; cookie-based; **no URL prefix** |
+| HTTP | axios |
+| Forms | react-hook-form + zod |
+| Realtime | Laravel Echo/Reverb **or** Socket.IO (driver switchable) |
+| PWA | Manual `public/sw.js` + manifest under `public/manifest/` |
+
+## Directory layout
+
+```
+pages/                  # Routes + API routes only (thin wiring)
+  api/auth/             # NextAuth handler
+  api/webpush/          # Web Push subscription
+  *.page.tsx            # SSR pages (default build)
+  *.static.tsx          # Static-export pages (BUILD_STATIC=true)
+src/
+  components/           # UI (kebab-case files)
+  components/ui/        # shadcn primitives
+  hooks/                # use-*.ts custom hooks
+  layouts/              # *.layout.tsx
+  libs/                 # Shared utilities (auth, API, realtime, i18n)
+  stores/               # Redux slices
+  types/                # Shared TypeScript types
+  page-auth/            # Per-route auth metadata consumed by proxy.ts
+  langs/                # Translation JSON
+tests/lib/              # Vitest unit tests
+tests/e2e/              # Playwright e2e tests
+proxy.ts                # Route guard (Next 16 — NOT middleware.ts)
+```
+
+**Rule:** Keep `pages/` thin. Business logic, components, and hooks live in `src/`.
+
+## Dual build system
+
+- **SSR (default):** pages named `*.page.tsx` → `npm run build` → output in `public/.next` (custom `distDir`)
+- **Static export:** pages named `*.static.tsx` → `BUILD_STATIC=true npm run generate` → `out/`
+- Do not mix `.page.tsx` and `.static.tsx` for the same route
+
+## Authentication & route protection
+
+### Server-side (`proxy.ts`)
+- Next.js 16 uses **`proxy.ts`** for edge route guards
+- **Never create `middleware.ts`** — it conflicts with `proxy.ts` and breaks auth redirects
+- `proxy.ts` reads auth metadata from `src/page-auth/` modules
+
+### Session validation
+- `hasValidSession()` in `src/libs/auth-session.ts` requires a non-empty **access token**, not just `status === "authenticated"`
+- Logout must call `POST /api/auth/logout` to clear cookies server-side
+- After logout, dashboard and protected routes must redirect to login
+
+### getServerSideProps
+- Always use `buildGetServerSideProps()` from `src/libs/page-props.server.ts`
+- Include `serverSideTranslations` for i18n on every SSR page
+- Serialize session props: use `null` for missing values — **never `undefined`** (Next.js GSSP serialization error)
+- Session callback must set `session.error` to `null` (not `undefined`) when there is no error
+
+### Client-side guards
+- `useRequireAuth()` — redirect unauthenticated users
+- `useRequireGuest()` — redirect authenticated users away from login/register
+
+## Environment variables
+
+| Variable | Scope | Purpose |
+|----------|-------|---------|
+| `NEXT_PUBLIC_APP_URL` | Public | Frontend origin |
+| `NEXT_PUBLIC_API_URL` | Public | Backend REST base |
+| `NEXT_PUBLIC_AUTH_URL` | Public | Auth API base |
+| `NEXT_PUBLIC_REALTIME_DRIVER` | Public | `echo` or `socketio` |
+| `NEXT_PUBLIC_REVERB_*` | Public | Laravel Reverb/Echo config |
+| `NEXT_PUBLIC_VAPID_PUBLIC_KEY` | Public | Web Push |
+| `NEXT_PUBLIC_APP_ENV` | Public | `development` / `production` |
+| `NEXT_PUBLIC_APP_LANG` | Public | Default locale |
+| `NEXTAUTH_URL` | Server | NextAuth callback URL |
+| `NEXTAUTH_SECRET` | Server | Session encryption |
+| `SECRET` | Server | App secret |
+
+- Read runtime config via `src/libs/runtime-config.ts` — do not scatter `process.env` reads
+- `.env.example` uses `api.backend.localhost`; local `.env` may use `localhost:8000`
+
+## Testing
+
+```bash
+npm test              # Vitest unit tests (tests/lib/**/*.test.ts)
+npm run test:watch  # Vitest watch mode
+npm run test:e2e    # Playwright (tests/e2e/, uses data-test selectors)
+npm run test:e2e:ui # Playwright UI mode
+```
+
+- E2E base URL from `NEXT_PUBLIC_APP_URL`
+- Default e2e credentials: `user@mail.com` / `12345678`
+
+## Code style
+
+- **Files:** kebab-case (`theme-toggle.tsx`, `use-notifications.ts`)
+- **Imports:** `@/components/*`, `@/hooks/*`, `@/libs/*` (no file extension)
+- **Formatting:** Allman braces, spaces inside parentheses `( foo, bar )` — `@tripteki/prettier-config`
+- **Lint:** `npm run lint` (eslint-config-next + prettier)
+- **shadcn:** add components via `npm run component` (bunx shadcn)
+
+## UI conventions
+
+- **Header action order (left → right in actions area):** i18n switcher → theme toggle → notifications → avatar/profile → logout
+- **Buttons:** loading state uses `gap-2` between spinner and label; `<Spinner />` without excessive margin
+- **Alerts:** use `AlertSuccess`, `AlertWarning`, `AlertError` — flex/grid layout with `mb-4` spacing
+- **Logo:** `AppLogo` component using manifest PNG assets
+- **i18n switcher:** flag emojis (🇺🇸 🇮🇩 🇲🇾) in header

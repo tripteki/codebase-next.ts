@@ -1,28 +1,32 @@
 import { GetServerSideProps, } from "next";
-import { publicRuntimeConfig, } from "@/libs/runtime-config";
 import { ReactElement, FormEvent, useState, ChangeEvent, } from "react";
 import { useRouter, } from "next/router";
 import Head from "next/head";
 import { useTranslation, } from "next-i18next/pages";
-import { LoaderCircle, } from "lucide-react";
 
 import AuthLayout from "@/layouts/auth/auth-layout";
+import AlertError from "@/components/alert-error";
+import AlertSuccess from "@/components/alert-success";
 import InputError from "@/components/input-error";
 import TextLink from "@/components/text-link";
 import { Button, } from "@/components/ui/button";
 import { Input, } from "@/components/ui/input";
 import { Label, } from "@/components/ui/label";
+import { Spinner, } from "@/components/ui/spinner";
 import { buildGetServerSideProps, } from "@/libs/page-props.server";
 import { type PagePropsOptions, } from "@/libs/page-props.shared";
+import { pageAuth, } from "@/page-auth/admin/auth/forgot-password";
 import { type ForgotPasswordProps, } from "@/types/admin/auth";
 import { formatPageTitle, } from "@/libs/page-title";
-import { call, } from "@/libs/call";
+import { parseApiErrors, } from "@/libs/parse-api-errors";
+import { useRequireGuest, } from "@/hooks/auth-guard";
 
 
 const ForgotPassword = ({
     status,
-}: ForgotPasswordProps): ReactElement =>
+}: ForgotPasswordProps): ReactElement | null =>
 {
+    const canRender = useRequireGuest ();
     const router = useRouter ();
     const { t, } = useTranslation ("auth");
     const displayStatus = status ?? (router.query.status as string | undefined);
@@ -40,63 +44,40 @@ const ForgotPassword = ({
 
         try
         {
-            const response = await call ({
-                baseUrl: publicRuntimeConfig.authURL,
-                url: "/forgot-password",
+            const response = await fetch ("/api/auth/forgot-password", {
                 method: "POST",
-                data,
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify (data),
             });
+            const payload = await response.json ();
 
-            if (response.isError)
+            if (! response.ok)
             {
-                const axiosError = response.error as any;
+                setErrors (parseApiErrors (payload, t ("something_went_wrong")));
 
-                if (axiosError?.response?.data)
-                {
-                    if (axiosError.response.data.errors)
-                    {
-                        setErrors (axiosError.response.data.errors);
-                    }
-                    else if (axiosError.response.data.message)
-                    {
-                        setErrors ({ email: axiosError.response.data.message, });
-                    }
-                    else if (typeof axiosError.response.data === "string")
-                    {
-                        setErrors ({ email: axiosError.response.data, });
-                    }
-                    else
-                    {
-                        setErrors ({ email: t ("something_went_wrong"), });
-                    }
-                }
-                else
-                {
-                    setErrors ({ email: t ("something_went_wrong"), });
-                }
+                return;
             }
-            else if (response.isSuccess)
+
+            if (payload?.errors)
             {
-                if (typeof response.data === "string")
-                {
-                    setErrors ({ email: response.data, });
-                }
-                else if (response.data?.errors)
-                {
-                    setErrors (response.data.errors);
-                }
-                else if (response.data && typeof response.data === "object")
-                {
-                    router.push ({
-                        pathname: "/admin/auth/login",
-                        query: { status: t ("password_reset_link_sent"), },
-                    });
-                }
-                else
-                {
-                    setErrors ({ email: t ("something_went_wrong"), });
-                }
+                setErrors (parseApiErrors (payload, t ("something_went_wrong")));
+
+                return;
             }
+
+            if (payload?.data || payload?.success)
+            {
+                router.push ({
+                    pathname: "/admin/auth/login",
+                    query: { status: t ("password_reset_link_sent"), },
+                });
+
+                return;
+            }
+
+            setErrors ({ email: t ("something_went_wrong"), });
         }
         catch (error)
         {
@@ -108,6 +89,11 @@ const ForgotPassword = ({
         }
     };
 
+    if (! canRender)
+    {
+        return null;
+    }
+
     return (
         <>
             <Head>
@@ -118,14 +104,12 @@ const ForgotPassword = ({
                 title={t ("forgot_password_title")}
                 description={t ("forgot_password_description")}
             >
-                {displayStatus && (
-                    <div className="mb-4 text-center text-sm font-medium text-green-600">
-                        {displayStatus}
-                    </div>
-                )}
+                <AlertSuccess message={displayStatus} />
 
                 <div className="space-y-6">
-                    <form onSubmit={submit}>
+                    <form onSubmit={submit} noValidate>
+                        <AlertError message={errors.general} />
+
                         <div className="grid gap-2">
                             <Label htmlFor="email">{t ("email_address")}</Label>
                             <Input
@@ -151,9 +135,7 @@ const ForgotPassword = ({
                                 disabled={processing}
                                 data-test="email-password-reset-link-button"
                             >
-                                {processing && (
-                                    <LoaderCircle className="h-4 w-4 animate-spin" />
-                                )}
+                                {processing && <Spinner />}
                                 {processing ? t ("sending") : t ("email_password_reset_link")}
                             </Button>
                         </div>
@@ -176,6 +158,11 @@ const pageOptions: PagePropsOptions = {
     namespaces: [ "auth", "common", ],
 };
 
-export const getServerSideProps: GetServerSideProps = buildGetServerSideProps (pageOptions);
+export { pageAuth, };
+
+export const getServerSideProps: GetServerSideProps = buildGetServerSideProps ({
+    ... pageOptions,
+    pageAuth,
+});
 
 export default ForgotPassword;

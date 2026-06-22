@@ -10,12 +10,18 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from "@/co
 import { useRequireAuth, } from "@/hooks/auth-guard";
 import { buildGetServerSideProps, } from "@/libs/page-props.server";
 import { type PagePropsOptions, } from "@/libs/page-props.shared";
+import { pageAuth, } from "@/page-auth/admin/dashboard";
 import { formatPageTitle, } from "@/libs/page-title";
 
-const Dashboard = (): ReactElement =>
+const Dashboard = (): ReactElement | null =>
 {
-    useRequireAuth ();
+    const canRender = useRequireAuth ();
     const { t, } = useTranslation ("common");
+
+    if (! canRender)
+    {
+        return null;
+    }
 
     return (
         <>
@@ -96,9 +102,11 @@ const pageOptions: PagePropsOptions = {
     namespaces: [ "common", "auth", ],
 };
 
+export { pageAuth, };
+
 export const getServerSideProps: GetServerSideProps = buildGetServerSideProps ({
     ... pageOptions,
-    requireAuth: true,
+    pageAuth,
 });
 
 export default Dashboard;

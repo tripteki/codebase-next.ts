@@ -5,8 +5,11 @@ import Link from "next/link";
 import { useTranslation, } from "next-i18next/pages";
 
 import { buildGetServerSideProps, } from "@/libs/page-props.server";
-import { type PagePropsOptions, } from "@/libs/page-props.shared";
+import { type PagePropsOptions, withLayoutNamespaces, } from "@/libs/page-props.shared";
+import { pageAuth, } from "@/page-auth/index";
 import { formatPageTitle, } from "@/libs/page-title";
+import { publicRuntimeConfig, } from "@/libs/runtime-config";
+import { resolveApiDocsUrl, } from "@/libs/api-base";
 
 import HeaderLayout from "@/layouts/header.layout";
 import FooterLayout from "@/layouts/footer.layout";
@@ -41,14 +44,18 @@ const Page = (): ReactElement =>
 
                         <div className="flex gap-4 justify-center">
                             <Button size="lg" asChild>
-                                <Link href="/admin/dashboard">
+                                <Link href="/admin/auth/login">
                                     {t ("get_started")}
                                 </Link>
                             </Button>
                             <Button variant="outline" size="lg" asChild>
-                                <Link href="/api/docs">
+                                <a
+                                    href={resolveApiDocsUrl (publicRuntimeConfig)}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
                                     {t ("view_docs")}
-                                </Link>
+                                </a>
                             </Button>
                         </div>
                     </div>
@@ -62,9 +69,14 @@ const Page = (): ReactElement =>
 
 const pageOptions: PagePropsOptions = {
     title: "Index",
-    namespaces: [ "common", ],
+    namespaces: withLayoutNamespaces ([]),
 };
 
-export const getServerSideProps: GetServerSideProps = buildGetServerSideProps (pageOptions);
+export { pageAuth, };
+
+export const getServerSideProps: GetServerSideProps = buildGetServerSideProps ({
+    ... pageOptions,
+    pageAuth,
+});
 
 export default Page;

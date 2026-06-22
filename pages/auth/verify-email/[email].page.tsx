@@ -1,5 +1,4 @@
 import { GetServerSideProps, } from "next";
-import { publicRuntimeConfig, } from "@/libs/runtime-config";
 import { ReactElement, useEffect, useState, } from "react";
 import { useRouter, } from "next/router";
 import Head from "next/head";
@@ -11,9 +10,13 @@ import TextLink from "@/components/text-link";
 import { Spinner, } from "@/components/ui/spinner";
 import { buildGetServerSideProps, } from "@/libs/page-props.server";
 import { type PagePropsOptions, } from "@/libs/page-props.shared";
+import { pageAuth, } from "@/page-auth/auth/verify-email/[email]";
 import { shouldRedirectVerifyEmailError, } from "@/libs/api-error-matchers";
 import { formatPageTitle, } from "@/libs/page-title";
-import { call, } from "@/libs/call";
+import {
+    normalizeAuthEmailParam,
+    resolveAuthQueryParam,
+} from "@/libs/auth-email";
 
 
 interface VerifyEmailProps
@@ -28,62 +31,71 @@ const VerifyEmail = ({
 }: VerifyEmailProps): ReactElement =>
 {
     const router = useRouter ();
-    const { t, } = useTranslation ("auth");
-    const email = emailProp ?? (router.query.email as string) ?? "";
-    const signed = signedProp ?? (router.query.signed as string) ?? "";
+    const { t, i18n, } = useTranslation ("auth");
+    const email = normalizeAuthEmailParam (
+        emailProp ?? resolveAuthQueryParam (router.query.email)
+    );
+    const signed = signedProp ?? resolveAuthQueryParam (router.query.signed);
     const [ status, setStatus, ] = useState<"verifying" | "success" | "error"> ("verifying");
     const [ message, setMessage, ] = useState<string> ("");
 
-    useEffect ((): void =>
+    useEffect ((): (() => void) | void =>
     {
+        if (! email || ! signed)
+        {
+            return;
+        }
+
+        let cancelled = false;
+
         const verifyEmail = async (): Promise<void> =>
         {
+            const translate = i18n.getFixedT (i18n.language, "auth");
+
             try
             {
-                const response = await call ({
-                    baseUrl: publicRuntimeConfig.authURL,
-                    url: `/verify-email/${email}`,
+                const response = await fetch ("/api/auth/verify-email", {
                     method: "POST",
-                    data: {},
-                    params: {
-                        signed,
+                    headers: {
+                        "Content-Type": "application/json",
                     },
+                    body: JSON.stringify ({
+                        email,
+                        signed,
+                    }),
                 });
+                const payload = await response.json ();
+
+                if (cancelled)
+                {
+                    return;
+                }
 
                 const getErrorMessage = (): string | null =>
                 {
-                    if (response.isError)
+                    if (! response.ok)
                     {
-                        const axiosError = response.error as any;
-                        if (axiosError?.response?.data?.message)
+                        if (payload?.errors?.general)
                         {
-                            return axiosError.response.data.message;
+                            return payload.errors.general;
                         }
-                        if (axiosError?.response?.data?.errors?.general)
+
+                        if (payload?.message)
                         {
-                            return axiosError.response.data.errors.general;
+                            return payload.message;
                         }
-                        if (typeof axiosError?.response?.data === "string")
-                        {
-                            return axiosError.response.data;
-                        }
-                        return t ("verification_failed");
+
+                        return translate ("verification_failed");
                     }
 
-                    if (response.isSuccess)
+                    if (payload?.errors?.general)
                     {
-                        if (typeof response.data === "string")
-                        {
-                            return response.data;
-                        }
-                        if (response.data?.errors?.general)
-                        {
-                            return response.data.errors.general;
-                        }
-                        if (response.data?.errors && response.data?.message)
-                        {
-                            return response.data.message;
-                        }
+                        return payload.errors.general;
+                    }
+
+                    if (payload?.message && ! payload.success)
+                    {
+                        return payload.message;
                     }
 
                     return null;
@@ -94,7 +106,7 @@ const VerifyEmail = ({
 
                 if (shouldRedirect)
                 {
-                    router.push ("/");
+                    void router.replace ("/");
                     return;
                 }
 
@@ -103,26 +115,35 @@ const VerifyEmail = ({
                     setStatus ("error");
                     setMessage (errorMessage);
                 }
-                else if (response.isSuccess && response.data && typeof response.data === "object" && ! response.data.errors)
+                else if (payload?.success)
                 {
                     setStatus ("success");
-                    setMessage (response.data.message || t ("email_verified"));
+                    setMessage (payload.message || translate ("email_verified"));
                 }
                 else
                 {
                     setStatus ("error");
-                    setMessage (t ("verification_failed"));
+                    setMessage (translate ("verification_failed"));
                 }
             }
-            catch (error)
+            catch
             {
-                setStatus ("error");
-                setMessage (t ("verification_failed"));
+                if (! cancelled)
+                {
+                    setStatus ("error");
+                    setMessage (translate ("verification_failed"));
+                }
             }
         };
 
-        verifyEmail ();
-    }, [ email, signed, t, router, ]);
+        void verifyEmail ();
+
+        return (): void =>
+        {
+            cancelled = true;
+        };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [ email, signed, ]);
 
     return (
         <>
@@ -146,8 +167,8 @@ const VerifyEmail = ({
 
                     {status === "success" && (
                         <div className="space-y-4">
-                            <div className="rounded-lg bg-green-50 dark:bg-green-900/20 p-4 text-center">
-                                <p className="text-sm font-medium text-green-800 dark:text-green-200">
+                            <div className="rounded-lg bg-success-muted p-4 text-center">
+                                <p className="text-sm font-medium text-success-foreground">
                                     {message}
                                 </p>
                             </div>
@@ -213,8 +234,11 @@ const pageOptions: PagePropsOptions = {
     namespaces: [ "auth", "common", ],
 };
 
+export { pageAuth, };
+
 export const getServerSideProps: GetServerSideProps = buildGetServerSideProps ({
     ... pageOptions,
+    pageAuth,
     requireParams: [ "email", ],
     requireQuery: [ "signed", ],
 });

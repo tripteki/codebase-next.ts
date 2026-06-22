@@ -1,0 +1,10 @@
+import "@/page-auth/index";
+import "@/page-auth/notifications";
+import "@/page-auth/admin/dashboard";
+import "@/page-auth/admin/settings";
+import "@/page-auth/admin/auth/login";
+import "@/page-auth/admin/auth/register";
+import "@/page-auth/admin/auth/forgot-password";
+import "@/page-auth/admin/auth/reset-password";
+import "@/page-auth/auth/verify-email/[email]";
+import "@/page-auth/auth/reset-password/[email]";

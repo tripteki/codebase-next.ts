@@ -1,5 +1,4 @@
 import { GetServerSideProps, } from "next";
-import { publicRuntimeConfig, } from "@/libs/runtime-config";
 import { ReactElement, FormEvent, useState, ChangeEvent, } from "react";
 import { useRouter, } from "next/router";
 import Head from "next/head";
@@ -15,14 +14,16 @@ import { Label, } from "@/components/ui/label";
 import { Spinner, } from "@/components/ui/spinner";
 import { buildGetServerSideProps, } from "@/libs/page-props.server";
 import { type PagePropsOptions, } from "@/libs/page-props.shared";
-import { call, } from "@/libs/call";
-import { parseApiErrors, } from "@/libs/parse-api-errors";
+import { pageAuth, } from "@/page-auth/admin/auth/register";
+import { parseApiErrors, focusPasswordMatchError, } from "@/libs/parse-api-errors";
 import { formatPageTitle, } from "@/libs/page-title";
 import { cn, } from "@/libs/utils";
+import { useRequireGuest, } from "@/hooks/auth-guard";
 
 
-const Register = (): ReactElement =>
+const Register = (): ReactElement | null =>
 {
+    const canRender = useRequireGuest ();
     const router = useRouter ();
     const { t, } = useTranslation ("auth");
     const [ data, setData, ] = useState ({
@@ -42,44 +43,46 @@ const Register = (): ReactElement =>
 
         try
         {
-            const response = await call ({
-                baseUrl: publicRuntimeConfig.authURL,
-                url: "/register",
+            const response = await fetch ("/api/auth/register", {
                 method: "POST",
-                data,
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify (data),
             });
+            const payload = await response.json ();
 
-            if (response.isError)
+            if (! response.ok)
             {
-                const axiosError = response.error as any;
-
-                setErrors (parseApiErrors (
-                    axiosError?.response?.data,
-                    t ("registration_failed")
+                setErrors (focusPasswordMatchError (
+                    parseApiErrors (payload, t ("registration_failed")),
+                    "password_confirmation"
                 ));
+
+                return;
             }
-            else if (response.isSuccess)
+
+            if (payload?.errors)
             {
-                if (typeof response.data === "string")
-                {
-                    setErrors ({ general: response.data, });
-                }
-                else if (response.data?.errors)
-                {
-                    setErrors (parseApiErrors (response.data.errors, t ("registration_failed")));
-                }
-                else if (response.data && typeof response.data === "object")
-                {
-                    router.push ({
-                        pathname: "/admin/auth/login",
-                        query: { status: t ("verification-sent"), },
-                    });
-                }
-                else
-                {
-                    setErrors ({ general: t ("registration_failed"), });
-                }
+                setErrors (focusPasswordMatchError (
+                    parseApiErrors (payload, t ("registration_failed")),
+                    "password_confirmation"
+                ));
+
+                return;
             }
+
+            if (payload?.data || payload?.success)
+            {
+                router.push ({
+                    pathname: "/admin/auth/login",
+                    query: { status: t ("verification-sent"), },
+                });
+
+                return;
+            }
+
+            setErrors ({ general: t ("registration_failed"), });
         }
         catch (error)
         {
@@ -90,6 +93,11 @@ const Register = (): ReactElement =>
             setProcessing (false);
         }
     };
+
+    if (! canRender)
+    {
+        return null;
+    }
 
     return (
         <>
@@ -104,6 +112,7 @@ const Register = (): ReactElement =>
                 <form
                     onSubmit={submit}
                     className="flex flex-col gap-6"
+                    noValidate
                 >
                     <AlertError message={errors.general} />
 
@@ -206,7 +215,7 @@ const Register = (): ReactElement =>
                             disabled={processing}
                             data-test="register-user-button"
                         >
-                            {processing && <Spinner className="mx-5" />}
+                            {processing && <Spinner />}
                             {processing ? t ("registering") : t ("create_account")}
                         </Button>
                     </div>
@@ -228,6 +237,11 @@ const pageOptions: PagePropsOptions = {
     namespaces: [ "auth", "common", ],
 };
 
-export const getServerSideProps: GetServerSideProps = buildGetServerSideProps (pageOptions);
+export { pageAuth, };
+
+export const getServerSideProps: GetServerSideProps = buildGetServerSideProps ({
+    ... pageOptions,
+    pageAuth,
+});
 
 export default Register;

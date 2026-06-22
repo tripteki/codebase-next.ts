@@ -1,25 +1,20 @@
-import Echo from "laravel-echo";
 import { getSession, } from "next-auth/react";
 import { Session, } from "next-auth";
-import { createEcho, } from "@/libs/echo";
-
-type Detail =
-{
-    apiUrl?: string;
-    reverbAppKey?: string;
-    reverbHost?: string;
-    reverbPort?: number;
-    reverbScheme?: string;
-};
+import {
+    createRealtimeClient,
+    type RealtimeClient,
+} from "@/libs/realtime-client";
+import type { RealtimeConnectionConfig, } from "@/libs/realtime-config";
 
 export const socket = async (
-    detail?: Detail
+    detail?: Partial<RealtimeConnectionConfig>,
+    session?: Session | null
 ): Promise<{
     isLoading: boolean;
     isLoaded: boolean;
     isError: boolean;
     isSuccess: boolean;
-    data: Echo<any> | null;
+    data: RealtimeClient | null;
     error: any;
 }> =>
 {
@@ -27,15 +22,17 @@ export const socket = async (
     let isLoaded: boolean = false;
     let isError: boolean = false;
     let isSuccess: boolean = false;
-    let data: Echo<any> | null = null;
+    let data: RealtimeClient | null = null;
     let error: any = null;
 
     try
     {
-        const session: Session | null = await getSession ();
-        const token: string = (session as any)?.accessToken ?? (session as any)?.jwt ?? "";
+        const resolvedSession: Session | null = session ?? await getSession ();
+        const token: string = (resolvedSession as any)?.accessToken
+            ?? (resolvedSession as any)?.jwt
+            ?? "";
 
-        data = createEcho (token, detail);
+        data = createRealtimeClient (token, detail);
         isSuccess = true;
     }
     catch (thrower: any)

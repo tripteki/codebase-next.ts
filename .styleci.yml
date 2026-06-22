@@ -1,7 +1,7 @@
 php:
     risky: true
     version: 8.1
-    preset: laravel
+    preset: psr12
     finder:
         exclude:
             - ".git"

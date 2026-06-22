@@ -1,11 +1,11 @@
 import { GetServerSideProps, } from "next";
-import { publicRuntimeConfig, } from "@/libs/runtime-config";
 import { ReactElement, FormEvent, useState, ChangeEvent, useEffect, } from "react";
 import { useRouter, } from "next/router";
 import Head from "next/head";
 import { useTranslation, } from "next-i18next/pages";
 
 import AuthLayout from "@/layouts/auth/auth-layout";
+import AlertError from "@/components/alert-error";
 import InputError from "@/components/input-error";
 import { Button, } from "@/components/ui/button";
 import { Input, } from "@/components/ui/input";
@@ -13,8 +13,10 @@ import { Label, } from "@/components/ui/label";
 import { Spinner, } from "@/components/ui/spinner";
 import { buildGetServerSideProps, } from "@/libs/page-props.server";
 import { type PagePropsOptions, } from "@/libs/page-props.shared";
+import { pageAuth, } from "@/page-auth/auth/reset-password/[email]";
+import { parseApiErrors, } from "@/libs/parse-api-errors";
 import { formatPageTitle, } from "@/libs/page-title";
-import { call, } from "@/libs/call";
+import { cn, } from "@/libs/utils";
 
 
 interface ResetPasswordProps
@@ -58,75 +60,45 @@ const ResetPassword = ({
 
         try
         {
-            const url = `/reset-password/${data.email}`;
-            const params: Record<string, string> = {};
-
-            if (data.signed)
-            {
-                params.signed = data.signed;
-            }
-
-            const response = await call ({
-                baseUrl: publicRuntimeConfig.authURL,
-                url,
+            const response = await fetch ("/api/auth/reset-password", {
                 method: "POST",
-                data: {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify ({
+                    email: data.email,
+                    signed: data.signed,
                     password: data.password,
                     password_confirmation: data.password_confirmation,
-                },
-                params,
+                }),
             });
+            const payload = await response.json ();
 
-            if (response.isError)
+            if (! response.ok)
             {
-                const axiosError = response.error as any;
+                setErrors (parseApiErrors (payload, t ("something_went_wrong")));
 
-                if (axiosError?.response?.data)
-                {
-                    if (axiosError.response.data.errors)
-                    {
-                        setErrors (axiosError.response.data.errors);
-                    }
-                    else if (axiosError.response.data.message)
-                    {
-                        setErrors ({ password: axiosError.response.data.message, });
-                    }
-                    else if (typeof axiosError.response.data === "string")
-                    {
-                        setErrors ({ password: axiosError.response.data, });
-                    }
-                    else
-                    {
-                        setErrors ({ password: t ("something_went_wrong"), });
-                    }
-                }
-                else
-                {
-                    setErrors ({ password: t ("something_went_wrong"), });
-                }
+                return;
             }
-            else if (response.isSuccess)
+
+            if (payload?.errors)
             {
-                if (typeof response.data === "string")
-                {
-                    setErrors ({ password: response.data, });
-                }
-                else if (response.data?.errors)
-                {
-                    setErrors (response.data.errors);
-                }
-                else if (response.data && typeof response.data === "object")
-                {
-                    router.push ({
-                        pathname: "/admin/auth/login",
-                        query: { status: t ("password_reset"), },
-                    });
-                }
-                else
-                {
-                    setErrors ({ password: t ("something_went_wrong"), });
-                }
+                setErrors (parseApiErrors (payload, t ("something_went_wrong")));
+
+                return;
             }
+
+            if (payload?.success)
+            {
+                router.push ({
+                    pathname: "/admin/auth/login",
+                    query: { status: t ("password_reset"), },
+                });
+
+                return;
+            }
+
+            setErrors ({ password: t ("something_went_wrong"), });
         }
         catch (error)
         {
@@ -148,7 +120,9 @@ const ResetPassword = ({
                 title={t ("reset_password_title")}
                 description={t ("reset_password_description")}
             >
-                <form onSubmit={submit}>
+                <form onSubmit={submit} noValidate>
+                    <AlertError message={errors.general} />
+
                     <div className="grid gap-6">
                         <div className="grid gap-2">
                             <Label htmlFor="email">{t ("email")}</Label>
@@ -175,9 +149,13 @@ const ResetPassword = ({
                                     setData ((prev) => ({ ... prev, password: e.target.value, }))
                                 }
                                 autoComplete="new-password"
-                                className="mt-1 block w-full"
                                 autoFocus
                                 placeholder={t ("password_placeholder")}
+                                aria-invalid={!! errors.password}
+                                className={cn (
+                                    "mt-1 block w-full",
+                                    errors.password && "border-destructive focus-visible:ring-destructive/30"
+                                )}
                             />
                             <InputError message={errors.password} />
                         </div>
@@ -195,8 +173,12 @@ const ResetPassword = ({
                                     setData ((prev) => ({ ... prev, password_confirmation: e.target.value, }))
                                 }
                                 autoComplete="new-password"
-                                className="mt-1 block w-full"
                                 placeholder={t ("password_confirmation_placeholder")}
+                                aria-invalid={!! errors.password_confirmation}
+                                className={cn (
+                                    "mt-1 block w-full",
+                                    errors.password_confirmation && "border-destructive focus-visible:ring-destructive/30"
+                                )}
                             />
                             <InputError message={errors.password_confirmation} />
                         </div>
@@ -207,7 +189,7 @@ const ResetPassword = ({
                             disabled={processing}
                             data-test="reset-password-button"
                         >
-                            {processing && <Spinner className="mx-5" />}
+                            {processing && <Spinner />}
                             {processing ? t ("resetting") : t ("reset_password")}
                         </Button>
                     </div>
@@ -222,8 +204,11 @@ const pageOptions: PagePropsOptions = {
     namespaces: [ "auth", "common", ],
 };
 
+export { pageAuth, };
+
 export const getServerSideProps: GetServerSideProps = buildGetServerSideProps ({
     ... pageOptions,
+    pageAuth,
     requireParams: [ "email", ],
 });
 

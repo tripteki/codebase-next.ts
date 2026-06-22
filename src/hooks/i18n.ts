@@ -1,6 +1,5 @@
-import { useRouter, } from "next/router";
 import { useTranslation, } from "next-i18next/pages";
-import { Dispatch, SetStateAction, useCallback, useEffect, useState, } from "react";
+import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState, } from "react";
 
 import {
     resolveLocale,
@@ -23,33 +22,46 @@ export type TranslationType =
 
 export const useLocale = (): LocaleType =>
 {
-    const router = useRouter ();
     const { i18n, } = useTranslation ();
     const [ currentLocale, setCurrentLocaleState, ] = useState<AppLocale> ((): AppLocale =>
         resolveLocale (i18n.language)
     );
+    const currentLocaleRef = useRef (currentLocale);
 
     useEffect ((): void =>
     {
-        setCurrentLocaleState (resolveLocale (i18n.language));
+        currentLocaleRef.current = currentLocale;
+    }, [ currentLocale, ]);
+
+    useEffect ((): void =>
+    {
+        const syncedLocale = resolveLocale (i18n.language);
+
+        currentLocaleRef.current = syncedLocale;
+        setCurrentLocaleState ((previousLocale: AppLocale): AppLocale =>
+            previousLocale === syncedLocale ? previousLocale : syncedLocale
+        );
     }, [ i18n.language, ]);
 
     const setCurrentLocale = useCallback ((nextLocale: SetStateAction<AppLocale>): void =>
     {
-        setCurrentLocaleState ((previousLocale: AppLocale): AppLocale =>
+        const resolvedLocale = resolveLocale (
+            typeof nextLocale === "function"
+                ? nextLocale (currentLocaleRef.current)
+                : nextLocale
+        );
+
+        if (resolvedLocale === currentLocaleRef.current)
         {
-            const resolvedLocale = resolveLocale (
-                typeof nextLocale === "function"
-                    ? nextLocale (previousLocale)
-                    : nextLocale
-            );
+            return;
+        }
 
-            setLocaleCookie (resolvedLocale);
-            router.reload ();
-
-            return resolvedLocale;
-        });
-    }, [ router, ]);
+        currentLocaleRef.current = resolvedLocale;
+        setLocaleCookie (resolvedLocale);
+        setCurrentLocaleState (resolvedLocale);
+        void i18n.changeLanguage (resolvedLocale);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     return {
         availableLocales: SUPPORTED_LOCALES,

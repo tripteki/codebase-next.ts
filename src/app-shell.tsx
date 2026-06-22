@@ -1,25 +1,42 @@
 import type { AppProps, } from "next/app";
 import { ReactElement, useEffect, } from "react";
-import { getSession, SessionProvider, } from "next-auth/react";
-import { useTranslation, } from "next-i18next/pages";
+import { getSession, useSession, } from "next-auth/react";
 import Head from "next/head";
-import { getClientLocale, } from "@/libs/i18n/locale";
+import NotificationShellExtras from "@/components/notifications/notification-shell-extras";
+import PwaInstallBanner from "@/components/pwa-install-banner";
+import { useSessionRefreshError, } from "@/hooks/use-session-refresh-error";
+import { applyBrandCss, } from "@/libs/apply-brand-css";
+import { attachPwaInstallListener, } from "@/libs/pwa-install";
+import { resolveBrandColors, } from "@/libs/branding";
+import { publicRuntimeConfig, } from "@/libs/runtime-config";
+
+const AuthenticatedExtras = (): ReactElement | null =>
+{
+    const { status, } = useSession ();
+
+    if (status !== "authenticated")
+    {
+        return null;
+    }
+
+    return <NotificationShellExtras />;
+};
 
 const AppShell = (
     { Component, pageProps, }: AppProps
 ): ReactElement =>
 {
-    const { i18n, } = useTranslation ();
+    useSessionRefreshError ();
 
     useEffect ((): void =>
     {
-        const locale = getClientLocale ();
+        applyBrandCss (document.documentElement, resolveBrandColors ());
+    }, []);
 
-        if (i18n.language !== locale)
-        {
-            void i18n.changeLanguage (locale);
-        }
-    }, [ i18n, ]);
+    useEffect (() =>
+    {
+        attachPwaInstallListener ();
+    }, []);
 
     useEffect (() =>
     {
@@ -41,33 +58,43 @@ const AppShell = (
 
     useEffect ((): void =>
     {
-        if (process.env.NODE_ENV !== "production" || ! ("serviceWorker" in navigator))
+        if (! ("serviceWorker" in navigator))
         {
             return;
         }
 
-        navigator.serviceWorker.register ("/sw.js")
-                .then ((registration: ServiceWorkerRegistration) =>
+        if (process.env.NODE_ENV !== "production")
+        {
+            void navigator.serviceWorker.getRegistrations ().then ((registrations) =>
+            {
+                for (const registration of registrations)
                 {
-                    console.log (registration);
-                })
-                .catch ((throwable: unknown) =>
-                {
-                    console.error (throwable);
-                });
+                    void registration.unregister ();
+                }
+            });
+
+            return;
+        }
+
+        void navigator.serviceWorker.register ("/sw.js");
     }, []);
 
+    const formattedAppName =
+        publicRuntimeConfig.appName.charAt (0).toUpperCase () +
+        publicRuntimeConfig.appName.slice (1);
+
     return (
-        <SessionProvider
-            refetchInterval={50 * 60}
-            session={pageProps.session}
-        >
+        <>
             <Head>
                 <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no, user-scalable=no, viewport-fit=cover" />
+                <meta name="apple-mobile-web-app-title" content={formattedAppName} />
+                <meta name="application-name" content={formattedAppName} />
             </Head>
 
+            <PwaInstallBanner />
+            <AuthenticatedExtras />
             <Component {... pageProps} />
-        </SessionProvider>
+        </>
     );
 };
 

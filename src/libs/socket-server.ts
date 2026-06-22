@@ -1,24 +1,18 @@
-import Echo from "laravel-echo";
-import { createEcho, } from "@/libs/echo";
-
-type Detail =
-{
-    apiUrl?: string;
-    reverbAppKey?: string;
-    reverbHost?: string;
-    reverbPort?: number;
-    reverbScheme?: string;
-};
+import {
+    createRealtimeClient,
+    type RealtimeClient,
+} from "@/libs/realtime-client";
+import type { RealtimeConnectionConfig, } from "@/libs/realtime-config";
 
 export const socketServer = async (
-    detail?: Detail,
+    detail?: Partial<RealtimeConnectionConfig>,
     token?: string
 ): Promise<{
     isLoading: boolean;
     isLoaded: boolean;
     isError: boolean;
     isSuccess: boolean;
-    data: Echo<any> | null;
+    data: RealtimeClient | null;
     error: any;
 }> =>
 {
@@ -26,12 +20,12 @@ export const socketServer = async (
     let isLoaded: boolean = false;
     let isError: boolean = false;
     let isSuccess: boolean = false;
-    let data: Echo<any> | null = null;
+    let data: RealtimeClient | null = null;
     let error: any = null;
 
     try
     {
-        data = createEcho (token ?? "", detail);
+        data = createRealtimeClient (token ?? "", detail);
         isSuccess = true;
     }
     catch (thrower: any)

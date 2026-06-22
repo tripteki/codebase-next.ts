@@ -14,6 +14,58 @@ export type ApiErrorPayload = {
 
 const LOCATION_PREFIXES = new Set ([ "body", "query", "path", "header", "cookie", ]);
 
+const WRAPPER_KEYS = new Set ([ "errors", "detail", "message", "success", ]);
+
+const unwrapErrorPayload = (
+    data: Record<string, unknown>
+): ApiErrorPayload =>
+{
+    const nested = data.data;
+
+    if (
+        nested
+        && typeof nested === "object"
+        && ! Array.isArray (nested)
+        && (
+            "errors" in nested
+            || "success" in nested
+            || "detail" in nested
+            || "message" in nested
+        )
+    )
+    {
+        return nested as ApiErrorPayload;
+    }
+
+    return data as ApiErrorPayload;
+};
+
+const isFieldErrorsRecord = (
+    data: Record<string, unknown>
+): data is Record<string, string | string[]> =>
+{
+    const keys = Object.keys (data);
+
+    if (keys.length === 0)
+    {
+        return false;
+    }
+
+    if (keys.some ((key) => WRAPPER_KEYS.has (key)))
+    {
+        return false;
+    }
+
+    return Object.values (data).every ((value) =>
+        typeof value === "string"
+        || (
+            Array.isArray (value)
+            && value.length > 0
+            && value.every ((item) => typeof item === "string")
+        )
+    );
+};
+
 export const resolveFieldFromLoc = (loc?: Array<string | number>): string =>
 {
     if (! loc || loc.length === 0)
@@ -29,6 +81,51 @@ export const resolveFieldFromLoc = (loc?: Array<string | number>): string =>
     }
 
     return parts.join (".");
+};
+
+const PASSWORD_MISMATCH_PATTERN = /password confirmation|password_confirmation|passwords? do not match|must match|mismatch/i;
+
+const resolveDetailFields = (item: ApiValidationDetail): string[] =>
+{
+    const field = resolveFieldFromLoc (item.loc);
+
+    if (field !== "general")
+    {
+        return [ field, ];
+    }
+
+    const message = item.msg ?? "";
+
+    if (
+        PASSWORD_MISMATCH_PATTERN.test (message)
+        || item.type === "value_error.confirmed"
+    )
+    {
+        return [ "password_confirmation", ];
+    }
+
+    return [ field, ];
+};
+
+export const focusPasswordMatchError = (
+    errors: Record<string, string>,
+    field: "password" | "password_confirmation"
+): Record<string, string> =>
+{
+    const message = errors.password_confirmation || errors.password;
+
+    if (! message)
+    {
+        return errors;
+    }
+
+    const next = { ... errors, };
+
+    delete next.password;
+    delete next.password_confirmation;
+    next[field] = message;
+
+    return next;
 };
 
 export const normalizeErrorsRecord = (
@@ -65,15 +162,16 @@ export const parseDetailArray = (
             continue;
         }
 
-        const field = resolveFieldFromLoc (item.loc);
-
-        if (result[field])
+        for (const targetField of resolveDetailFields (item))
         {
-            result[field] = `${result[field]} ${item.msg}`;
-        }
-        else
-        {
-            result[field] = item.msg;
+            if (result[targetField])
+            {
+                result[targetField] = `${result[targetField]} ${item.msg}`;
+            }
+            else
+            {
+                result[targetField] = item.msg;
+            }
         }
     }
 
@@ -95,28 +193,35 @@ export const parseApiErrors = (
         return { general: data, };
     }
 
-    if (data.errors && typeof data.errors === "object")
+    const payload = unwrapErrorPayload (data as Record<string, unknown>);
+
+    if (isFieldErrorsRecord (payload as Record<string, unknown>))
     {
-        return normalizeErrorsRecord (data.errors);
+        return normalizeErrorsRecord (payload as Record<string, string | string[]>);
     }
 
-    if (Array.isArray (data.detail))
+    if (payload.errors && typeof payload.errors === "object")
     {
-        const parsed = parseDetailArray (data.detail);
+        return normalizeErrorsRecord (payload.errors);
+    }
+
+    if (Array.isArray (payload.detail))
+    {
+        const parsed = parseDetailArray (payload.detail);
 
         return Object.keys (parsed).length > 0
             ? parsed
             : { general: fallback, };
     }
 
-    if (typeof data.detail === "string")
+    if (typeof payload.detail === "string" && payload.detail.length > 0)
     {
-        return { general: data.detail, };
+        return { general: payload.detail, };
     }
 
-    if (typeof data.message === "string")
+    if (typeof payload.message === "string" && payload.message.length > 0)
     {
-        return { general: data.message, };
+        return { general: payload.message, };
     }
 
     return { general: fallback, };

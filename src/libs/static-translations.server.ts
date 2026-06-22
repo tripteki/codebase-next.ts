@@ -1,5 +1,5 @@
-import { serverSideTranslations, } from "next-i18next/pages/serverSideTranslations";
-
+import { resolveLocale, } from "./i18n/locale";
+import { loadPageTranslations, } from "./i18n/load-translations.server";
 import { staticLocale, type PagePropsOptions, } from "./page-props.shared";
 
 export const loadStaticPageProps = async (
@@ -7,5 +7,5 @@ export const loadStaticPageProps = async (
 ): Promise<Record<string, unknown>> =>
 ({
     title: options.title,
-    ... (await serverSideTranslations (staticLocale, options.namespaces)),
+    ... (await loadPageTranslations (resolveLocale (staticLocale), options.namespaces)),
 });

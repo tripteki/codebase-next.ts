@@ -3,7 +3,8 @@ import { publicRuntimeConfig, } from "@/libs/runtime-config";
 
 import { getServerTranslation, getLocaleFromRequest, } from "@/libs/i18n/server";
 import { callServer, } from "@/libs/call-server";
-import { parseApiErrors, } from "@/libs/parse-api-errors";
+import { validatePasswordConfirmation, } from "@/libs/auth-response";
+import { focusPasswordMatchError, parseApiErrors, } from "@/libs/parse-api-errors";
 
 
 const handler = async (
@@ -22,6 +23,21 @@ const handler = async (
     const { name, email, password, password_confirmation, } = req.body;
     const locale = getLocaleFromRequest (req);
     const t = getServerTranslation (locale, "auth");
+
+    const passwordMismatch = validatePasswordConfirmation (
+        password,
+        password_confirmation,
+        t ("password_mismatch")
+    );
+
+    if (passwordMismatch)
+    {
+        res.status (422).json ({
+            success: false,
+            errors: focusPasswordMatchError (passwordMismatch, "password_confirmation"),
+        });
+        return;
+    }
 
     const response = await callServer ({
         baseUrl: publicRuntimeConfig.authURL,

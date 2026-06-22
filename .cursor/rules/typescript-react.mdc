@@ -1,0 +1,79 @@
+---
+description: TypeScript and React patterns for components, hooks, API, and realtime
+globs: "**/*.{ts,tsx}"
+alwaysApply: false
+---
+
+# TypeScript & React Patterns
+
+## Component architecture
+
+- Use **functional components** only
+- Extract reusable logic into `src/hooks/use-*.ts`
+- Layout components: suffix `.layout.tsx` (e.g. `header.layout.tsx`, `auth.layout.tsx`)
+- Page-specific components stay near their page; shared ones go in `src/components/`
+- shadcn/ui primitives live in `src/components/ui/` — do not edit generated files unless customizing
+
+### Alert components
+
+```tsx
+// Use the dedicated alert wrappers — do not raw-render shadcn Alert for app messages
+<AlertError message={error} />    // flex/grid, mb-4
+<AlertSuccess message={msg} />
+<AlertWarning message={warn} />
+```
+
+### Header components
+
+- `AppLogo` — manifest PNG, links to home
+- `I18nSwitcher` — flag-based locale switcher (far left of header actions)
+- `HeaderProfileLink` — avatar links to profile page
+- Notification bell icon color must match other header icons
+
+## Realtime abstraction
+
+Do not import Echo or socket.io directly in components. Use the shared client:
+
+```typescript
+import { createRealtimeClient, socket } from "@/libs/realtime-client";
+
+// REALTIME_DRIVER=echo  → Laravel Echo + Reverb
+// REALTIME_DRIVER=socketio → socket.io-client
+```
+
+- Notifications: `useNotificationBroadcast()` hook listens for `v1.user.admin.*` events
+- Subscribe/unsubscribe in `useEffect`; clean up on unmount
+
+## API integration
+
+- HTTP calls via axios instances in `src/libs/`
+- **Error response shapes** (backend-aligned):
+  - Validation: `{ detail: [{ loc, msg, type }] }` — HTTP 422
+  - General: `{ message: string }` — HTTP 4xx/5xx
+- **Pagination response:**
+  ```json
+  { "data": [...], "meta": { "total", "per_page", "current_page", "last_page" }, "links": { "first", "last", "prev", "next" } }
+  ```
+- Refresh token failure → auto-logout (clear session, redirect to login)
+
+## Redux patterns
+
+- Slices in `src/stores/` — one slice per domain
+- Use typed hooks (`useAppDispatch`, `useAppSelector`) if configured
+- Do not duplicate server state that NextAuth session already provides
+
+## TypeScript rules
+
+- Strict mode enabled — no `any` without justification
+- Shared API types in `src/types/` (especially `types/admin/`)
+- Props interfaces colocated with component or in `src/types/`
+
+## Common pitfalls (avoid)
+
+| Problem | Fix |
+|---------|-----|
+| `session.error` is `undefined` in GSSP | Return `null` in session callback; serialize with `serializePropsValue` |
+| Dashboard accessible after logout | Ensure logout hits `POST /api/auth/logout`; proxy checks access token |
+| Business logic in `pages/` | Move to `src/hooks/` or `src/libs/` |
+| Direct Echo/socket.io in components | Use `realtime-client.ts` abstraction |
+| Missing i18n on SSR page | Wrap GSSP with `buildGetServerSideProps` + `serverSideTranslations` |

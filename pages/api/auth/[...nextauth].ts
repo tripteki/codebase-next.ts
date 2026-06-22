@@ -3,6 +3,8 @@ import { publicRuntimeConfig, serverRuntimeConfig, } from "@/libs/runtime-config
 import CredentialsProvider from "next-auth/providers/credentials";
 
 import { callServer, } from "@/libs/call-server";
+import { buildAuthLoginPayload, } from "@/libs/auth-login-payload";
+import { isAuthTokenResponse, parseAuthLoginFailure, } from "@/libs/auth-response";
 import { parseApiErrors, } from "@/libs/parse-api-errors";
 import { getServerTranslation, getLocaleFromRequest, } from "@/libs/i18n/server";
 import { refreshAccessToken, } from "@/libs/refresh-access-token";
@@ -18,6 +20,30 @@ const createAuthOptions = (locale: string = "en"): NextAuthOptions =>
             maxAge: 30 * 24 * 60 * 60,
         },
         secret: serverRuntimeConfig.secret,
+        events: {
+            async signOut ({ token, })
+            {
+                const accessToken = (token as any)?.accessToken ?? (token as any)?.jwt;
+
+                if (! accessToken)
+                {
+                    return;
+                }
+
+                try
+                {
+                    await callServer ({
+                        baseUrl: publicRuntimeConfig.authURL,
+                        url: "/logout",
+                        method: "POST",
+                    }, accessToken);
+                }
+                catch
+                {
+                    //
+                }
+            },
+        },
         callbacks: {
             async jwt ({ token, user, })
             {
@@ -57,10 +83,11 @@ const createAuthOptions = (locale: string = "en"): NextAuthOptions =>
             {
                 if (token)
                 {
-                    (session as any).jwt = token?.accessToken || token?.jwt;
-                    (session as any).accessToken = token?.accessToken;
-                    (session as any).refreshToken = token?.refreshToken;
-                    (session as any).user = token?.user;
+                    (session as any).jwt = token?.accessToken || token?.jwt || null;
+                    (session as any).accessToken = token?.accessToken ?? null;
+                    (session as any).refreshToken = token?.refreshToken ?? null;
+                    (session as any).user = token?.user ?? null;
+                    (session as any).error = (token as any).error ?? null;
                     if (session.user)
                     {
                         (session.user as any).id = token.id as string;
@@ -81,19 +108,16 @@ const createAuthOptions = (locale: string = "en"): NextAuthOptions =>
                 async authorize (credentials)
                 {
                     const identifier = credentials?.identifier || "";
-                    const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test (identifier);
-
-                    const formData = {
-                        identifierKey: isEmail ? "email" : "username",
-                        identifierValue: identifier,
-                        password: credentials?.password,
-                    };
 
                     let tokenResponse = await callServer ({
                         baseUrl: publicRuntimeConfig.authURL,
                         url: "/login",
                         method: "POST",
-                        data: formData,
+                        data: buildAuthLoginPayload ({
+                            identifier,
+                            password: credentials?.password || "",
+                            remember: credentials?.remember === "true",
+                        }),
                     });
 
                     if (tokenResponse.isError)
@@ -104,14 +128,24 @@ const createAuthOptions = (locale: string = "en"): NextAuthOptions =>
                         )));
                     }
 
-                    const accessToken = tokenResponse.data?.accessToken;
-                    const refreshToken = tokenResponse.data?.refreshToken;
-                    const accessTokenTtl = tokenResponse.data?.accessTokenTtl ?? 3600;
+                    const loginFailure = parseAuthLoginFailure (
+                        tokenResponse.data,
+                        t ("authentication_failed")
+                    );
 
-                    if (! accessToken)
+                    if (loginFailure)
+                    {
+                        throw new Error (JSON.stringify (loginFailure));
+                    }
+
+                    if (! isAuthTokenResponse (tokenResponse.data))
                     {
                         throw new Error (t ("authentication_failed"));
                     }
+
+                    const accessToken = tokenResponse.data.accessToken;
+                    const refreshToken = tokenResponse.data.refreshToken;
+                    const accessTokenTtl = tokenResponse.data.accessTokenTtl ?? 3600;
 
                     let userResponse = await callServer ({
                         baseUrl: publicRuntimeConfig.authURL,

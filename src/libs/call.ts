@@ -1,4 +1,5 @@
 import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosRequestConfig, AxiosResponse, } from "axios";
+import { resolveApiBaseUrl, } from "@/libs/api-base";
 import { publicRuntimeConfig, } from "@/libs/runtime-config";
 import { getSession, } from "next-auth/react";
 import { Session, } from "next-auth";
@@ -9,22 +10,24 @@ type Detail =
     url: string;
     headers?: Record<string, any>;
     method?: "GET" | "DELETE" | "POST" | "PUT" | "PATCH";
-    data?: Record<string, any>;
+    data?: Record<string, any> | FormData;
     params?: Record<string, any>;
 };
 
-export const call = async (
-    detail: Detail
-): Promise<{
+export type CallResult = {
     isLoading: boolean;
     isLoaded: boolean;
     isError: boolean;
     isSuccess: boolean;
     data: any;
     error: any;
-}> =>
+};
+
+export const call = async (
+    detail: Detail
+): Promise<CallResult> =>
 {
-    const baseURL: string = detail?.baseUrl ?? publicRuntimeConfig.baseURL;
+    const baseURL: string = detail?.baseUrl ?? resolveApiBaseUrl (publicRuntimeConfig);
 
     let isLoading: boolean = true;
     let isLoaded: boolean = false;

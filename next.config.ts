@@ -29,6 +29,10 @@ module.exports = {
                     source: "/manifest.webmanifest",
                     destination: "/api/manifest",
                 },
+                {
+                    source: "/api/pwa/manifest",
+                    destination: "/api/manifest",
+                },
             ];
         },
     }),

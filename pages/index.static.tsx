@@ -1,12 +1,12 @@
 import { GetStaticProps, } from "next";
 
-import { type PagePropsOptions, } from "@/libs/page-props.shared";
+import { type PagePropsOptions, withLayoutNamespaces, } from "@/libs/page-props.shared";
 
 export { default, } from "./index.page";
 
 const pageOptions: PagePropsOptions = {
     title: "Index",
-    namespaces: [ "common", ],
+    namespaces: withLayoutNamespaces ([]),
 };
 
 export const getStaticProps: GetStaticProps = async () =>

@@ -5,6 +5,8 @@ import { ReactElement, } from "react";
 import manifest, { url, } from "@/libs/manifest";
 import { DEFAULT_LOCALE, getLocaleFromRequest, type AppLocale, } from "@/libs/i18n/locale";
 import { pwaSplashLinks, } from "@/libs/pwa-splash-links";
+import { defaultBrandColors, } from "@/libs/branding";
+import { brandCssInlineStyle, } from "@/libs/apply-brand-css";
 
 const { short_name, description, }: MetadataRoute.Manifest = manifest ();
 
@@ -19,9 +21,14 @@ const Page = (
     return (
         <Html lang={props.locale}>
             <Head>
+                <style
+                    dangerouslySetInnerHTML={{
+                        __html: `:root { ${brandCssInlineStyle (defaultBrandColors)} }`,
+                    }}
+                />
                 <meta name="robots" content="index, follow" />
                 <meta name="description" content={description} />
-                <meta name="theme-color" content="#FFFFFF" />
+                <meta name="theme-color" content={defaultBrandColors.primary} />
                 <meta name="mobile-web-app-capable" content="yes" />
                 <meta name="apple-mobile-web-app-capable" content="yes" />
                 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -35,7 +42,7 @@ const Page = (
                 <link rel="canonical" href={url} />
                 <link rel="icon" href="/favicon.ico" sizes="any" />
                 <link rel="apple-touch-icon" href="/manifest/icon-192x192.png" sizes="192x192" />
-                <link rel="manifest" href="/manifest.webmanifest" />
+                <link rel="manifest" href={process.env.NEXT_PUBLIC_BUILD_STATIC === "true" ? "/manifest.webmanifest" : "/api/pwa/manifest"} />
                 {pwaSplashLinks.map ((link) => (
                     <link
                         key={link.href}

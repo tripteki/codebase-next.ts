@@ -62,6 +62,9 @@
       ],
       "@/assets/*": [
         "./src/assets/*"
+      ],
+      "@/page-auth/*": [
+        "./src/page-auth/*"
       ]
     }
   },
@@ -73,6 +76,8 @@
     "public/.next/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "tests",
+    "playwright.config.ts"
   ]
 }

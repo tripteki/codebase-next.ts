@@ -7,6 +7,7 @@ import { useTranslation, } from "next-i18next/pages";
 
 import AuthLayout from "@/layouts/auth/auth-layout";
 import AlertError from "@/components/alert-error";
+import AlertSuccess from "@/components/alert-success";
 import InputError from "@/components/input-error";
 import TextLink from "@/components/text-link";
 import { Button, } from "@/components/ui/button";
@@ -17,18 +18,20 @@ import { Spinner, } from "@/components/ui/spinner";
 import { useRequireGuest, } from "@/hooks/auth-guard";
 import { buildGetServerSideProps, } from "@/libs/page-props.server";
 import { type PagePropsOptions, } from "@/libs/page-props.shared";
+import { pageAuth, } from "@/page-auth/admin/auth/login";
 import { formatPageTitle, } from "@/libs/page-title";
 import { cn, } from "@/libs/utils";
+import { parseApiErrors, } from "@/libs/parse-api-errors";
 import { type LoginProps, } from "@/types/admin/auth";
 
 const Login = ({
     status,
     canResetPassword = true,
     canRegister = true,
-}: LoginProps): ReactElement =>
+}: LoginProps): ReactElement | null =>
 {
     const router = useRouter ();
-    useRequireGuest ();
+    const canRender = useRequireGuest ();
     const { t, } = useTranslation ("auth");
     const [ data, setData, ] = useState ({
         identifier: "",
@@ -59,14 +62,7 @@ const Login = ({
                 try
                 {
                     const errorData = JSON.parse (result.error);
-                    if (typeof errorData === "object" && errorData !== null)
-                    {
-                        setErrors (errorData);
-                    }
-                    else
-                    {
-                        setErrors ({ general: result.error, });
-                    }
+                    setErrors (parseApiErrors (errorData, t ("authentication_failed")));
                 }
                 catch
                 {
@@ -91,6 +87,11 @@ const Login = ({
     const identifierError = errors.email || errors.identifier;
     const passwordError = errors.password;
 
+    if (! canRender)
+    {
+        return null;
+    }
+
     return (
         <>
             <Head>
@@ -104,7 +105,9 @@ const Login = ({
                 <form
                     onSubmit={submit}
                     className="flex flex-col gap-6"
+                    noValidate
                 >
+                    <AlertSuccess message={displayStatus} />
                     <AlertError message={errors.general} />
 
                     <div className="grid gap-6">
@@ -112,7 +115,7 @@ const Login = ({
                             <Label htmlFor="email">{t ("email_address")}</Label>
                             <Input
                                 id="email"
-                                type="email"
+                                type="text"
                                 name="identifier"
                                 value={data.identifier}
                                 onChange={(e: ChangeEvent<HTMLInputElement>): void =>
@@ -121,7 +124,7 @@ const Login = ({
                                 required
                                 autoFocus
                                 tabIndex={1}
-                                autoComplete="email"
+                                autoComplete="username"
                                 placeholder={t ("email_placeholder")}
                                 aria-invalid={!! identifierError}
                                 className={cn (
@@ -184,7 +187,7 @@ const Login = ({
                             disabled={processing}
                             data-test="login-button"
                         >
-                            {processing && <Spinner className="mx-5" />}
+                            {processing && <Spinner />}
                             {processing ? t ("logging_in") : t ("log_in")}
                         </Button>
                     </div>
@@ -201,12 +204,6 @@ const Login = ({
                         </div>
                     )}
                 </form>
-
-                {displayStatus && (
-                    <div className="mb-4 text-center text-sm font-medium text-green-600">
-                        {displayStatus}
-                    </div>
-                )}
             </AuthLayout>
         </>
     );
@@ -217,9 +214,11 @@ const pageOptions: PagePropsOptions = {
     namespaces: [ "auth", "common", ],
 };
 
+export { pageAuth, };
+
 export const getServerSideProps: GetServerSideProps = buildGetServerSideProps ({
     ... pageOptions,
-    requireGuest: true,
+    pageAuth,
 });
 
 export default Login;

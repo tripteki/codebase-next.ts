@@ -1,29 +1,43 @@
-import { ReactElement, type ChangeEvent, } from "react";
+import { ReactElement, } from "react";
 
+import { Button, } from "@/components/ui/button";
 import { type AppLocale, } from "@/libs/i18n/locale";
+import { LOCALE_FLAGS, LOCALE_LABELS, } from "@/libs/i18n/locale-flags";
 import { type LocaleType, useLocale, } from "@/hooks/i18n";
+import { cn, } from "@/libs/utils";
 
 const I18nSwitcher = (): ReactElement =>
 {
     const { availableLocales, currentLocale, setCurrentLocale, }: LocaleType = useLocale ();
 
-    const handleChange = (e: ChangeEvent<HTMLSelectElement>): void =>
-    {
-        setCurrentLocale (e.target.value as AppLocale);
-    };
-
     return (
-        <select
-            onChange={handleChange}
-            value={currentLocale}
-            className="px-3 py-2 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+        <div
+            className="flex items-center gap-0.5 rounded-md border border-input bg-background p-0.5"
+            role="group"
         >
-            {availableLocales.map ((langOption: AppLocale) => (
-                <option key={`lang-${langOption}`} value={langOption}>
-                    {langOption.toUpperCase ()}
-                </option>
-            ))}
-        </select>
+            {availableLocales.map ((langOption: AppLocale) =>
+            {
+                const isActive = currentLocale === langOption;
+
+                return (
+                    <Button
+                        key={`lang-${langOption}`}
+                        type="button"
+                        variant={isActive ? "secondary" : "ghost"}
+                        size="icon"
+                        className={cn (
+                            "h-8 w-8 text-base leading-none",
+                            ! isActive && "opacity-70 hover:opacity-100"
+                        )}
+                        aria-label={LOCALE_LABELS[langOption]}
+                        aria-pressed={isActive}
+                        onClick={(): void => setCurrentLocale (langOption)}
+                    >
+                        <span aria-hidden="true">{LOCALE_FLAGS[langOption]}</span>
+                    </Button>
+                );
+            })}
+        </div>
     );
 };
 

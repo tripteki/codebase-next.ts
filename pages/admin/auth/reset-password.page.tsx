@@ -5,6 +5,7 @@ import Head from "next/head";
 import { useTranslation, } from "next-i18next/pages";
 
 import AuthLayout from "@/layouts/auth/auth-layout";
+import AlertError from "@/components/alert-error";
 import InputError from "@/components/input-error";
 import { Button, } from "@/components/ui/button";
 import { Input, } from "@/components/ui/input";
@@ -12,8 +13,11 @@ import { Label, } from "@/components/ui/label";
 import { Spinner, } from "@/components/ui/spinner";
 import { buildGetServerSideProps, } from "@/libs/page-props.server";
 import { type PagePropsOptions, } from "@/libs/page-props.shared";
+import { pageAuth, } from "@/page-auth/admin/auth/reset-password";
 import { type ResetPasswordProps, } from "@/types/admin/auth";
 import { formatPageTitle, } from "@/libs/page-title";
+import { parseApiErrors, focusPasswordMatchError, } from "@/libs/parse-api-errors";
+import { cn, } from "@/libs/utils";
 
 
 const ResetPassword = ({
@@ -65,25 +69,21 @@ const ResetPassword = ({
 
             if (! response.ok)
             {
-                if (payload?.errors)
-                {
-                    setErrors (payload.errors);
-                }
-                else if (payload?.message)
-                {
-                    setErrors ({ password: payload.message, });
-                }
-                else
-                {
-                    setErrors ({ password: t ("something_went_wrong"), });
-                }
+                setErrors (focusPasswordMatchError (
+                    parseApiErrors (payload, t ("something_went_wrong")),
+                    "password"
+                ));
 
                 return;
             }
 
             if (payload?.errors)
             {
-                setErrors (payload.errors);
+                setErrors (focusPasswordMatchError (
+                    parseApiErrors (payload, t ("something_went_wrong")),
+                    "password"
+                ));
+
                 return;
             }
 
@@ -118,7 +118,9 @@ const ResetPassword = ({
                 title={t ("reset_password_title")}
                 description={t ("reset_password_description")}
             >
-                <form onSubmit={submit}>
+                <form onSubmit={submit} noValidate>
+                    <AlertError message={errors.general} />
+
                     <div className="grid gap-6">
                         <div className="grid gap-2">
                             <Label htmlFor="email">{t ("email")}</Label>
@@ -145,9 +147,13 @@ const ResetPassword = ({
                                     setData ((prev) => ({ ... prev, password: e.target.value, }))
                                 }
                                 autoComplete="new-password"
-                                className="mt-1 block w-full"
                                 autoFocus
                                 placeholder={t ("password_placeholder")}
+                                aria-invalid={!! errors.password}
+                                className={cn (
+                                    "mt-1 block w-full",
+                                    errors.password && "border-destructive focus-visible:ring-destructive/30"
+                                )}
                             />
                             <InputError message={errors.password} />
                         </div>
@@ -165,8 +171,12 @@ const ResetPassword = ({
                                     setData ((prev) => ({ ... prev, password_confirmation: e.target.value, }))
                                 }
                                 autoComplete="new-password"
-                                className="mt-1 block w-full"
                                 placeholder={t ("password_confirmation_placeholder")}
+                                aria-invalid={!! errors.password_confirmation}
+                                className={cn (
+                                    "mt-1 block w-full",
+                                    errors.password_confirmation && "border-destructive focus-visible:ring-destructive/30"
+                                )}
                             />
                             <InputError message={errors.password_confirmation} />
                         </div>
@@ -177,7 +187,7 @@ const ResetPassword = ({
                             disabled={processing}
                             data-test="reset-password-button"
                         >
-                            {processing && <Spinner className="mx-5" />}
+                            {processing && <Spinner />}
                             {processing ? t ("resetting") : t ("reset_password")}
                         </Button>
                     </div>
@@ -192,6 +202,11 @@ const pageOptions: PagePropsOptions = {
     namespaces: [ "auth", "common", ],
 };
 
-export const getServerSideProps: GetServerSideProps = buildGetServerSideProps (pageOptions);
+export { pageAuth, };
+
+export const getServerSideProps: GetServerSideProps = buildGetServerSideProps ({
+    ... pageOptions,
+    pageAuth,
+});
 
 export default ResetPassword;

@@ -2,7 +2,9 @@ import { NextApiRequest, NextApiResponse, } from "next";
 import { publicRuntimeConfig, } from "@/libs/runtime-config";
 
 import { getServerTranslation, getLocaleFromRequest, } from "@/libs/i18n/server";
+import { normalizeAuthEmailParam, } from "@/libs/auth-email";
 import { callServer, } from "@/libs/call-server";
+import { parseApiErrors, } from "@/libs/parse-api-errors";
 
 
 const handler = async (
@@ -18,7 +20,8 @@ const handler = async (
         return;
     }
 
-    const { email, signed, } = req.body;
+    const { email: rawEmail, signed, } = req.body;
+    const email = normalizeAuthEmailParam (String (rawEmail || ""));
     const locale = getLocaleFromRequest (req);
     const t = getServerTranslation (locale, "auth");
 
@@ -46,7 +49,7 @@ const handler = async (
 
     const response = await callServer ({
         baseUrl: publicRuntimeConfig.authURL,
-        url: `/verify-email/${email}`,
+        url: `/verify-email/${encodeURIComponent (email)}`,
         method: "POST",
         data: {},
         params: {
@@ -61,30 +64,13 @@ const handler = async (
         if (axiosError?.response)
         {
             const status = axiosError.response.status || 500;
-            let message = t ("verification_failed");
-            let errors: Record<string, string> = {};
-
-            if (status === 403)
-            {
-                message = t ("not_signed");
-            }
-            else if (axiosError.response.data?.message)
-            {
-                message = axiosError.response.data.message;
-            }
-            else if (typeof axiosError.response.data === "string")
-            {
-                message = axiosError.response.data;
-            }
-
-            if (axiosError.response.data?.errors)
-            {
-                errors = axiosError.response.data.errors;
-            }
+            const errors = parseApiErrors (
+                axiosError.response.data,
+                status === 403 ? t ("not_signed") : t ("verification_failed")
+            );
 
             res.status (status).json ({
                 success: false,
-                message,
                 errors,
             });
         }
