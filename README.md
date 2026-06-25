@@ -1,6 +1,6 @@
 <h1 align="center">Codebase Next.js</h1>
 
-Web frontend built with **Next.js 16** (Pages Router), **React 19**, **next-i18next 16**, **NextAuth.js 4**, **Tailwind CSS 4**, and **PWA** support. Consumes a backend-agnostic HTTP API via `NEXT_PUBLIC_*_URL` environment variables.
+Web frontend built with **Next.js 16** (Pages Router), **React 19**, **next-i18next 16**, **NextAuth.js 4**, **Tailwind CSS 4**, **Flowbite**, and **PWA** support. Consumes a backend-agnostic HTTP API via `NEXT_PUBLIC_*_URL` environment variables.
 
 ### Features
 
@@ -10,7 +10,7 @@ Web frontend built with **Next.js 16** (Pages Router), **React 19**, **next-i18n
 | 2 | Authentication | Login, register, forgot/reset password, verify email | NextAuth.js (Credentials) |
 | 3 | API proxy | Auth flows proxied to backend API | Next.js API routes |
 | 4 | I18N | English, Indonesian, Malay (cookie-based, no URL prefix) | next-i18next 16 + i18next 26 |
-| 5 | UI | Auth layout, dashboard, theme toggle | Tailwind CSS 4 + shadcn/ui |
+| 5 | UI | Auth layout, dashboard, theme toggle | Tailwind CSS 4 + Flowbite |
 | 6 | User & profile | `/users/me`, interests, password update | `useUserProfile` → REST API |
 | 7 | Notifications | List, read, delete, unread badge | `useNotifications` → `/api/v1/notifications/*` |
 | 8 | Real-time | Notifications + optional admin events | `useNotificationBroadcast` + Echo/Reverb or Socket.IO |
@@ -103,11 +103,29 @@ Output: `out/` (static HTML + assets). Suitable for CDN/static hosting without N
 npm run lint
 ```
 
-#### Add shadcn component
+### UI (Flowbite)
 
-```bash
-npm run component
-```
+- **CSS:** `src/styles/globals.css` — Tailwind v4 + Flowbite plugin + `brand-theme.css`
+- **Class tokens:** `src/libs/flowbite-classes.ts` (`fbCard`, `fbMuted`, `fbAlert*`, …)
+- **Components:** `src/components/flowbite/fb-*.tsx` — thin wrappers (`FbButton`, `FbInput`, `FbLabel`, `FbCheckbox`, `FbSpinner`, `FbApexChart`, `FbDataTable`, `FbWysiwyg`)
+- **Init:** `src/app-shell.tsx` calls `initFlowbite()` on `routeChangeComplete`
+- **Alerts:** use `AlertSuccess`, `AlertWarning`, `AlertError` — not raw Flowbite JS widgets
+- **Icons:** inline SVG in header/actions (no Lucide dependency)
+
+### Brand theme
+
+- **CSS variables:** `--brand-primary`, `--brand-secondary`, `--brand-tertiary` in `src/styles/brand-theme.css`
+- **Runtime:** `src/app-shell.tsx` applies colors from `src/libs/branding.ts`
+- **Override via env (optional):** `NEXT_PUBLIC_BRAND_PRIMARY`, `NEXT_PUBLIC_BRAND_SECONDARY`, `NEXT_PUBLIC_BRAND_TERTIARY` (hex)
+- **Charts:** `fb-apex-chart` reads brand colors from CSS variables at render time
+
+### Flowbite plugins (reusable wrappers)
+
+| Plugin | Deps | Component | Notes |
+|--------|------|-----------|-------|
+| Charts | `apexcharts`, `react-apexcharts` | `fb-apex-chart` | `src/libs/flowbite-chart-options.ts` — dark mode via `useTheme` |
+| Datatables | `simple-datatables` | `fb-data-table` | children = `<thead>` / `<tbody>`; pass `options` from [Flowbite datatables docs](https://flowbite.com/docs/plugins/datatables/) |
+| WYSIWYG | TipTap + `flowbite-typography` | `fb-wysiwyg` | `value` + `onChange` HTML; StarterKit toolbar |
 
 ### Routes
 
@@ -285,11 +303,12 @@ frontend/
 │   ├── api/auth/                  # NextAuth + auth API proxies
 │   └── auth/                      # Signed URL flows
 ├── src/
-│   ├── components/                # UI + i18n-switcher, theme-toggle
+│   ├── components/                # UI + flowbite/ + i18n-switcher, theme-toggle
 │   ├── hooks/                     # auth, i18n, theme
 │   ├── langs/                     # en, id, ms JSON
 │   ├── layouts/                   # header, footer, auth
-│   └── libs/                      # echo, realtime-client, call, runtime-config
+│   ├── libs/                      # echo, realtime-client, call, flowbite-classes
+│   └── styles/                    # globals.css, brand-theme.css
 ├── public/
 │   ├── manifest/                  # PWA icons + splash
 │   ├── favicon.ico

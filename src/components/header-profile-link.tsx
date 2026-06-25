@@ -3,7 +3,6 @@ import Link from "next/link";
 import { useSession, } from "next-auth/react";
 import { useTranslation, } from "next-i18next/pages";
 
-import { Avatar, AvatarFallback, AvatarImage, } from "@/components/ui/avatar";
 import { getUserInitials, } from "@/libs/user-initials";
 import type { UserMeDto, } from "@/types/admin/settings";
 
@@ -23,16 +22,19 @@ const HeaderProfileLink = (): ReactElement | null =>
             href="/admin/settings"
             aria-label={t ("profile")}
             data-test="profile-link"
-            className="rounded-full ring-offset-background transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            className="rounded-full transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-primary)] focus-visible:ring-offset-2"
         >
-            <Avatar className="h-8 w-8">
+            <div className="icon-avatar-brand flex h-8 w-8 items-center justify-center overflow-hidden rounded-full text-xs font-medium">
                 {avatarUrl ? (
-                    <AvatarImage src={avatarUrl} alt="" />
-                ) : null}
-                <AvatarFallback className="text-xs font-medium">
-                    {initials}
-                </AvatarFallback>
-            </Avatar>
+                    <img
+                        src={avatarUrl}
+                        alt=""
+                        className="h-full w-full object-cover"
+                    />
+                ) : (
+                    <span>{initials}</span>
+                )}
+            </div>
         </Link>
     );
 };

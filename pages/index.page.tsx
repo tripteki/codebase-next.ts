@@ -1,7 +1,6 @@
 import { GetServerSideProps, } from "next";
 import { ReactElement, } from "react";
 import Head from "next/head";
-import Link from "next/link";
 import { useTranslation, } from "next-i18next/pages";
 
 import { buildGetServerSideProps, } from "@/libs/page-props.server";
@@ -13,7 +12,8 @@ import { resolveApiDocsUrl, } from "@/libs/api-base";
 
 import HeaderLayout from "@/layouts/header.layout";
 import FooterLayout from "@/layouts/footer.layout";
-import { Button, } from "@/components/ui/button";
+import FbButton from "@/components/flowbite/fb-button";
+import { fbMuted, fbPage, } from "@/libs/flowbite-classes";
 
 const Page = (): ReactElement =>
 {
@@ -25,7 +25,7 @@ const Page = (): ReactElement =>
                 <title>{formatPageTitle (t ("welcome"))}</title>
             </Head>
 
-            <div className="min-h-screen flex flex-col bg-background">
+            <div className={fbPage}>
                 <HeaderLayout />
 
                 <main className="flex-1 flex items-center justify-center px-4 py-16">
@@ -34,29 +34,25 @@ const Page = (): ReactElement =>
                             <h2 className="text-4xl font-bold tracking-tight sm:text-5xl">
                                 {t ("title")}
                                 <br />
-                                <span className="text-primary">{t ("subtitle")}</span>
+                                <span className="text-[var(--brand-primary)]">{t ("subtitle")}</span>
                             </h2>
 
-                            <p className="text-xl text-muted-foreground">
+                            <p className={`text-xl ${fbMuted}`}>
                                 {t ("description")}
                             </p>
                         </div>
 
                         <div className="flex gap-4 justify-center">
-                            <Button size="lg" asChild>
-                                <Link href="/admin/auth/login">
-                                    {t ("get_started")}
-                                </Link>
-                            </Button>
-                            <Button variant="outline" size="lg" asChild>
-                                <a
-                                    href={resolveApiDocsUrl (publicRuntimeConfig)}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    {t ("view_docs")}
-                                </a>
-                            </Button>
+                            <FbButton size="lg" href="/admin/auth/login">
+                                {t ("get_started")}
+                            </FbButton>
+                            <FbButton
+                                variant="outline"
+                                size="lg"
+                                href={resolveApiDocsUrl (publicRuntimeConfig)}
+                            >
+                                {t ("view_docs")}
+                            </FbButton>
                         </div>
                     </div>
                 </main>

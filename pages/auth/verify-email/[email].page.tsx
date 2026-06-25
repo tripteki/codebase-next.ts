@@ -5,9 +5,10 @@ import Head from "next/head";
 import { useTranslation, } from "next-i18next/pages";
 
 import AuthLayout from "@/layouts/auth/auth-layout";
-import { Button, } from "@/components/ui/button";
 import TextLink from "@/components/text-link";
-import { Spinner, } from "@/components/ui/spinner";
+import FbButton from "@/components/flowbite/fb-button";
+import FbSpinner from "@/components/flowbite/fb-spinner";
+import { fbAlertSuccess, fbMuted, } from "@/libs/flowbite-classes";
 import { buildGetServerSideProps, } from "@/libs/page-props.server";
 import { type PagePropsOptions, } from "@/libs/page-props.shared";
 import { pageAuth, } from "@/page-auth/auth/verify-email/[email]";
@@ -158,8 +159,8 @@ const VerifyEmail = ({
                 <div className="space-y-6">
                     {status === "verifying" && (
                         <div className="flex flex-col items-center gap-4">
-                            <Spinner className="h-8 w-8" />
-                            <p className="text-center text-sm text-muted-foreground">
+                            <FbSpinner className="h-8 w-8" />
+                            <p className={`text-center text-sm ${fbMuted}`}>
                                 {t ("verifying_email")}
                             </p>
                         </div>
@@ -167,22 +168,19 @@ const VerifyEmail = ({
 
                     {status === "success" && (
                         <div className="space-y-4">
-                            <div className="rounded-lg bg-success-muted p-4 text-center">
-                                <p className="text-sm font-medium text-success-foreground">
+                            <div className={`${fbAlertSuccess} text-center`}>
+                                <p className="font-medium">
                                     {message}
                                 </p>
                             </div>
 
                             <div className="flex flex-col gap-2">
-                                <Button
-                                    onClick={(): void =>
-                                    {
-                                        router.push ("/admin/auth/login");
-                                    }}
+                                <FbButton
                                     className="w-full"
+                                    href="/admin/auth/login"
                                 >
                                     {t ("log_in")}
-                                </Button>
+                                </FbButton>
 
                                 <TextLink
                                     href="/"
@@ -196,23 +194,20 @@ const VerifyEmail = ({
 
                     {status === "error" && (
                         <div className="space-y-4">
-                            <div className="rounded-lg bg-red-50 dark:bg-red-900/20 p-4 text-center">
+                            <div className="rounded-lg bg-red-50 p-4 text-center dark:bg-red-900/20">
                                 <p className="text-sm font-medium text-red-800 dark:text-red-200">
                                     {message}
                                 </p>
                             </div>
 
                             <div className="flex flex-col gap-2">
-                                <Button
-                                    onClick={(): void =>
-                                    {
-                                        router.push ("/admin/auth/login");
-                                    }}
+                                <FbButton
                                     variant="outline"
                                     className="w-full"
+                                    href="/admin/auth/login"
                                 >
                                     {t ("go_to_login")}
-                                </Button>
+                                </FbButton>
 
                                 <TextLink
                                     href="/admin/auth/register"

@@ -1,6 +1,7 @@
 import { ReactElement, ComponentProps, } from "react";
 import Link from "next/link";
 
+import { fbLink, } from "@/libs/flowbite-classes";
 import { cn, } from "@/libs/utils";
 
 type TextLinkProps = ComponentProps<typeof Link>;
@@ -13,10 +14,7 @@ const TextLink = ({
 {
     return (
         <Link
-            className={cn (
-                "text-foreground underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current! dark:decoration-neutral-500",
-                className,
-            )}
+            className={cn (fbLink, className)}
             {... props}
         >
             {children}

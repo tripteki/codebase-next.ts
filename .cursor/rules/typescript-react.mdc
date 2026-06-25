@@ -12,15 +12,28 @@ alwaysApply: false
 - Extract reusable logic into `src/hooks/use-*.ts`
 - Layout components: suffix `.layout.tsx` (e.g. `header.layout.tsx`, `auth.layout.tsx`)
 - Page-specific components stay near their page; shared ones go in `src/components/`
-- shadcn/ui primitives live in `src/components/ui/` — do not edit generated files unless customizing
+- Flowbite primitives live in `src/components/flowbite/` — extend `fb-*.tsx`, not deleted shadcn files
 
 ### Alert components
 
 ```tsx
-// Use the dedicated alert wrappers — do not raw-render shadcn Alert for app messages
-<AlertError message={error} />    // flex/grid, mb-4
+// Use the dedicated alert wrappers — Flowbite-styled divs with fbAlert* classes
+<AlertError message={error} />
 <AlertSuccess message={msg} />
 <AlertWarning message={warn} />
+```
+
+### Flowbite primitives
+
+```tsx
+import FbButton from "@/components/flowbite/fb-button";
+import FbInput from "@/components/flowbite/fb-input";
+import FbLabel from "@/components/flowbite/fb-label";
+import FbSpinner from "@/components/flowbite/fb-spinner";
+
+// Button variants: primary | outline | ghost | danger | secondary
+// Use href="/path" for internal links; external href for docs links
+<FbInput invalid={!!error} />
 ```
 
 ### Header components

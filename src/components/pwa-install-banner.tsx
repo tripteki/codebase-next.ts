@@ -9,7 +9,7 @@ const PwaInstallBanner = (): ReactElement | null =>
 {
     const { t, } = useTranslation ("common");
     const { visible, isInstalling, dismiss, install, } = usePwaInstall ();
-    const [feedbackKey, setFeedbackKey] = useState<string | null>(null);
+    const [feedbackKey, setFeedbackKey, ] = useState<string | null>(null);
 
     if (! visible)
     {
@@ -29,27 +29,27 @@ const PwaInstallBanner = (): ReactElement | null =>
 
     return (
         <div
-            className="pwa-install fixed bottom-4 right-4 z-[100] max-w-[min(100vw-1.5rem,18rem)] rounded-2xl border border-border bg-background/95 p-2 shadow-lg backdrop-blur-md max-sm:bottom-3 max-sm:right-3"
+            className="pwa-install fixed bottom-4 right-4 z-[100] max-w-[min(100vw-1.5rem,18rem)] rounded-2xl border border-gray-200 bg-white/95 p-2 shadow-lg backdrop-blur-md dark:border-gray-700 dark:bg-gray-900/95 max-sm:bottom-3 max-sm:right-3"
             role="region"
             aria-label={t ("pwa_install")}
         >
             <div className="flex items-start gap-2">
-                <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-muted">
-                    <AppLogoIcon className="size-9 fill-current text-foreground" aria-hidden />
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-gray-100 dark:bg-gray-700">
+                    <AppLogoIcon className="size-9 fill-current text-gray-900 dark:text-white" aria-hidden />
                 </div>
 
                 <div className="min-w-0 flex-1 pt-0.5">
                     <p className="truncate text-xs font-semibold leading-tight">
                         {appLabel}
                     </p>
-                    <p className="mt-0.5 text-[10px] leading-snug text-muted-foreground">
+                    <p className="mt-0.5 text-[10px] leading-snug text-gray-500 dark:text-gray-400">
                         {feedbackKey ? t (feedbackKey) : t ("pwa_install_hint")}
                     </p>
                 </div>
 
                 <button
                     type="button"
-                    className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground"
+                    className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
                     aria-label={t ("close")}
                     onClick={dismiss}
                 >
@@ -73,7 +73,7 @@ const PwaInstallBanner = (): ReactElement | null =>
 
             <button
                 type="button"
-                className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground disabled:cursor-not-allowed disabled:opacity-60"
+                className="btn-brand-primary mt-2 flex w-full items-center justify-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
                 disabled={isInstalling}
                 onClick={() => void handleInstall ()}
             >

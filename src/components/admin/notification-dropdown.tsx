@@ -1,10 +1,10 @@
 import { ReactElement, useEffect, useState, } from "react";
 import Link from "next/link";
 import { useTranslation, } from "next-i18next/pages";
-import { Bell, } from "lucide-react";
 
 import NotificationItemPreview from "@/components/admin/notification-item-preview";
-import { Button, } from "@/components/ui/button";
+import FbButton from "@/components/flowbite/fb-button";
+import { fbLink, fbMuted, fbPopover, } from "@/libs/flowbite-classes";
 import {
     type NotificationStatusFilter,
     useNotifications,
@@ -67,15 +67,13 @@ const NotificationDropdown = (): ReactElement => {
 
     const tabClass = (tab: "all" | "unread" | "read"): string =>
         cn (
-            "inline-flex flex-1 items-center justify-center rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
-            activeTab === tab
-                ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:bg-muted"
+            "inline-flex flex-1 items-center justify-center rounded-full border px-3 py-1.5 text-xs font-medium transition-colors",
+            activeTab === tab ? "tab-brand-active" : "tab-brand-inactive"
         );
 
     return (
         <div className="relative">
-            <Button
+            <FbButton
                 type="button"
                 variant="ghost"
                 size="icon"
@@ -84,31 +82,43 @@ const NotificationDropdown = (): ReactElement => {
                 aria-label={t ("notifications")}
                 onClick={() => void toggle ()}
             >
-                <Bell className="h-5 w-5" />
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="h-5 w-5"
+                >
+                    <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+                    <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+                </svg>
                 {unread > 0 && (
-                    <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-bold text-destructive-foreground">
+                    <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-600 px-1 text-[10px] font-bold text-white">
                         {unread > 99 ? "99+" : unread}
                     </span>
                 )}
-            </Button>
+            </FbButton>
 
             {open && (
-                <div className="absolute right-0 z-50 mt-2 w-80 rounded-lg border bg-popover text-popover-foreground shadow-lg">
-                    <div className="flex items-center justify-between border-b px-4 py-3">
+                <div className={cn ("absolute right-0 z-50 mt-2 w-80", fbPopover)}>
+                    <div className="flex items-center justify-between border-b border-gray-200 px-4 py-3 dark:border-gray-600">
                         <h3 className="text-sm font-semibold">{t ("notifications")}</h3>
                         {unread > 0 && (
-                            <Button
+                            <FbButton
                                 variant="ghost"
                                 size="sm"
                                 className="h-auto px-2 py-1 text-xs"
                                 onClick={() => void markAllAsRead ().then (loadDropdownItems)}
                             >
                                 {t ("mark_all_read")}
-                            </Button>
+                            </FbButton>
                         )}
                     </div>
 
-                    <div className="flex gap-1 border-b px-2 py-2">
+                    <div className="flex gap-1 border-b border-gray-200 px-2 py-2 dark:border-gray-600">
                         {(["all", "unread", "read"] as const).map ((tab) => (
                             <button
                                 key={tab}
@@ -123,11 +133,11 @@ const NotificationDropdown = (): ReactElement => {
 
                     <div className="max-h-80 overflow-y-auto">
                         {dropdownLoading ? (
-                            <div className="px-4 py-6 text-center text-xs text-muted-foreground">
+                            <div className={cn ("px-4 py-6 text-center text-xs", fbMuted)}>
                                 {t ("loading")}
                             </div>
                         ) : items.length === 0 ? (
-                            <div className="px-4 py-6 text-center text-xs text-muted-foreground">
+                            <div className={cn ("px-4 py-6 text-center text-xs", fbMuted)}>
                                 {t ("no_notifications")}
                             </div>
                         ) : (
@@ -136,8 +146,8 @@ const NotificationDropdown = (): ReactElement => {
                                     key={item.id}
                                     type="button"
                                     className={cn (
-                                        "flex w-full gap-3 border-b px-4 py-3 text-left transition-colors hover:bg-muted/50",
-                                        notificationIsUnread (item) && "bg-muted/30"
+                                        "flex w-full gap-3 border-b border-gray-200 px-4 py-3 text-left transition-colors hover:bg-gray-50 dark:border-gray-600 dark:hover:bg-gray-700/50",
+                                        notificationIsUnread (item) && "bg-gray-50 dark:bg-gray-700/30"
                                     )}
                                     onClick={() => void handleNotificationClick (item.id)}
                                 >
@@ -147,10 +157,10 @@ const NotificationDropdown = (): ReactElement => {
                         )}
                     </div>
 
-                    <div className="border-t px-4 py-2">
+                    <div className="border-t border-gray-200 px-4 py-2 dark:border-gray-600">
                         <Link
                             href="/notifications"
-                            className="block text-center text-xs text-primary hover:underline"
+                            className={cn ("block text-center text-xs", fbLink)}
                             onClick={() => setOpen (false)}
                         >
                             {t ("view_all_notifications")}

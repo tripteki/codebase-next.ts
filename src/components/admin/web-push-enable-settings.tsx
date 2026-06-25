@@ -1,8 +1,9 @@
 import { ReactElement, } from "react";
 import { useTranslation, } from "next-i18next/pages";
 
-import { Button, } from "@/components/ui/button";
-import { Spinner, } from "@/components/ui/spinner";
+import FbButton from "@/components/flowbite/fb-button";
+import FbSpinner from "@/components/flowbite/fb-spinner";
+import { fbMuted, fbSurfacePanel, } from "@/libs/flowbite-classes";
 import { useWebPush, } from "@/hooks/use-web-push";
 
 const WebPushEnableSettings = (): ReactElement | null => {
@@ -28,43 +29,45 @@ const WebPushEnableSettings = (): ReactElement | null => {
               : t ("webpush_status_default");
 
     return (
-        <section className="space-y-3 rounded-lg border p-4">
+        <section className={`${fbSurfacePanel} space-y-3 p-4`}>
             <div>
-                <h3 className="text-lg font-semibold">{t ("webpush_settings_title")}</h3>
-                <p className="mt-1 text-sm text-muted-foreground">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    {t ("webpush_settings_title")}
+                </h3>
+                <p className={`mt-1 ${fbMuted}`}>
                     {t ("webpush_settings_description")}
                 </p>
             </div>
 
-            <p className="text-sm font-medium">{statusLabel}</p>
+            <p className="text-sm font-medium text-gray-900 dark:text-white">{statusLabel}</p>
 
             <div className="flex flex-wrap gap-2">
                 {permission !== "granted" && permission !== "denied" && (
-                    <Button
+                    <FbButton
                         type="button"
                         disabled={isSubscribing}
                         onClick={() => void requestPermission ()}
                     >
-                        {isSubscribing && <Spinner />}
+                        {isSubscribing && <FbSpinner />}
                         {t ("webpush_enable_button")}
-                    </Button>
+                    </FbButton>
                 )}
 
                 {permission === "granted" && (
-                    <Button
+                    <FbButton
                         type="button"
                         variant="outline"
                         disabled={isSubscribing}
                         onClick={() => void syncSubscription ()}
                     >
-                        {isSubscribing && <Spinner />}
+                        {isSubscribing && <FbSpinner />}
                         {t ("webpush_sync_button")}
-                    </Button>
+                    </FbButton>
                 )}
             </div>
 
             {permission === "denied" && (
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-gray-500 dark:text-gray-400">
                     {t ("webpush_status_denied_hint")}
                 </p>
             )}

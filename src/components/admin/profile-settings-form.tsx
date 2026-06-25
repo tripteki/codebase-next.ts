@@ -5,10 +5,11 @@ import AlertError from "@/components/alert-error";
 import AlertSuccess from "@/components/alert-success";
 import InputError from "@/components/input-error";
 import WebPushEnableSettings from "@/components/admin/web-push-enable-settings";
-import { Button, } from "@/components/ui/button";
-import { Input, } from "@/components/ui/input";
-import { Label, } from "@/components/ui/label";
-import { Spinner, } from "@/components/ui/spinner";
+import FbButton from "@/components/flowbite/fb-button";
+import FbInput from "@/components/flowbite/fb-input";
+import FbLabel from "@/components/flowbite/fb-label";
+import FbSpinner from "@/components/flowbite/fb-spinner";
+import { fbInput, fbMuted, } from "@/libs/flowbite-classes";
 import { useUserProfile, } from "@/hooks/use-user-profile";
 import { actionErrors, } from "@/libs/admin-action";
 import type { UserMeDto, } from "@/types/admin/settings";
@@ -109,8 +110,8 @@ const ProfileSettingsForm = (): ReactElement => {
 
     if (isLoading) {
         return (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Spinner className="h-4 w-4" />
+            <div className={`flex items-center gap-2 ${fbMuted}`}>
+                <FbSpinner className="h-4 w-4" />
                 {t ("loading")}
             </div>
         );
@@ -125,9 +126,9 @@ const ProfileSettingsForm = (): ReactElement => {
             <WebPushEnableSettings />
 
             <div className="space-y-2">
-                <Label htmlFor="avatar">{t ("avatar")}</Label>
+                <FbLabel htmlFor="avatar">{t ("avatar")}</FbLabel>
                 <div className="flex items-center gap-4">
-                    <div className="size-20 shrink-0 overflow-hidden rounded-full border bg-muted">
+                    <div className="size-20 shrink-0 overflow-hidden rounded-full border border-gray-200 bg-gray-100 dark:border-gray-700 dark:bg-gray-700">
                         {(avatarPreview || currentAvatarUrl) && (
                             <img
                                 src={avatarPreview ?? currentAvatarUrl ?? undefined}
@@ -136,10 +137,11 @@ const ProfileSettingsForm = (): ReactElement => {
                             />
                         )}
                     </div>
-                    <Input
+                    <input
                         id="avatar"
                         type="file"
                         accept="image/*"
+                        className={fbInput}
                         onChange={(event) => {
                             const file = event.target.files?.[0] ?? null;
                             setAvatarFile (file);
@@ -152,11 +154,13 @@ const ProfileSettingsForm = (): ReactElement => {
 
             <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                    <Label htmlFor="name">{t ("name")}</Label>
-                    <Input
+                    <FbLabel htmlFor="name">{t ("name")}</FbLabel>
+                    <FbInput
                         id="name"
+                        name="name"
                         value={form.name}
                         required
+                        invalid={!! errors.name}
                         onChange={(event) =>
                             setForm ({ ...form, name: event.target.value, })
                         }
@@ -165,12 +169,14 @@ const ProfileSettingsForm = (): ReactElement => {
                 </div>
 
                 <div className="space-y-2">
-                    <Label htmlFor="email">{t ("email")}</Label>
-                    <Input
+                    <FbLabel htmlFor="email">{t ("email")}</FbLabel>
+                    <FbInput
                         id="email"
                         type="email"
+                        name="email"
                         value={form.email}
                         required
+                        invalid={!! errors.email}
                         onChange={(event) =>
                             setForm ({ ...form, email: event.target.value, })
                         }
@@ -179,10 +185,12 @@ const ProfileSettingsForm = (): ReactElement => {
                 </div>
 
                 <div className="space-y-2 md:col-span-2">
-                    <Label htmlFor="full_name">{t ("full_name")}</Label>
-                    <Input
+                    <FbLabel htmlFor="full_name">{t ("full_name")}</FbLabel>
+                    <FbInput
                         id="full_name"
+                        name="full_name"
                         value={form.full_name}
+                        invalid={!! errors.full_name}
                         onChange={(event) =>
                             setForm ({ ...form, full_name: event.target.value, })
                         }
@@ -192,12 +200,12 @@ const ProfileSettingsForm = (): ReactElement => {
             </div>
 
             <div className="space-y-2">
-                <Label>{t ("interests")}</Label>
+                <FbLabel>{t ("interests")}</FbLabel>
                 <div className="flex flex-wrap gap-2">
                     {interests.map ((interest, index) => (
                         <span
                             key={interest}
-                            className="inline-flex items-center gap-1 rounded-full bg-muted px-3 py-1 text-xs"
+                            className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-3 py-1 text-xs dark:bg-gray-700"
                         >
                             {interest}
                             <button
@@ -213,8 +221,10 @@ const ProfileSettingsForm = (): ReactElement => {
                     ))}
                 </div>
                 <div className="flex gap-2">
-                    <Input
+                    <input
+                        type="text"
                         value={newInterest}
+                        className={fbInput}
                         placeholder={t ("add_interest")}
                         onChange={(event) => setNewInterest (event.target.value)}
                         onKeyDown={(event) => {
@@ -224,20 +234,22 @@ const ProfileSettingsForm = (): ReactElement => {
                             }
                         }}
                     />
-                    <Button type="button" variant="outline" onClick={() => addInterest ()}>
+                    <FbButton type="button" variant="outline" onClick={() => addInterest ()}>
                         {t ("add")}
-                    </Button>
+                    </FbButton>
                 </div>
             </div>
 
             <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                    <Label htmlFor="password">{t ("new_password")}</Label>
-                    <Input
+                    <FbLabel htmlFor="password">{t ("new_password")}</FbLabel>
+                    <FbInput
                         id="password"
                         type="password"
+                        name="password"
                         autoComplete="new-password"
                         value={form.password}
+                        invalid={!! errors.password}
                         onChange={(event) =>
                             setForm ({ ...form, password: event.target.value, })
                         }
@@ -246,12 +258,14 @@ const ProfileSettingsForm = (): ReactElement => {
                 </div>
 
                 <div className="space-y-2">
-                    <Label htmlFor="password_confirmation">{t ("confirm_password")}</Label>
-                    <Input
+                    <FbLabel htmlFor="password_confirmation">{t ("confirm_password")}</FbLabel>
+                    <FbInput
                         id="password_confirmation"
                         type="password"
+                        name="password_confirmation"
                         autoComplete="new-password"
                         value={form.password_confirmation}
+                        invalid={!! errors.password_confirmation}
                         onChange={(event) =>
                             setForm ({
                                 ...form,
@@ -263,10 +277,10 @@ const ProfileSettingsForm = (): ReactElement => {
                 </div>
             </div>
 
-            <Button type="submit" disabled={isSaving}>
-                {isSaving && <Spinner />}
+            <FbButton type="submit" disabled={isSaving}>
+                {isSaving && <FbSpinner />}
                 {t ("save_changes")}
-            </Button>
+            </FbButton>
         </form>
     );
 };

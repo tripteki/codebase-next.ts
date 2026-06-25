@@ -9,10 +9,11 @@ import AlertError from "@/components/alert-error";
 import AlertSuccess from "@/components/alert-success";
 import InputError from "@/components/input-error";
 import TextLink from "@/components/text-link";
-import { Button, } from "@/components/ui/button";
-import { Input, } from "@/components/ui/input";
-import { Label, } from "@/components/ui/label";
-import { Spinner, } from "@/components/ui/spinner";
+import FbButton from "@/components/flowbite/fb-button";
+import FbInput from "@/components/flowbite/fb-input";
+import FbLabel from "@/components/flowbite/fb-label";
+import FbSpinner from "@/components/flowbite/fb-spinner";
+import { fbMuted, } from "@/libs/flowbite-classes";
 import { buildGetServerSideProps, } from "@/libs/page-props.server";
 import { type PagePropsOptions, } from "@/libs/page-props.shared";
 import { pageAuth, } from "@/page-auth/admin/auth/forgot-password";
@@ -111,8 +112,8 @@ const ForgotPassword = ({
                         <AlertError message={errors.general} />
 
                         <div className="grid gap-2">
-                            <Label htmlFor="email">{t ("email_address")}</Label>
-                            <Input
+                            <FbLabel htmlFor="email">{t ("email_address")}</FbLabel>
+                            <FbInput
                                 id="email"
                                 type="email"
                                 name="email"
@@ -123,25 +124,26 @@ const ForgotPassword = ({
                                 autoComplete="off"
                                 autoFocus
                                 placeholder={t ("email_placeholder")}
+                                invalid={!! errors.email}
                             />
 
                             <InputError message={errors.email} />
                         </div>
 
                         <div className="my-6 flex items-center justify-start">
-                            <Button
+                            <FbButton
                                 type="submit"
                                 className="w-full"
                                 disabled={processing}
                                 data-test="email-password-reset-link-button"
                             >
-                                {processing && <Spinner />}
+                                {processing && <FbSpinner />}
                                 {processing ? t ("sending") : t ("email_password_reset_link")}
-                            </Button>
+                            </FbButton>
                         </div>
                     </form>
 
-                    <div className="space-x-1 text-center text-sm text-muted-foreground">
+                    <div className={`space-x-1 text-center text-sm ${fbMuted}`}>
                         <span>{t ("or_return_to")}</span>
                         <TextLink href="/admin/auth/login">
                             {t ("log_in_lower")}

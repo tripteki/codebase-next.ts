@@ -8,16 +8,16 @@ import AuthLayout from "@/layouts/auth/auth-layout";
 import AlertError from "@/components/alert-error";
 import InputError from "@/components/input-error";
 import TextLink from "@/components/text-link";
-import { Button, } from "@/components/ui/button";
-import { Input, } from "@/components/ui/input";
-import { Label, } from "@/components/ui/label";
-import { Spinner, } from "@/components/ui/spinner";
+import FbButton from "@/components/flowbite/fb-button";
+import FbInput from "@/components/flowbite/fb-input";
+import FbLabel from "@/components/flowbite/fb-label";
+import FbSpinner from "@/components/flowbite/fb-spinner";
+import { fbMuted, } from "@/libs/flowbite-classes";
 import { buildGetServerSideProps, } from "@/libs/page-props.server";
 import { type PagePropsOptions, } from "@/libs/page-props.shared";
 import { pageAuth, } from "@/page-auth/admin/auth/register";
 import { parseApiErrors, focusPasswordMatchError, } from "@/libs/parse-api-errors";
 import { formatPageTitle, } from "@/libs/page-title";
-import { cn, } from "@/libs/utils";
 import { useRequireGuest, } from "@/hooks/auth-guard";
 
 
@@ -118,8 +118,8 @@ const Register = (): ReactElement | null =>
 
                     <div className="grid gap-6">
                         <div className="grid gap-2">
-                            <Label htmlFor="name">{t ("name")}</Label>
-                            <Input
+                            <FbLabel htmlFor="name">{t ("name")}</FbLabel>
+                            <FbInput
                                 id="name"
                                 type="text"
                                 required
@@ -132,17 +132,14 @@ const Register = (): ReactElement | null =>
                                     setData ((prev) => ({ ... prev, name: e.target.value, }))
                                 }
                                 placeholder={t ("username")}
-                                aria-invalid={!! errors.name}
-                                className={cn (
-                                    errors.name && "border-destructive focus-visible:ring-destructive/30"
-                                )}
+                                invalid={!! errors.name}
                             />
                             <InputError message={errors.name} />
                         </div>
 
                         <div className="grid gap-2">
-                            <Label htmlFor="email">{t ("email_address")}</Label>
-                            <Input
+                            <FbLabel htmlFor="email">{t ("email_address")}</FbLabel>
+                            <FbInput
                                 id="email"
                                 type="email"
                                 required
@@ -154,17 +151,14 @@ const Register = (): ReactElement | null =>
                                     setData ((prev) => ({ ... prev, email: e.target.value, }))
                                 }
                                 placeholder={t ("email_placeholder")}
-                                aria-invalid={!! errors.email}
-                                className={cn (
-                                    errors.email && "border-destructive focus-visible:ring-destructive/30"
-                                )}
+                                invalid={!! errors.email}
                             />
                             <InputError message={errors.email} />
                         </div>
 
                         <div className="grid gap-2">
-                            <Label htmlFor="password">{t ("password")}</Label>
-                            <Input
+                            <FbLabel htmlFor="password">{t ("password")}</FbLabel>
+                            <FbInput
                                 id="password"
                                 type="password"
                                 required
@@ -176,19 +170,16 @@ const Register = (): ReactElement | null =>
                                     setData ((prev) => ({ ... prev, password: e.target.value, }))
                                 }
                                 placeholder={t ("password_placeholder")}
-                                aria-invalid={!! errors.password}
-                                className={cn (
-                                    errors.password && "border-destructive focus-visible:ring-destructive/30"
-                                )}
+                                invalid={!! errors.password}
                             />
                             <InputError message={errors.password} />
                         </div>
 
                         <div className="grid gap-2">
-                            <Label htmlFor="password_confirmation">
+                            <FbLabel htmlFor="password_confirmation">
                                 {t ("password_confirmation_label")}
-                            </Label>
-                            <Input
+                            </FbLabel>
+                            <FbInput
                                 id="password_confirmation"
                                 type="password"
                                 required
@@ -200,27 +191,24 @@ const Register = (): ReactElement | null =>
                                     setData ((prev) => ({ ... prev, password_confirmation: e.target.value, }))
                                 }
                                 placeholder={t ("password_confirmation_placeholder")}
-                                aria-invalid={!! errors.password_confirmation}
-                                className={cn (
-                                    errors.password_confirmation && "border-destructive focus-visible:ring-destructive/30"
-                                )}
+                                invalid={!! errors.password_confirmation}
                             />
                             <InputError message={errors.password_confirmation} />
                         </div>
 
-                        <Button
+                        <FbButton
                             type="submit"
                             className="mt-2 w-full"
                             tabIndex={5}
                             disabled={processing}
                             data-test="register-user-button"
                         >
-                            {processing && <Spinner />}
+                            {processing && <FbSpinner />}
                             {processing ? t ("registering") : t ("create_account")}
-                        </Button>
+                        </FbButton>
                     </div>
 
-                    <div className="text-center text-sm text-muted-foreground">
+                    <div className={`text-center text-sm ${fbMuted}`}>
                         {t ("already_have_account")}{" "}
                         <TextLink href="/admin/auth/login" tabIndex={6}>
                             {t ("log_in")}

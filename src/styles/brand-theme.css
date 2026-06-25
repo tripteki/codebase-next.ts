@@ -1,0 +1,114 @@
+@layer base {
+    :root {
+        --brand-primary: #2563eb;
+        --brand-secondary: #84cc16;
+        --brand-tertiary: #1e3a8a;
+    }
+}
+
+.btn-brand-primary {
+    background-color: var(--brand-primary);
+    color: #ffffff;
+}
+
+.btn-brand-primary:hover {
+    filter: brightness(0.96);
+}
+
+.btn-brand-primary:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px
+        color-mix(in srgb, var(--brand-primary) 55%, #ffffff 45%);
+}
+
+.btn-brand-danger {
+    background-color: #b91c1c;
+    color: #ffffff;
+}
+
+.btn-brand-danger:hover {
+    filter: brightness(0.96);
+}
+
+.dark .btn-brand-danger {
+    background-color: #dc2626;
+}
+
+.link-brand-primary {
+    color: var(--brand-primary);
+}
+
+.link-brand-primary:hover {
+    color: color-mix(in srgb, var(--brand-primary) 78%, #0f172a 22%);
+    text-decoration: underline;
+}
+
+.dark .link-brand-primary:hover {
+    color: color-mix(in srgb, var(--brand-primary) 72%, #f1f5f9 28%);
+}
+
+.icon-avatar-brand {
+    background-color: var(--brand-primary);
+    color: #ffffff;
+}
+
+.input-brand:focus {
+    outline: none;
+    border-color: var(--brand-primary);
+    box-shadow: 0 0 0 2px
+        color-mix(in srgb, var(--brand-primary) 40%, #ffffff 60%);
+}
+
+.dark .input-brand:focus {
+    border-color: color-mix(in srgb, var(--brand-primary) 65%, #020617 35%);
+    box-shadow: 0 0 0 2px
+        color-mix(in srgb, var(--brand-primary) 45%, #020617 55%);
+}
+
+.checkbox-brand {
+    accent-color: var(--brand-primary);
+}
+
+.tab-brand-active {
+    color: #ffffff;
+    background-color: var(--brand-primary);
+    border-color: var(--brand-primary);
+}
+
+.dark .tab-brand-active {
+    color: #ffffff;
+    background-color: color-mix(
+        in srgb,
+        var(--brand-primary) 88%,
+        #020617 12%
+    );
+    border-color: color-mix(in srgb, var(--brand-primary) 75%, #020617 25%);
+}
+
+.tab-brand-inactive {
+    color: #6b7280;
+    background-color: #ffffff;
+    border-color: #d1d5db;
+}
+
+.tab-brand-inactive:hover {
+    background-color: color-mix(in srgb, var(--brand-primary) 8%, #ffffff 92%);
+    color: var(--brand-primary);
+    border-color: color-mix(in srgb, var(--brand-primary) 22%, #e5e7eb 78%);
+}
+
+.dark .tab-brand-inactive {
+    color: #9ca3af;
+    background-color: #1f2937;
+    border-color: #374151;
+}
+
+.dark .tab-brand-inactive:hover {
+    background-color: color-mix(
+        in srgb,
+        var(--brand-primary) 18%,
+        #020617 82%
+    );
+    color: color-mix(in srgb, var(--brand-primary) 78%, #f1f5f9 22%);
+    border-color: color-mix(in srgb, var(--brand-primary) 35%, #1e293b 65%);
+}

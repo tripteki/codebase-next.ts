@@ -1,7 +1,7 @@
 import { ReactElement, } from "react";
 import { useTranslation, } from "next-i18next/pages";
 
-import { Button, } from "@/components/ui/button";
+import FbButton from "@/components/flowbite/fb-button";
 import { useWebPush, } from "@/hooks/use-web-push";
 
 interface WebPushEnableBannerProps {
@@ -32,14 +32,14 @@ const WebPushEnableBanner = ({
                 </div>
 
                 <div className="flex shrink-0 items-center gap-2">
-                    <Button
+                    <FbButton
                         type="button"
                         size="sm"
                         disabled={isSubscribing}
                         onClick={() => void requestPermission ()}
                     >
                         {t ("webpush_enable_button")}
-                    </Button>
+                    </FbButton>
 
                     <button
                         type="button"

@@ -8,12 +8,12 @@ import ProfileSettingsForm from "@/components/admin/profile-settings-form";
 import HeaderLayout from "@/layouts/header.layout";
 import FooterLayout from "@/layouts/footer.layout";
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
+    fbCard,
+    fbCardDescription,
+    fbCardTitle,
+    fbMuted,
+    fbPage,
+} from "@/libs/flowbite-classes";
 import { useRequireAuth, } from "@/hooks/auth-guard";
 import { buildGetServerSideProps, } from "@/libs/page-props.server";
 import { type PagePropsOptions, } from "@/libs/page-props.shared";
@@ -34,7 +34,7 @@ const ProfileSettings = (): ReactElement | null => {
                 <title>{formatPageTitle (t ("profile_settings"))}</title>
             </Head>
 
-            <div className="min-h-screen flex flex-col bg-background">
+            <div className={fbPage}>
                 <HeaderLayout showLogout={true} />
 
                 <main className="flex-1 container mx-auto px-4 py-8">
@@ -45,22 +45,20 @@ const ProfileSettings = (): ReactElement | null => {
                             <h1 className="text-3xl font-bold tracking-tight">
                                 {t ("profile_settings")}
                             </h1>
-                            <p className="text-muted-foreground">
+                            <p className={fbMuted}>
                                 {t ("profile_settings_description")}
                             </p>
                         </div>
 
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>{t ("personal_information")}</CardTitle>
-                                <CardDescription>
+                        <div className={fbCard}>
+                            <div className="mb-6 space-y-1.5">
+                                <h3 className={fbCardTitle}>{t ("personal_information")}</h3>
+                                <p className={fbCardDescription}>
                                     {t ("personal_information_description")}
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <ProfileSettingsForm />
-                            </CardContent>
-                        </Card>
+                                </p>
+                            </div>
+                            <ProfileSettingsForm />
+                        </div>
                     </div>
                 </main>
 

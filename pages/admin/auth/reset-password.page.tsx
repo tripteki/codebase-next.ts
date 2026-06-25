@@ -7,17 +7,16 @@ import { useTranslation, } from "next-i18next/pages";
 import AuthLayout from "@/layouts/auth/auth-layout";
 import AlertError from "@/components/alert-error";
 import InputError from "@/components/input-error";
-import { Button, } from "@/components/ui/button";
-import { Input, } from "@/components/ui/input";
-import { Label, } from "@/components/ui/label";
-import { Spinner, } from "@/components/ui/spinner";
+import FbButton from "@/components/flowbite/fb-button";
+import FbInput from "@/components/flowbite/fb-input";
+import FbLabel from "@/components/flowbite/fb-label";
+import FbSpinner from "@/components/flowbite/fb-spinner";
 import { buildGetServerSideProps, } from "@/libs/page-props.server";
 import { type PagePropsOptions, } from "@/libs/page-props.shared";
 import { pageAuth, } from "@/page-auth/admin/auth/reset-password";
 import { type ResetPasswordProps, } from "@/types/admin/auth";
 import { formatPageTitle, } from "@/libs/page-title";
 import { parseApiErrors, focusPasswordMatchError, } from "@/libs/parse-api-errors";
-import { cn, } from "@/libs/utils";
 
 
 const ResetPassword = ({
@@ -123,22 +122,21 @@ const ResetPassword = ({
 
                     <div className="grid gap-6">
                         <div className="grid gap-2">
-                            <Label htmlFor="email">{t ("email")}</Label>
-                            <Input
+                            <FbLabel htmlFor="email">{t ("email")}</FbLabel>
+                            <FbInput
                                 id="email"
                                 type="email"
                                 name="email"
                                 autoComplete="email"
                                 value={email}
-                                className="mt-1 block w-full"
                                 readOnly
                             />
                             <InputError message={errors.email} />
                         </div>
 
                         <div className="grid gap-2">
-                            <Label htmlFor="password">{t ("password")}</Label>
-                            <Input
+                            <FbLabel htmlFor="password">{t ("password")}</FbLabel>
+                            <FbInput
                                 id="password"
                                 type="password"
                                 name="password"
@@ -149,20 +147,16 @@ const ResetPassword = ({
                                 autoComplete="new-password"
                                 autoFocus
                                 placeholder={t ("password_placeholder")}
-                                aria-invalid={!! errors.password}
-                                className={cn (
-                                    "mt-1 block w-full",
-                                    errors.password && "border-destructive focus-visible:ring-destructive/30"
-                                )}
+                                invalid={!! errors.password}
                             />
                             <InputError message={errors.password} />
                         </div>
 
                         <div className="grid gap-2">
-                            <Label htmlFor="password_confirmation">
+                            <FbLabel htmlFor="password_confirmation">
                                 {t ("password_confirmation_label")}
-                            </Label>
-                            <Input
+                            </FbLabel>
+                            <FbInput
                                 id="password_confirmation"
                                 type="password"
                                 name="password_confirmation"
@@ -172,24 +166,20 @@ const ResetPassword = ({
                                 }
                                 autoComplete="new-password"
                                 placeholder={t ("password_confirmation_placeholder")}
-                                aria-invalid={!! errors.password_confirmation}
-                                className={cn (
-                                    "mt-1 block w-full",
-                                    errors.password_confirmation && "border-destructive focus-visible:ring-destructive/30"
-                                )}
+                                invalid={!! errors.password_confirmation}
                             />
                             <InputError message={errors.password_confirmation} />
                         </div>
 
-                        <Button
+                        <FbButton
                             type="submit"
                             className="mt-4 w-full"
                             disabled={processing}
                             data-test="reset-password-button"
                         >
-                            {processing && <Spinner />}
+                            {processing && <FbSpinner />}
                             {processing ? t ("resetting") : t ("reset_password")}
-                        </Button>
+                        </FbButton>
                     </div>
                 </form>
             </AuthLayout>

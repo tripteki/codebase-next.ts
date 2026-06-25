@@ -1,5 +1,7 @@
 import type { AppProps, } from "next/app";
+import { useRouter, } from "next/router";
 import { ReactElement, useEffect, } from "react";
+import { initFlowbite, } from "flowbite";
 import { getSession, useSession, } from "next-auth/react";
 import Head from "next/head";
 import NotificationShellExtras from "@/components/notifications/notification-shell-extras";
@@ -26,12 +28,29 @@ const AppShell = (
     { Component, pageProps, }: AppProps
 ): ReactElement =>
 {
+    const router = useRouter ();
     useSessionRefreshError ();
 
     useEffect ((): void =>
     {
         applyBrandCss (document.documentElement, resolveBrandColors ());
     }, []);
+
+    useEffect (() =>
+    {
+        const init = (): void =>
+        {
+            initFlowbite ();
+        };
+
+        init ();
+        router.events.on ("routeChangeComplete", init);
+
+        return () =>
+        {
+            router.events.off ("routeChangeComplete", init);
+        };
+    }, [ router.events, ]);
 
     useEffect (() =>
     {

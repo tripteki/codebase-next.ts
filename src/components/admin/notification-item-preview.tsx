@@ -1,5 +1,6 @@
 import { ReactElement, } from "react";
 
+import { fbMuted, } from "@/libs/flowbite-classes";
 import {
     notificationBody,
     notificationIsUnread,
@@ -30,7 +31,7 @@ const NotificationItemPreview = ({
                 {title}
             </p>
             {body && (
-                <p className="mt-0.5 line-clamp-2 text-xs text-muted-foreground">
+                <p className={cn ("mt-0.5 line-clamp-2 text-xs", fbMuted)}>
                     {body}
                 </p>
             )}

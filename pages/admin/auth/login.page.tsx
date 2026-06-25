@@ -10,17 +10,17 @@ import AlertError from "@/components/alert-error";
 import AlertSuccess from "@/components/alert-success";
 import InputError from "@/components/input-error";
 import TextLink from "@/components/text-link";
-import { Button, } from "@/components/ui/button";
-import { Checkbox, } from "@/components/ui/checkbox";
-import { Input, } from "@/components/ui/input";
-import { Label, } from "@/components/ui/label";
-import { Spinner, } from "@/components/ui/spinner";
+import FbButton from "@/components/flowbite/fb-button";
+import FbCheckboxField from "@/components/flowbite/fb-checkbox-field";
+import FbInput from "@/components/flowbite/fb-input";
+import FbLabel from "@/components/flowbite/fb-label";
+import FbSpinner from "@/components/flowbite/fb-spinner";
+import { fbMuted, } from "@/libs/flowbite-classes";
 import { useRequireGuest, } from "@/hooks/auth-guard";
 import { buildGetServerSideProps, } from "@/libs/page-props.server";
 import { type PagePropsOptions, } from "@/libs/page-props.shared";
 import { pageAuth, } from "@/page-auth/admin/auth/login";
 import { formatPageTitle, } from "@/libs/page-title";
-import { cn, } from "@/libs/utils";
 import { parseApiErrors, } from "@/libs/parse-api-errors";
 import { type LoginProps, } from "@/types/admin/auth";
 
@@ -112,8 +112,8 @@ const Login = ({
 
                     <div className="grid gap-6">
                         <div className="grid gap-2">
-                            <Label htmlFor="email">{t ("email_address")}</Label>
-                            <Input
+                            <FbLabel htmlFor="email">{t ("email_address")}</FbLabel>
+                            <FbInput
                                 id="email"
                                 type="text"
                                 name="identifier"
@@ -126,17 +126,14 @@ const Login = ({
                                 tabIndex={1}
                                 autoComplete="username"
                                 placeholder={t ("email_placeholder")}
-                                aria-invalid={!! identifierError}
-                                className={cn (
-                                    identifierError && "border-destructive focus-visible:ring-destructive/30"
-                                )}
+                                invalid={!! identifierError}
                             />
                             <InputError message={identifierError} />
                         </div>
 
                         <div className="grid gap-2">
-                            <div className="flex items-center">
-                                <Label htmlFor="password">{t ("password")}</Label>
+                            <div className="mb-2 flex items-center justify-between">
+                                <FbLabel htmlFor="password" variant="inline">{t ("password")}</FbLabel>
                                 {canResetPassword && (
                                     <TextLink
                                         href="/admin/auth/forgot-password"
@@ -147,7 +144,7 @@ const Login = ({
                                     </TextLink>
                                 )}
                             </div>
-                            <Input
+                            <FbInput
                                 id="password"
                                 type="password"
                                 name="password"
@@ -159,41 +156,37 @@ const Login = ({
                                 tabIndex={2}
                                 autoComplete="current-password"
                                 placeholder={t ("password_placeholder")}
-                                aria-invalid={!! passwordError}
-                                className={cn (
-                                    passwordError && "border-destructive focus-visible:ring-destructive/30"
-                                )}
+                                invalid={!! passwordError}
                             />
                             <InputError message={passwordError} />
                         </div>
 
-                        <div className="flex items-center space-x-3">
-                            <Checkbox
-                                id="remember"
-                                name="remember"
-                                checked={data.remember}
-                                onCheckedChange={(checked: boolean | "indeterminate"): void =>
-                                    setData ((prev) => ({ ... prev, remember: checked === true, }))
-                                }
-                                tabIndex={3}
-                            />
-                            <Label htmlFor="remember">{t ("remember_me")}</Label>
-                        </div>
+                        <FbCheckboxField
+                            id="remember"
+                            name="remember"
+                            checked={data.remember}
+                            onCheckedChange={(checked: boolean): void =>
+                                setData ((prev) => ({ ... prev, remember: checked, }))
+                            }
+                            tabIndex={3}
+                        >
+                            {t ("remember_me")}
+                        </FbCheckboxField>
 
-                        <Button
+                        <FbButton
                             type="submit"
                             className="mt-4 w-full"
                             tabIndex={4}
                             disabled={processing}
                             data-test="login-button"
                         >
-                            {processing && <Spinner />}
+                            {processing && <FbSpinner />}
                             {processing ? t ("logging_in") : t ("log_in")}
-                        </Button>
+                        </FbButton>
                     </div>
 
                     {canRegister && (
-                        <div className="text-center text-sm text-muted-foreground">
+                        <div className={`text-center text-sm ${fbMuted}`}>
                             {t ("dont_have_account")}{" "}
                             <TextLink
                                 href="/admin/auth/register"

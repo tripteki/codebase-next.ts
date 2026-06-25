@@ -4,9 +4,10 @@ import { useTranslation, } from "next-i18next/pages";
 
 import AlertError from "@/components/alert-error";
 import AlertSuccess from "@/components/alert-success";
-import { Alert, } from "@/components/ui/alert";
-import { Button, } from "@/components/ui/button";
-import { Spinner, } from "@/components/ui/spinner";
+import FbButton from "@/components/flowbite/fb-button";
+import FbSpinner from "@/components/flowbite/fb-spinner";
+import { fbMuted, fbSurfacePanel, } from "@/libs/flowbite-classes";
+import { cn, } from "@/libs/utils";
 
 const AuthVerifyEmailBanner = (): ReactElement | null =>
 {
@@ -57,12 +58,17 @@ const AuthVerifyEmailBanner = (): ReactElement | null =>
 
     return (
         <div className="space-y-3">
-            <Alert className="mb-0 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <p className="text-sm text-muted-foreground">
+            <div
+                className={cn (
+                    fbSurfacePanel,
+                    "mb-0 flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between"
+                )}
+            >
+                <p className={fbMuted}>
                     {t ("email_not_verified_message")}
                 </p>
 
-                <Button
+                <FbButton
                     type="button"
                     variant="outline"
                     size="sm"
@@ -70,10 +76,10 @@ const AuthVerifyEmailBanner = (): ReactElement | null =>
                     disabled={processing}
                     onClick={(): void => { void resend (); }}
                 >
-                    {processing && <Spinner />}
+                    {processing && <FbSpinner className="h-4 w-4" />}
                     {processing ? t ("resending_verification_email") : t ("resend_verification_email")}
-                </Button>
-            </Alert>
+                </FbButton>
+            </div>
 
             <AlertSuccess message={successMessage || undefined} />
             <AlertError message={errorMessage || undefined} />

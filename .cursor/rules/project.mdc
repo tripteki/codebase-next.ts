@@ -15,7 +15,7 @@ This is the **Next.js 16 Pages Router** frontend in the Tripteki parallel-codeba
 | Dev server | `npm run dev` (Turbopack); clears `public/.next` before start |
 | Auth | NextAuth.js 4 — Credentials provider, JWT session strategy |
 | State | Redux Toolkit (`src/stores/`) |
-| UI | Tailwind CSS 4 + shadcn/ui (new-york) + Radix + Lucide |
+| UI | Tailwind CSS 4 + Flowbite (`@tailwindcss/postcss`) |
 | i18n | next-i18next — locales `en`, `id`, `ms`; cookie-based; **no URL prefix** |
 | HTTP | axios |
 | Forms | react-hook-form + zod |
@@ -32,10 +32,11 @@ pages/                  # Routes + API routes only (thin wiring)
   *.static.tsx          # Static-export pages (BUILD_STATIC=true)
 src/
   components/           # UI (kebab-case files)
-  components/ui/        # shadcn primitives
+  components/flowbite/  # Fb* wrappers (fb-button, fb-input, …)
   hooks/                # use-*.ts custom hooks
   layouts/              # *.layout.tsx
-  libs/                 # Shared utilities (auth, API, realtime, i18n)
+  libs/                 # Shared utilities (auth, API, realtime, flowbite-classes)
+  styles/               # globals.css, brand-theme.css
   stores/               # Redux slices
   types/                # Shared TypeScript types
   page-auth/            # Per-route auth metadata consumed by proxy.ts
@@ -112,12 +113,16 @@ npm run test:e2e:ui # Playwright UI mode
 - **Imports:** `@/components/*`, `@/hooks/*`, `@/libs/*` (no file extension)
 - **Formatting:** Allman braces, spaces inside parentheses `( foo, bar )` — `@tripteki/prettier-config`
 - **Lint:** `npm run lint` (eslint-config-next + prettier)
-- **shadcn:** add components via `npm run component` (bunx shadcn)
 
-## UI conventions
+## UI conventions (Flowbite)
 
+- **CSS:** `src/styles/globals.css` imports Flowbite plugin; brand utilities in `src/styles/brand-theme.css`
+- **Class tokens:** `src/libs/flowbite-classes.ts` — prefer `fbCard`, `fbMuted`, `fbAlert*` over ad-hoc gray classes
+- **Components:** use `src/components/flowbite/fb-*.tsx`; dropdowns/modals are custom React, not Flowbite JS widgets
+- **Plugins:** `fb-apex-chart`, `fb-data-table`, `fb-wysiwyg` + `src/libs/flowbite-chart-options.ts`
+- **Init:** `initFlowbite()` in `src/app-shell.tsx` on route changes
 - **Header action order (left → right in actions area):** i18n switcher → theme toggle → notifications → avatar/profile → logout
-- **Buttons:** loading state uses `gap-2` between spinner and label; `<Spinner />` without excessive margin
-- **Alerts:** use `AlertSuccess`, `AlertWarning`, `AlertError` — flex/grid layout with `mb-4` spacing
+- **Buttons:** loading state uses `gap-2` between `FbSpinner` and label
+- **Alerts:** use `AlertSuccess`, `AlertWarning`, `AlertError` — flex layout with `mb-4` spacing
 - **Logo:** `AppLogo` component using manifest PNG assets
 - **i18n switcher:** flag emojis (🇺🇸 🇮🇩 🇲🇾) in header

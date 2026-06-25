@@ -6,7 +6,8 @@ import { useTranslation, } from "next-i18next/pages";
 import NotificationItemPreview from "@/components/admin/notification-item-preview";
 import HeaderLayout from "@/layouts/header.layout";
 import FooterLayout from "@/layouts/footer.layout";
-import { Button, } from "@/components/ui/button";
+import FbButton from "@/components/flowbite/fb-button";
+import { fbMuted, fbPage, fbSurfacePanel, } from "@/libs/flowbite-classes";
 import { useRequireAuth, } from "@/hooks/auth-guard";
 import {
     type NotificationStatusFilter,
@@ -74,7 +75,7 @@ const NotificationsPage = (): ReactElement | null => {
                 <title>{formatPageTitle (t ("notifications"))}</title>
             </Head>
 
-            <div className="min-h-screen flex flex-col bg-background">
+            <div className={fbPage}>
                 <HeaderLayout showLogout={true} />
 
                 <main className="flex-1 container mx-auto px-4 py-8">
@@ -84,20 +85,20 @@ const NotificationsPage = (): ReactElement | null => {
                                 <h1 className="text-3xl font-bold tracking-tight">
                                     {t ("notifications")}
                                 </h1>
-                                <p className="text-muted-foreground">
+                                <p className={fbMuted}>
                                     {t ("notifications_description")}
                                 </p>
                             </div>
-                            <Button variant="outline" onClick={() => void markAllAsRead ()}>
+                            <FbButton variant="outline" onClick={() => void markAllAsRead ()}>
                                 {t ("mark_all_read")}
-                            </Button>
+                            </FbButton>
                         </div>
 
                         <div className="flex gap-2">
                             {(["all", "unread", "read"] as const).map ((tab) => (
-                                <Button
+                                <FbButton
                                     key={tab}
-                                    variant={activeTab === tab ? "default" : "outline"}
+                                    variant={activeTab === tab ? "primary" : "outline"}
                                     size="sm"
                                     onClick={() => {
                                         setActiveTab (tab);
@@ -105,26 +106,26 @@ const NotificationsPage = (): ReactElement | null => {
                                     }}
                                 >
                                     {t (tab === "all" ? "all" : tab)}
-                                </Button>
+                                </FbButton>
                             ))}
                         </div>
 
                         {isLoading ? (
-                            <div className="py-8 text-center text-sm text-muted-foreground">
+                            <div className={cn ("py-8 text-center text-sm", fbMuted)}>
                                 {t ("loading")}
                             </div>
                         ) : items.length === 0 ? (
-                            <div className="rounded-lg border py-12 text-center text-sm text-muted-foreground">
+                            <div className={cn (fbSurfacePanel, "py-12 text-center text-sm", fbMuted)}>
                                 {t ("no_notifications")}
                             </div>
                         ) : (
-                            <div className="divide-y rounded-lg border">
+                            <div className={cn (fbSurfacePanel, "divide-y")}>
                                 {items.map ((item) => (
                                     <div
                                         key={item.id}
                                         className={cn (
                                             "flex items-start gap-3 px-4 py-4",
-                                            notificationIsUnread (item) && "bg-muted/30"
+                                            notificationIsUnread (item) && "bg-gray-50 dark:bg-gray-700/30"
                                         )}
                                     >
                                         <button
@@ -134,15 +135,15 @@ const NotificationsPage = (): ReactElement | null => {
                                         >
                                             <NotificationItemPreview item={item} />
                                         </button>
-                                        <Button
+                                        <FbButton
                                             variant="ghost"
                                             size="sm"
-                                            className="shrink-0 text-destructive"
+                                            className="shrink-0 text-red-600 dark:text-red-400"
                                             disabled={actionId === item.id}
                                             onClick={() => void deleteNotification (item.id)}
                                         >
                                             {t ("delete")}
-                                        </Button>
+                                        </FbButton>
                                     </div>
                                 ))}
                             </div>
@@ -150,25 +151,25 @@ const NotificationsPage = (): ReactElement | null => {
 
                         {meta && (meta.last_page ?? 1) > 1 && (
                             <div className="flex items-center justify-center gap-2">
-                                <Button
+                                <FbButton
                                     variant="outline"
                                     size="sm"
                                     disabled={currentPage <= 1}
                                     onClick={() => setCurrentPage ((page) => page - 1)}
                                 >
                                     {t ("previous")}
-                                </Button>
-                                <span className="text-sm text-muted-foreground">
+                                </FbButton>
+                                <span className={fbMuted}>
                                     {currentPage} / {meta.last_page}
                                 </span>
-                                <Button
+                                <FbButton
                                     variant="outline"
                                     size="sm"
                                     disabled={currentPage >= (meta.last_page ?? 1)}
                                     onClick={() => setCurrentPage ((page) => page + 1)}
                                 >
                                     {t ("next")}
-                                </Button>
+                                </FbButton>
                             </div>
                         )}
                     </div>
