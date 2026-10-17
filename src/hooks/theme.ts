@@ -7,7 +7,7 @@ export function useTheme (): {
     mounted: boolean;
 }
 {
-    const [ theme, setThemeState, ] = useState<string> ("light");
+    const [ theme, setThemeState, ] = useState<string> ("dark");
     const [ mounted, setMounted, ] = useState<boolean> (false);
 
     useEffect ((): void =>

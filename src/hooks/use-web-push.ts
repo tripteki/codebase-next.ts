@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState, } from "react";
 import { useSession, } from "next-auth/react";
 
+import { authorizationHeader, } from "@/libs/access-token";
 import { publicRuntimeConfig, } from "@/libs/runtime-config";
 import {
     isWebPushSupported,
@@ -72,7 +73,7 @@ export function useWebPush () {
         await fetch ("/api/webpush/subscribe", {
             method: "POST",
             headers: {
-                Authorization: `Bearer ${session?.jwt ?? session?.accessToken ?? ""}`,
+                Authorization: authorizationHeader (session?.jwt ?? session?.accessToken ?? ""),
                 "Content-Type": "application/json",
             },
             body: JSON.stringify (subscription.toJSON ()),

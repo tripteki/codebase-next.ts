@@ -3,8 +3,11 @@ import { describe, expect, it, } from "vitest";
 import type { NotificationDto, } from "@/types/admin/notification";
 import {
     notificationBody,
+    notificationIconName,
     notificationIsUnread,
+    notificationTargetIsFile,
     notificationTargetUrl,
+    notificationTheme,
     notificationTitle,
 } from "@/libs/notification-presenter";
 
@@ -24,7 +27,7 @@ describe ("notification-presenter", () =>
     {
         const item = baseNotification ();
 
-        expect (notificationTitle ({ ... item, type: "fallback", })).toBe ("fallback");
+        expect (notificationTitle ({ ... item, type: "fallback", })).toBe ("Fallback");
 
         expect (notificationTitle ({
             ... item,
@@ -63,5 +66,19 @@ describe ("notification-presenter", () =>
             ... baseNotification (),
             read_at: "2026-01-02T00:00:00Z",
         })).toBe (false);
+    });
+
+    it ("marks file targets and import icons", () =>
+    {
+        const item = {
+            ... baseNotification (),
+            type: "user.import.finished",
+            data: { fileUrl: "https://cdn.example/export.csv", },
+        };
+
+        expect (notificationTargetUrl (item)).toBe ("https://cdn.example/export.csv");
+        expect (notificationTargetIsFile (item)).toBe (true);
+        expect (notificationIconName (item)).toBe ("import");
+        expect (notificationTheme ({ ... item, type: "user.import.failed", })).toBe ("danger");
     });
 });

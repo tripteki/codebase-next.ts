@@ -67,6 +67,10 @@ export function useNotificationBroadcast (): {
         if (typeof payload.id === "string" && payload.id.trim () !== "") {
             await handleRealtimeNotification (payload.id);
         }
+
+        if (typeof window !== "undefined") {
+            window.dispatchEvent (new CustomEvent ("admin:notifications-refresh"));
+        }
     }, [refresh, setUnread]);
 
     const unsubscribe = useCallback (async (): Promise<void> => {

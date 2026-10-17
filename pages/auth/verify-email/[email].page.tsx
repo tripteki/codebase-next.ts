@@ -177,7 +177,7 @@ const VerifyEmail = ({
                             <div className="flex flex-col gap-2">
                                 <FbButton
                                     className="w-full"
-                                    href="/admin/auth/login"
+                                    href="/auth/login"
                                 >
                                     {t ("log_in")}
                                 </FbButton>
@@ -204,13 +204,13 @@ const VerifyEmail = ({
                                 <FbButton
                                     variant="outline"
                                     className="w-full"
-                                    href="/admin/auth/login"
+                                    href="/auth/login"
                                 >
                                     {t ("go_to_login")}
                                 </FbButton>
 
                                 <TextLink
-                                    href="/admin/auth/register"
+                                    href="/auth/register"
                                     className="text-center text-sm"
                                 >
                                     {t ("sign_up")}

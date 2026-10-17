@@ -1,10 +1,11 @@
 
+import { formatAppName, } from "@/libs/app-name";
 import { publicRuntimeConfig, } from "@/libs/runtime-config";
 export const getAppDisplayName = (): string =>
 {
     const appName = publicRuntimeConfig?.appName || "codebase";
 
-    return appName.charAt (0).toUpperCase () + appName.slice (1);
+    return formatAppName (appName);
 };
 
 export const formatPageTitle = (

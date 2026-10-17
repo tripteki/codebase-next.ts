@@ -126,6 +126,32 @@ describe ("parse-api-errors", () =>
         });
     });
 
+    it ("keeps the code when verification is forbidden", () =>
+    {
+        expect (parseApiErrors ({
+            detail: {
+                code: "email_not_verified",
+                message: "Email is not verified.",
+            },
+        })).toEqual ({
+            general: "Email is not verified.",
+            code: "email_not_verified",
+        });
+    });
+
+    it ("reads a nested message object from Nest", () =>
+    {
+        expect (parseApiErrors ({
+            message: {
+                code: "email_not_verified",
+                message: "Email is not verified.",
+            },
+        })).toEqual ({
+            general: "Email is not verified.",
+            code: "email_not_verified",
+        });
+    });
+
     it ("parses password confirmation validation detail", () =>
     {
         expect (parseApiErrors ({

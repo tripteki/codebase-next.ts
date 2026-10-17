@@ -6,7 +6,7 @@ import { hasValidSession, } from "@/libs/auth-session";
 import { isStaticBuild, } from "@/libs/page-props.shared";
 
 export const useRequireAuth = (
-    redirectTo: string = "/admin/auth/login"
+    redirectTo: string = "/auth/login"
 ): boolean =>
 {
     const router = useRouter ();

@@ -1,6 +1,8 @@
 import type Echo from "laravel-echo";
 import { io, type Socket, } from "socket.io-client";
 
+import { authorizationHeader, rawAccessToken, } from "@/libs/access-token";
+
 import { createEcho, } from "@/libs/echo";
 import {
     buildRealtimeConnectionConfig,
@@ -77,13 +79,13 @@ const createSocketIoRealtimeClient = (
     config: RealtimeConnectionConfig
 ): RealtimeClient =>
 {
+    const token = rawAccessToken (accessToken);
+    const authorization = authorizationHeader (accessToken);
     const socket: Socket = io (config.apiUrl, {
         path: config.socketPath,
         transports: [ "websocket", "polling", ],
-        auth: { token: accessToken, },
-        extraHeaders: {
-            Authorization: `Bearer ${accessToken}`,
-        },
+        auth: { token, },
+        extraHeaders: authorization ? { Authorization: authorization, } : {},
     });
 
     const handlers = new Map<string, RealtimeEventHandler> ();

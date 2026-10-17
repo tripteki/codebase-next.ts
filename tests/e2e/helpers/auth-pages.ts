@@ -64,21 +64,21 @@ export class AuthPages
 
     async gotoLogin (): Promise<void>
     {
-        await this.page.goto ("/admin/auth/login", { waitUntil: "networkidle", });
+        await this.page.goto ("/auth/login", { waitUntil: "networkidle", });
         await this.waitForAppReady ();
         await expect (this.page.getByRole ("heading", { name: "Login", })).toBeVisible ();
     }
 
     async gotoRegister (): Promise<void>
     {
-        await this.page.goto ("/admin/auth/register", { waitUntil: "networkidle", });
+        await this.page.goto ("/auth/register", { waitUntil: "networkidle", });
         await this.waitForAppReady ();
         await expect (this.page.getByRole ("heading", { name: "Create Account", })).toBeVisible ();
     }
 
     async gotoForgotPassword (): Promise<void>
     {
-        await this.page.goto ("/admin/auth/forgot-password", { waitUntil: "networkidle", });
+        await this.page.goto ("/auth/forgot-password", { waitUntil: "networkidle", });
         await this.waitForAppReady ();
         await expect (this.page.getByRole ("heading", { name: "Forgot Password", })).toBeVisible ();
     }
@@ -265,13 +265,13 @@ export class AuthPages
 
     async expectAuthenticatedRedirectFromLogin (): Promise<void>
     {
-        await this.expectAuthenticatedRedirectFrom ("/admin/auth/login");
+        await this.expectAuthenticatedRedirectFrom ("/auth/login");
     }
 
     async gotoResetPasswordWithToken (email: string, token = "invalid-token"): Promise<void>
     {
         await this.page.goto (
-            `/admin/auth/reset-password?token=${encodeURIComponent (token)}&email=${encodeURIComponent (email)}`,
+            `/auth/reset-password?token=${encodeURIComponent (token)}&email=${encodeURIComponent (email)}`,
             { waitUntil: "networkidle", }
         );
         await this.waitForAppReady ();
@@ -306,6 +306,13 @@ export class AuthPages
 
     async logout (): Promise<void>
     {
+        const toggle = this.page.getByTestId ("account-dropdown-toggle");
+
+        if (await toggle.count ())
+        {
+            await toggle.click ();
+        }
+
         const logoutButton = this.page.getByTestId ("logout-button");
 
         await expect (logoutButton).toBeVisible ({ timeout: 15_000, });

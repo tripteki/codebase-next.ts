@@ -60,7 +60,7 @@ export function useNotifications () {
         ]);
 
         const result = await call ({
-            url: "/api/v1/notifications",
+            url: "/api/v1/notifications/",
             method: "GET",
             params,
         });
@@ -123,6 +123,19 @@ export function useNotifications () {
         return true;
     }, [refresh]);
 
+    const deleteAll = useCallback (async (): Promise<boolean> => {
+        const result = await call ({
+            url: "/api/v1/notifications/delete-all",
+            method: "DELETE",
+        });
+
+        if (result.isSuccess) {
+            await refresh ();
+        }
+
+        return result.isSuccess;
+    }, [refresh]);
+
     const deleteNotification = useCallback (async (id: string): Promise<boolean> => {
         const result = await call ({
             url: `/api/v1/notifications/${id}`,
@@ -152,6 +165,7 @@ export function useNotifications () {
         markAsRead,
         markAllAsRead,
         deleteNotification,
+        deleteAll,
         refresh,
         setUnread,
     };

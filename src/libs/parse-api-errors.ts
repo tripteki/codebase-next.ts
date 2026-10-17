@@ -6,9 +6,15 @@ export type ApiValidationDetail = {
     ctx?: Record<string, unknown>;
 };
 
-export type ApiErrorPayload = {
-    detail?: ApiValidationDetail[] | string;
+export type ApiCodedError = {
+    code?: string;
     message?: string;
+};
+
+export type ApiErrorPayload = {
+    detail?: ApiValidationDetail[] | string | ApiCodedError;
+    message?: string | ApiCodedError;
+    code?: string;
     errors?: Record<string, string | string[]>;
 };
 
@@ -178,6 +184,76 @@ export const parseDetailArray = (
     return result;
 };
 
+const readCodedError = (
+    value: unknown,
+    fallback: string
+): Record<string, string> | null =>
+{
+    if (! value || typeof value !== "object" || Array.isArray (value))
+    {
+        return null;
+    }
+
+    const record = value as Record<string, unknown>;
+    const code = typeof record.code === "string" ? record.code : "";
+    const message = typeof record.message === "string" ? record.message : "";
+
+    if (! code && ! message)
+    {
+        return null;
+    }
+
+    const result: Record<string, string> = {
+        general: message || fallback,
+    };
+
+    if (code)
+    {
+        result.code = code;
+    }
+
+    return result;
+};
+
+const parseMessageList = (
+    message: unknown[]
+): Record<string, string> | null =>
+{
+    const result: Record<string, string> = {};
+
+    for (const item of message)
+    {
+        if (typeof item === "string" && item.trim ())
+        {
+            result.general = result.general ? `${result.general} ${item}` : item;
+            continue;
+        }
+
+        if (! item || typeof item !== "object")
+        {
+            continue;
+        }
+
+        const row = item as {
+            property?: string;
+            constraints?: Record<string, string>;
+        };
+        const text = row.constraints
+            ? Object.values (row.constraints).filter (Boolean).join (" ")
+            : "";
+
+        if (! text)
+        {
+            continue;
+        }
+
+        const field = row.property || "general";
+        result[field] = result[field] ? `${result[field]} ${text}` : text;
+    }
+
+    return Object.keys (result).length > 0 ? result : null;
+};
+
 export const parseApiErrors = (
     data: ApiErrorPayload | string | null | undefined,
     fallback = "Something went wrong."
@@ -214,14 +290,52 @@ export const parseApiErrors = (
             : { general: fallback, };
     }
 
+    if (payload.detail && typeof payload.detail === "object" && ! Array.isArray (payload.detail))
+    {
+        const coded = readCodedError (payload.detail, fallback);
+
+        if (coded)
+        {
+            return coded;
+        }
+    }
+
     if (typeof payload.detail === "string" && payload.detail.length > 0)
     {
         return { general: payload.detail, };
     }
 
+    if (Array.isArray (payload.message))
+    {
+        const parsed = parseMessageList (payload.message);
+
+        if (parsed)
+        {
+            return parsed;
+        }
+    }
+
+    if (payload.message && typeof payload.message === "object")
+    {
+        const coded = readCodedError (payload.message, fallback);
+
+        if (coded)
+        {
+            return coded;
+        }
+    }
+
     if (typeof payload.message === "string" && payload.message.length > 0)
     {
-        return { general: payload.message, };
+        const result: Record<string, string> = { general: payload.message, };
+        const code = (payload as ApiErrorPayload).code;
+
+        if (code)
+        {
+            result.code = code;
+        }
+
+        return result;
     }
 
     return { general: fallback, };

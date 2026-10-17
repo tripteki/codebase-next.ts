@@ -90,7 +90,7 @@ const ResetPassword = ({
             if (payload?.success)
             {
                 router.push ({
-                    pathname: "/admin/auth/login",
+                    pathname: "/auth/login",
                     query: { status: t ("password_reset"), },
                 });
 
@@ -119,7 +119,7 @@ const ResetPassword = ({
                 title={t ("reset_password_title")}
                 description={t ("reset_password_description")}
             >
-                <form onSubmit={submit} noValidate>
+                <form method="post" onSubmit={submit} noValidate>
                     <AlertError message={errors.general} />
 
                     <div className="grid gap-6">
@@ -132,6 +132,7 @@ const ResetPassword = ({
                                 autoComplete="email"
                                 value={email}
                                 readOnly
+                                placeholder={t ("email_placeholder")}
                             />
                             <InputError message={errors.email} />
                         </div>

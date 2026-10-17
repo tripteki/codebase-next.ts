@@ -85,7 +85,7 @@ export const buildGetServerSideProps = (
                 {
                     return {
                         redirect: {
-                            destination: options.redirectTo || "/admin/auth/login",
+                            destination: options.redirectTo || "/auth/login",
                             permanent: false,
                         },
                     };
@@ -101,7 +101,7 @@ export const buildGetServerSideProps = (
                 {
                     return {
                         redirect: {
-                            destination: options.redirectTo || "/admin/auth/login",
+                            destination: options.redirectTo || "/auth/login",
                             permanent: false,
                         },
                     };

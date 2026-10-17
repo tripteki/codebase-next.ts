@@ -10,6 +10,7 @@ import { useSessionRefreshError, } from "@/hooks/use-session-refresh-error";
 import { applyBrandCss, } from "@/libs/apply-brand-css";
 import { attachPwaInstallListener, } from "@/libs/pwa-install";
 import { resolveBrandColors, } from "@/libs/branding";
+import { formatAppName, } from "@/libs/app-name";
 import { publicRuntimeConfig, } from "@/libs/runtime-config";
 
 const AuthenticatedExtras = (): ReactElement | null =>
@@ -82,25 +83,10 @@ const AppShell = (
             return;
         }
 
-        if (process.env.NODE_ENV !== "production")
-        {
-            void navigator.serviceWorker.getRegistrations ().then ((registrations) =>
-            {
-                for (const registration of registrations)
-                {
-                    void registration.unregister ();
-                }
-            });
-
-            return;
-        }
-
-        void navigator.serviceWorker.register ("/sw.js");
+        void navigator.serviceWorker.register ("/sw.js").catch (() => undefined);
     }, []);
 
-    const formattedAppName =
-        publicRuntimeConfig.appName.charAt (0).toUpperCase () +
-        publicRuntimeConfig.appName.slice (1);
+    const formattedAppName = formatAppName (publicRuntimeConfig.appName);
 
     return (
         <>

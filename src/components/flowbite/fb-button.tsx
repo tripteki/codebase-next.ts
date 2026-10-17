@@ -7,11 +7,12 @@ import {
     fbButtonOutline,
     fbButtonPrimary,
     fbButtonSecondary,
+    fbButtonTertiary,
 } from "@/libs/flowbite-classes";
 import { cn, } from "@/libs/utils";
 
-type FbButtonVariant = "primary" | "outline" | "ghost" | "danger" | "secondary";
-type FbButtonSize = "default" | "sm" | "lg" | "icon";
+type FbButtonVariant = "primary" | "outline" | "ghost" | "danger" | "secondary" | "tertiary";
+type FbButtonSize = "default" | "xs" | "sm" | "lg" | "icon";
 
 export type FbButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
     variant?: FbButtonVariant;
@@ -31,6 +32,8 @@ function resolveVariantClass (variant: FbButtonVariant): string {
             return fbButtonDanger;
         case "secondary":
             return fbButtonSecondary;
+        case "tertiary":
+            return fbButtonTertiary;
         default:
             return fbButtonPrimary;
     }
@@ -39,6 +42,10 @@ function resolveVariantClass (variant: FbButtonVariant): string {
 function resolveSizeClass (size: FbButtonSize): string {
     if (size === "lg") {
         return "px-6 py-3 text-base";
+    }
+
+    if (size === "xs") {
+        return "gap-1.5 px-2 py-1 text-xs";
     }
 
     if (size === "sm") {

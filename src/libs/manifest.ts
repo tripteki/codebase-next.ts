@@ -8,8 +8,8 @@ import { getAppDisplayName, } from "@/libs/page-title";
 const manifest = (): MetadataRoute.Manifest =>
     createPwaManifest ({
         name: getAppDisplayName (),
-        shortName: publicRuntimeConfig.appName,
-        description: `The ${publicRuntimeConfig.appName} WebApp!`,
+        shortName: getAppDisplayName (),
+        description: `The ${getAppDisplayName ()} WebApp!`,
     });
 
 export const url: string = publicRuntimeConfig.appUrl;

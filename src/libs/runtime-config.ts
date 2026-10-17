@@ -31,7 +31,7 @@ export const publicRuntimeConfig: PublicRuntimeConfig = {
     reverbScheme: process.env.NEXT_PUBLIC_REVERB_SCHEME || "http",
     vapidPublicKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || "",
     env: process.env.NEXT_PUBLIC_APP_ENV || "local",
-    realtimeDriver: process.env.NEXT_PUBLIC_REALTIME_DRIVER || "echo",
+    realtimeDriver: process.env.NEXT_PUBLIC_REALTIME_DRIVER || "socketio",
 };
 
 export const serverRuntimeConfig = {

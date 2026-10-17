@@ -4,14 +4,14 @@ import { resolveRealtimeDriver, } from "@/libs/realtime-config";
 
 describe ("realtime-config", () =>
 {
-    it ("defaults to echo driver", () =>
+    it ("defaults to socketio driver", () =>
     {
-        expect (resolveRealtimeDriver ()).toBe ("echo");
-        expect (resolveRealtimeDriver ("echo")).toBe ("echo");
+        expect (resolveRealtimeDriver ()).toBe ("socketio");
+        expect (resolveRealtimeDriver ("socketio")).toBe ("socketio");
     });
 
-    it ("resolves socketio driver", () =>
+    it ("resolves echo driver", () =>
     {
-        expect (resolveRealtimeDriver ("socketio")).toBe ("socketio");
+        expect (resolveRealtimeDriver ("echo")).toBe ("echo");
     });
 });

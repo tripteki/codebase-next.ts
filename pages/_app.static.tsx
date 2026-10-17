@@ -4,8 +4,11 @@ import { SessionProvider, } from "next-auth/react";
 import { appWithTranslation, } from "next-i18next/pages";
 
 import AppShell from "@/src/app-shell";
+import { bindPageProgress, } from "@/libs/page-progress";
 import nextI18NextConfig from "../next-i18next.config.js";
 import "@/styles/globals.css";
+
+bindPageProgress ();
 
 const REFETCH_INTERVAL_SECONDS = 50 * 60;
 

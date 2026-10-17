@@ -6,7 +6,7 @@ export type PageAuthConfig = {
     redirectUnauthenticatedTo?: string;
 };
 
-export const AUTH_LOGIN_PATH = "/admin/auth/login";
+export const AUTH_LOGIN_PATH = "/auth/login";
 
 export const AUTH_HOME_PATH = "/admin/dashboard";
 

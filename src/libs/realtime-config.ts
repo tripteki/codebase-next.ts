@@ -16,7 +16,7 @@ export type RealtimeConnectionConfig = {
 export const resolveRealtimeDriver = (
     value?: string
 ): RealtimeDriver =>
-    value === "socketio" ? "socketio" : "echo";
+    value === "echo" ? "echo" : "socketio";
 
 export const buildRealtimeConnectionConfig = (
     overrides: Partial<RealtimeConnectionConfig> = {}

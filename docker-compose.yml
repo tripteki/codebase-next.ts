@@ -1,0 +1,34 @@
+name: codebase-next
+
+services:
+  next:
+    image: codebase-next:latest
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_APP_NAME: ${NEXT_PUBLIC_APP_NAME:-codebase}
+        NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+        NEXT_PUBLIC_BASE_URL: ${NEXT_PUBLIC_BASE_URL:-http://api.backend.localhost/api}
+        NEXT_PUBLIC_AUTH_URL: ${NEXT_PUBLIC_AUTH_URL:-http://api.backend.localhost/api/v1/auth}
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://api.backend.localhost}
+        NEXT_PUBLIC_REALTIME_DRIVER: ${NEXT_PUBLIC_REALTIME_DRIVER:-socketio}
+        NEXT_PUBLIC_REVERB_APP_KEY: ${NEXT_PUBLIC_REVERB_APP_KEY:-}
+        NEXT_PUBLIC_REVERB_HOST: ${NEXT_PUBLIC_REVERB_HOST:-127.0.0.1}
+        NEXT_PUBLIC_REVERB_PORT: ${NEXT_PUBLIC_REVERB_PORT:-8080}
+        NEXT_PUBLIC_REVERB_SCHEME: ${NEXT_PUBLIC_REVERB_SCHEME:-http}
+        NEXT_PUBLIC_VAPID_PUBLIC_KEY: ${NEXT_PUBLIC_VAPID_PUBLIC_KEY:-}
+        NEXT_PUBLIC_APP_ENV: ${NEXT_PUBLIC_APP_ENV:-production}
+        NEXT_PUBLIC_APP_LANG: ${NEXT_PUBLIC_APP_LANG:-en}
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      HOSTNAME: 0.0.0.0
+      PORT: 3000
+    ports:
+      - "${PORT:-3000}:3000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+      - "api.backend.localhost:host-gateway"
+    init: true
+    restart: unless-stopped

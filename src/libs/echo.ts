@@ -2,6 +2,8 @@ import Echo from "laravel-echo";
 import { publicRuntimeConfig, } from "@/libs/runtime-config";
 import Pusher from "pusher-js";
 
+import { authorizationHeader, } from "@/libs/access-token";
+
 type Detail =
 {
     apiUrl?: string;
@@ -45,7 +47,7 @@ export const createEcho = (accessToken: string, detail?: Detail): Echo<any> =>
         authEndpoint: `${apiUrl}/broadcasting/auth`,
         auth: {
             headers: {
-                Authorization: `Bearer ${accessToken}`,
+                Authorization: authorizationHeader (accessToken),
             },
         },
     });

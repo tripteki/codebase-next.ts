@@ -4,6 +4,7 @@ export interface PaginatedResponse<T> {
 }
 
 export type OffsetPaginationResponse<T> = {
+    total?: number;
     totalPage: number;
     perPage: number;
     currentPage: number;

@@ -9,6 +9,8 @@ alwaysApply: false
 ## Component architecture
 
 - Use **functional components** only
+- New files use Allman braces. Do not mass-reformat existing K&R files
+- Indent 4, double quotes, trailing commas, space before `(`. No JSDoc on `src/libs` or hooks
 - Extract reusable logic into `src/hooks/use-*.ts`
 - Layout components: suffix `.layout.tsx` (e.g. `header.layout.tsx`, `auth.layout.tsx`)
 - Page-specific components stay near their page; shared ones go in `src/components/`

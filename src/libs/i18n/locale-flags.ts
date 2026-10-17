@@ -1,5 +1,11 @@
 import { type AppLocale, } from "@/libs/i18n/locale";
 
+export const LOCALE_SWITCHER_LABELS: Record<AppLocale, string> = {
+    en: "United States",
+    id: "Indonesia",
+    ms: "Malaysia",
+};
+
 export const LOCALE_FLAGS: Record<AppLocale, string> = {
     en: "🇺🇸",
     id: "🇮🇩",

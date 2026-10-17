@@ -3,6 +3,7 @@ import { resolveApiBaseUrl, } from "@/libs/api-base";
 import { publicRuntimeConfig, } from "@/libs/runtime-config";
 import { getSession, } from "next-auth/react";
 import { Session, } from "next-auth";
+import { authorizationHeader, } from "@/libs/access-token";
 
 type Detail =
 {
@@ -39,12 +40,12 @@ export const call = async (
     try
     {
         const session: Session | null = await getSession ();
-        const token: string = session?.jwt ?? "";
+        const authorization = authorizationHeader (session?.jwt ?? "");
 
         const instance: AxiosInstance = axios.create ({
             baseURL,
             headers: {
-                ... (token ? { Authorization: `Bearer ${token}`, } : {}),
+                ... (authorization ? { Authorization: authorization, } : {}),
             },
         });
 

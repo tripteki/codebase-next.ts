@@ -47,6 +47,6 @@ test.describe ("Auth route guards UI", () =>
         const auth = new AuthPages (page);
 
         await auth.loginExpectSuccess (e2eEnv.userLogin, e2eEnv.userPassword);
-        await auth.expectAuthenticatedRedirectFrom ("/admin/auth/register");
+        await auth.expectAuthenticatedRedirectFrom ("/auth/register");
     });
 });

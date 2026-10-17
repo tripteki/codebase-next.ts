@@ -77,6 +77,18 @@ export function buildAdminListParams (
     return params;
 }
 
+export function toggleAdminListOrder (current: string, field: string): string
+{
+    const [name, direction] = current.split (":");
+
+    if (name === field && direction === "asc")
+    {
+        return `${field}:desc`;
+    }
+
+    return `${field}:asc`;
+}
+
 export function appendAdminListFilter (
     params: Record<string, string | number>,
     key: string,

@@ -21,7 +21,7 @@ export const useSessionRefreshError = (): void =>
         hasSignedOutRef.current = true;
 
         void signOut ({
-            callbackUrl: "/admin/auth/login?signedOut=1",
+            callbackUrl: "/auth/login?signedOut=1",
         });
     }, [ session, ]);
 };

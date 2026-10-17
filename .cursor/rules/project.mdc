@@ -5,7 +5,23 @@ alwaysApply: true
 
 # Next.js — Project Conventions
 
-This is the **Next.js 16 Pages Router** frontend in the Tripteki parallel-codebase family. It pairs with NestJS, FastAPI, or Laravel backends via a shared REST contract.
+This is the **Next.js 16 Pages Router** frontend in the Tripteki parallel-codebase family. It pairs with FastAPI or Nest through one REST contract. The product brand is **Codebase**.
+
+## Family conventions
+
+| Topic | Rule |
+|-------|------|
+| Roles | Exactly `superadmin`, `admin`, `user` |
+| Brand | Primary `#2563eb`, secondary `#84cc16`, tertiary `#1e3a8a` |
+| CSS | `--brand-primary`, `--brand-secondary`, `--brand-tertiary` in `src/styles/brand-theme.css` |
+| Runtime | `src/libs/branding.ts`. Optional `NEXT_PUBLIC_BRAND_*` hex overrides |
+| Locales | `en`, `id`, `ms` |
+| Auth pages | `/auth/login`, `/auth/register`, `/auth/forgot-password`, `/auth/reset-password` |
+| Legacy auth | `next.config.ts` redirects `/admin/auth/:path*` to `/auth/:path*` |
+| Format | Indent 4, double quotes, trailing commas, space before `(` |
+| Braces | New files use Allman. Do not mass-reformat existing K&R files |
+| Docs | No JSDoc on `src/libs` or hooks |
+| Validation | HTTP 422 `{ detail: [{ loc, msg, type }] }`. Nest string errors are parsed too |
 
 ## Stack
 
@@ -105,13 +121,13 @@ npm run test:e2e:ui # Playwright UI mode
 ```
 
 - E2E base URL from `NEXT_PUBLIC_APP_URL`
-- Default e2e credentials: `user@mail.com` / `12345678`
+- Default e2e credentials: `superuser@mail.com` / `12345678`
 
 ## Code style
 
 - **Files:** kebab-case (`theme-toggle.tsx`, `use-notifications.ts`)
 - **Imports:** `@/components/*`, `@/hooks/*`, `@/libs/*` (no file extension)
-- **Formatting:** Allman braces, spaces inside parentheses `( foo, bar )` — `@tripteki/prettier-config`
+- **Formatting:** indent 4, double quotes, trailing commas, space before `(` (`require ("./package.json")`). New files use Allman braces. Leave existing K&R files as they are
 - **Lint:** `npm run lint` (eslint-config-next + prettier)
 
 ## UI conventions (Flowbite)

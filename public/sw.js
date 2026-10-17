@@ -3,7 +3,7 @@
 const CACHE_NAME = "codebase-shell-v3";
 const PRECACHE_URLS = [
     "/",
-    "/admin/auth/login",
+    "/auth/login",
     "/manifest.webmanifest",
     "/manifest/icon-192x192.png",
     "/manifest/icon-512x512.png",

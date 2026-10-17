@@ -21,6 +21,21 @@
         color-mix(in srgb, var(--brand-primary) 55%, #ffffff 45%);
 }
 
+.btn-brand-tertiary {
+    background-color: var(--brand-tertiary);
+    color: #ffffff;
+}
+
+.btn-brand-tertiary:hover {
+    filter: brightness(1.05);
+}
+
+.btn-brand-tertiary:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px
+        color-mix(in srgb, var(--brand-tertiary) 55%, #ffffff 45%);
+}
+
 .btn-brand-danger {
     background-color: #b91c1c;
     color: #ffffff;
@@ -32,6 +47,33 @@
 
 .dark .btn-brand-danger {
     background-color: #dc2626;
+}
+
+.nav-pill-brand-active {
+    background-color: var(--brand-primary);
+    color: #ffffff;
+}
+
+.dark .nav-pill-brand-active {
+    background-color: color-mix(in srgb, var(--brand-primary) 88%, #020617 12%);
+}
+
+.nav-pill-brand-inactive:hover {
+    background-color: color-mix(in srgb, var(--brand-primary) 10%, #ffffff 90%);
+}
+
+.dark .nav-pill-brand-inactive:hover {
+    background-color: color-mix(in srgb, var(--brand-primary) 18%, #1f2937 82%);
+}
+
+.icon-brand-soft {
+    background-color: color-mix(in srgb, var(--brand-primary) 12%, #ffffff 88%);
+    color: var(--brand-primary);
+}
+
+.dark .icon-brand-soft {
+    background-color: color-mix(in srgb, var(--brand-primary) 28%, #020617 72%);
+    color: color-mix(in srgb, var(--brand-primary) 78%, #ecfdf5 22%);
 }
 
 .link-brand-primary {
@@ -52,6 +94,16 @@
     color: #ffffff;
 }
 
+.badge-brand-primary {
+    background-color: color-mix(in srgb, var(--brand-primary) 15%, #ffffff 85%);
+    color: color-mix(in srgb, var(--brand-primary) 88%, #0f172a 12%);
+}
+
+.dark .badge-brand-primary {
+    background-color: color-mix(in srgb, var(--brand-primary) 28%, #020617 72%);
+    color: color-mix(in srgb, var(--brand-primary) 82%, #ecfdf5 18%);
+}
+
 .input-brand:focus {
     outline: none;
     border-color: var(--brand-primary);
@@ -70,19 +122,15 @@
 }
 
 .tab-brand-active {
-    color: #ffffff;
-    background-color: var(--brand-primary);
-    border-color: var(--brand-primary);
+    color: var(--brand-primary);
+    background-color: color-mix(in srgb, var(--brand-primary) 10%, #ffffff 90%);
+    border-color: color-mix(in srgb, var(--brand-primary) 30%, #e5e7eb 70%);
 }
 
 .dark .tab-brand-active {
-    color: #ffffff;
-    background-color: color-mix(
-        in srgb,
-        var(--brand-primary) 88%,
-        #020617 12%
-    );
-    border-color: color-mix(in srgb, var(--brand-primary) 75%, #020617 25%);
+    color: var(--brand-primary);
+    background-color: color-mix(in srgb, var(--brand-primary) 20%, #1f2937 80%);
+    border-color: color-mix(in srgb, var(--brand-primary) 45%, #1f2937 55%);
 }
 
 .tab-brand-inactive {
@@ -103,6 +151,14 @@
     border-color: #374151;
 }
 
+.search-hide-native-clear::-webkit-search-cancel-button,
+.search-hide-native-clear::-webkit-search-decoration,
+.search-hide-native-clear::-webkit-search-results-button,
+.search-hide-native-clear::-webkit-search-results-decoration {
+    -webkit-appearance: none;
+    appearance: none;
+}
+
 .dark .tab-brand-inactive:hover {
     background-color: color-mix(
         in srgb,
@@ -111,4 +167,17 @@
     );
     color: color-mix(in srgb, var(--brand-primary) 78%, #f1f5f9 22%);
     border-color: color-mix(in srgb, var(--brand-primary) 35%, #1e293b 65%);
+}
+
+html.pwa-install-open #admin-main-content,
+html.pwa-install-open .auth-panel,
+html.pwa-install-open footer {
+    padding-bottom: 8.5rem;
+}
+
+#pwa-install-banner-root {
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    pointer-events: none;
 }

@@ -3,6 +3,7 @@ export interface AuthLayoutProps
     name?: string;
     title?: string;
     description?: string;
+    variant?: "hero" | "split";
 };
 
 export interface LoginProps
@@ -21,4 +22,5 @@ export interface ResetPasswordProps
 {
     token: string;
     email: string;
+    signed?: string;
 };

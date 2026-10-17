@@ -10,7 +10,7 @@ type NotificationStore = {
     actionId: string | null;
 };
 
-const store: NotificationStore = {
+let snapshot: NotificationStore = {
     unread: 0,
     items: [],
     meta: undefined,
@@ -25,11 +25,14 @@ function emit (): void {
 }
 
 export function getNotificationStore (): NotificationStore {
-    return store;
+    return snapshot;
 }
 
 export function setNotificationStore (patch: Partial<NotificationStore>): void {
-    Object.assign (store, patch);
+    snapshot = {
+        ...snapshot,
+        ...patch,
+    };
     emit ();
 }
 
@@ -40,7 +43,7 @@ export function useNotificationStore (): NotificationStore {
 
             return () => listeners.delete (listener);
         }, []),
-        () => store,
-        () => store
+        () => snapshot,
+        () => snapshot
     );
 }

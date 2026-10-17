@@ -4,7 +4,7 @@ import { resolve, } from "node:path";
 import { e2eEnv, } from "./env";
 
 export const mailSubjects = {
-    verifyEmail: "Verify your email address",
+    verifyEmail: "Verify your email",
     resetPassword: "Reset your password",
 } as const;
 

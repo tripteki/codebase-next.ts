@@ -4,7 +4,7 @@ import FbCheckbox, { type FbCheckboxProps, } from "@/components/flowbite/fb-chec
 import { fbCheckboxLabel, fbCheckboxRow, } from "@/libs/flowbite-classes";
 import { cn, } from "@/libs/utils";
 
-export type FbCheckboxFieldProps = Omit<FbCheckboxProps, "className"> & {
+export type FbCheckboxFieldProps = FbCheckboxProps & {
     id: string;
     children: ReactNode;
     wrapperClassName?: string;
@@ -17,10 +17,11 @@ const FbCheckboxField = ({
     wrapperClassName,
     labelClassName,
     disabled,
+    className,
     ... checkboxProps
 }: FbCheckboxFieldProps): ReactElement => (
     <div className={cn (fbCheckboxRow, wrapperClassName)}>
-        <FbCheckbox id={id} disabled={disabled} {... checkboxProps} />
+        <FbCheckbox id={id} disabled={disabled} className={className} {... checkboxProps} />
         <label
             htmlFor={id}
             className={cn (
